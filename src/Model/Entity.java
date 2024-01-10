@@ -1,0 +1,124 @@
+package Model;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.Random;
+
+public abstract class Entity {
+    private boolean left, right,up,down;
+    private int yPos, xPos;
+    private int width, height;
+    private float movementSpeed;
+    private Rectangle2D.Float hitBox;
+    private Game game;
+
+    public Entity(int xPos,  int yPos, int width, int height, float movementSpeed,  Game game) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.width = width;
+        this.height = height;
+        this.movementSpeed = movementSpeed;
+        this.game = game;
+        initHitBox();
+    }
+
+    public void initHitBox() {
+        hitBox = new Rectangle2D.Float(xPos, yPos,width,height);
+    }
+    public void drawHitBox(Graphics g) {
+        g.setColor(Color.PINK);
+        g.fillRect((int) hitBox.x, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
+    }
+
+    public void update() {
+        float xSpeed = 0f;
+        float ySpeed = 0f;
+
+        // CHECK COLLISION BETWEEN ENTITIES
+        game.getCollisionChecker().handleCollision(this, game.getEntities(), xSpeed, ySpeed);
+
+    }
+
+    public void updateEntityPos(float xSpeed, float ySpeed) {
+        setxPos(xSpeed);
+        setyPos(ySpeed);
+    }
+    public void render(Graphics g) {
+        drawHitBox(g);
+    }
+
+    public float getMovementSpeed() {
+        return movementSpeed;
+    }
+
+    public int getyPos() {
+        return (int) hitBox.y;
+    }
+
+    public void setyPos(float yPos) {
+        this.hitBox.y += yPos;
+    }
+
+    public int getxPos() {
+        return (int) hitBox.x;
+    }
+
+    public void setxPos(float xPos) {
+        this.hitBox.x += xPos;
+    }
+
+    public Rectangle2D.Float getHitBox() {
+        return hitBox;
+    }
+
+    public void setHitBox(Rectangle2D.Float hitBox) {
+        this.hitBox = hitBox;
+    }
+    public boolean isLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+    public boolean isUp() {
+        return up;
+    }
+
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+
+    public boolean isDown() {
+        return down;
+    }
+
+    public void setDown(boolean down) {
+        this.down = down;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+}
