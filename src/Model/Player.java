@@ -6,6 +6,8 @@ import java.awt.*;
 
 public class Player extends Entity {
     Game game;
+    int playerX;
+    int playerY;
     public Player(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos,yPos,width,height,movementSpeed,game);
         this.game = game;
@@ -21,8 +23,9 @@ public class Player extends Entity {
 
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[0].length; j++) {
-                if (y / 48 == 2 && x / 48 == 2) {
-                    System.out.println("We're at the 2,2");
+                if (y / 48 == i && x / 48 == j) {
+                    playerX = i;
+                    playerY = j;
                 }
             }
         }
@@ -50,8 +53,11 @@ public class Player extends Entity {
         g.setColor(Color.RED);
         g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
-        int num = 20;
-        g.drawString(String.valueOf(num), 200,100);
+
+        Font font = new Font("Arial", Font.BOLD, 20);
+        g.setFont(font);
+
+        g.drawString("Player cords: " + playerX + " " + playerY, 100, 100);
     }
     @Override
     public String toString() {

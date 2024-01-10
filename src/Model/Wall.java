@@ -10,6 +10,7 @@ public class Wall extends Entity{
 
     @Override
     public void render(Graphics g) {
+        g.setColor(Color.magenta);
         g.fillRect((int) getHitBox().x, (int) getHitBox().y, (int) getHitBox().width, (int) getHitBox().height);
     }
 }
