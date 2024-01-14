@@ -56,8 +56,12 @@ public class Player extends Entity {
 
         Font font = new Font("Arial", Font.BOLD, 20);
         g.setFont(font);
+        g.drawString("Player coords: " + playerY + " " + playerX, 100, 100);
 
-        g.drawString("Player cords: " + playerX + " " + playerY, 100, 100);
+        g.setColor(Color.BLACK);
+        //System.err.println(playerX + "|" + playerY);
+
+        g.fillRect((playerY*48),(playerX*48),48,48);
     }
     @Override
     public String toString() {

@@ -12,8 +12,8 @@ public class GameController {
     private final int originalTileSize = 16; //16x16 tile
     private final int scale = 3;
     private final int tileSize = originalTileSize * scale; //48x48 tile
-    final int maxScreenCol = 27;
-    final int maxScreenRow = 18;
+    public static final int maxScreenCol = 27;
+    public static final int maxScreenRow = 18;
     final int screenWidth = maxScreenCol * tileSize;
     final int screenHeight = maxScreenRow * tileSize;
 
@@ -29,6 +29,8 @@ public class GameController {
         GameFrame gameFrame = new GameFrame(gamePanel);
         KeyboardInputs keyboardInputs = new KeyboardInputs(this);
         gamePanel.addKeyListener(keyboardInputs);
+
+        gameLoop.startGameLoop();
     }
 
     void update() {

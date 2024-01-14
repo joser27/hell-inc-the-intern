@@ -1,75 +1,89 @@
 package Controller;
-
 import Model.Game;
-import View.GameFrame;
+
 import View.GamePanel;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class GameLoop{
+public class GameLoop implements Runnable {
+    private Game model;
+    private GamePanel view;
+    private GameController controller;
+    private Thread gameThread;
+    private final int FPS_SET = 120;
+    private final int UPS_SET = 120;
+    private final long NANO_PER_SEC = 1_000_000_000L;
 
-//    private static final int WIDTH = 800;
-//    private static final int HEIGHT = 600;
+    private volatile boolean isRunning = true;
 
-    private boolean running;
-    private int x, y;
-    private int frameCount;
-    private long startTime;
-    GamePanel gamePanel;
-    Game game;
-    GameController controller;
-    GameFrame gameFrame;
-    public GameLoop(Game game, GamePanel gamePanel,GameController controller) {
-        this.game = game;
-        this.gamePanel = gamePanel;
+    public GameLoop(Game model, GamePanel view, GameController controller) {
+        this.model = model;
+        this.view = view;
         this.controller = controller;
-
-
-
-        running = true;
-        frameCount = 0;
-        startTime = System.currentTimeMillis();
-
-        Timer timer = new Timer(16, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                update();
-                gamePanel.repaint();
-                frameCount++;
-            }
-        });
-        timer.start();
-
-        Timer fpsTimer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calculateFPS();
-            }
-        });
-        fpsTimer.start();
     }
 
-    private void calculateFPS() {
-        long currentTime = System.currentTimeMillis();
-        long elapsedTime = currentTime - startTime;
-
-        if (elapsedTime > 0) {
-            double fps = (double) frameCount / (elapsedTime / 1000.0);
-            System.out.println("FPS: " + Math.round(fps));
-        }
-
-        frameCount = 0;
-        startTime = currentTime;
+    public void startGameLoop() {
+        gameThread = new Thread(this);
+        gameThread.start();
     }
 
-    private void update() {
+    public void stopGameLoop() {
+        isRunning = false;
+    }
+    public void update() {
         controller.update();
     }
-
     public void render(Graphics g) {
         controller.render(g);
     }
+
+
+    @Override
+    public void run() {
+        double timePerFrame = NANO_PER_SEC / FPS_SET;
+        double timePerUpdate = NANO_PER_SEC / UPS_SET;
+
+        long previousTime = System.nanoTime();
+        long currentTime;
+        long lastCheck = System.currentTimeMillis();
+
+        int frames = 0;
+        int updates = 0;
+
+        double deltaU = 0;
+        double deltaF = 0;
+
+        while (isRunning) {
+            currentTime = System.nanoTime();
+
+            deltaU += (currentTime - previousTime) / timePerUpdate;
+            deltaF += (currentTime - previousTime) / timePerFrame;
+            previousTime = currentTime;
+
+            if (deltaU >= 1) {
+                update();
+                updates++;
+                deltaU--;
+            }
+            if (deltaF >= 1) {
+                view.repaint();
+                frames++;
+                deltaF--;
+            }
+
+            if (System.currentTimeMillis() - lastCheck >= 1000) {
+                lastCheck = System.currentTimeMillis();
+                System.out.println("FPS: " + frames + " | UPS: " + updates);
+                frames = 0;
+                updates = 0;
+            }
+        }
+    }
+//    public Game getModel() {
+//        return model;
+//    }
+//
+//    public GamePanel getView() {
+//        return view;
+//    }
 }

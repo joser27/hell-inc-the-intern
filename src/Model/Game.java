@@ -17,7 +17,7 @@ public class Game {
     public Game(int entityHeight, int entityWidth) {
         this.entityHeight = entityHeight;
         this.entityWidth = entityWidth;
-        player = new Player(100, 100, entityWidth, entityHeight, 3, this);
+        player = new Player(100, 100, 30, 30, 1f, this);
 
         // Initialize walls array
         addWalls();
@@ -42,7 +42,7 @@ public class Game {
         int count = 0;
 
         for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[0].length; j++) {
+            for (int j = 0; j < LevelLoader.world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 1) {
                     count++;
                 }
@@ -53,7 +53,7 @@ public class Game {
         // Populate walls array based on LevelLoader.world
         int wallIndex = 0;
         for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[0].length; j++) {
+            for (int j = 0; j < LevelLoader.world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 1) {
                     walls[wallIndex] = new Wall(j * entityWidth, i * entityHeight, entityWidth, entityHeight, 0, this);
                     wallIndex++;
@@ -63,7 +63,7 @@ public class Game {
     }
 
     public void generateRandomEnemy() {
-        enemy[0] = new Enemy(200, 200, entityWidth, entityHeight, 0, this);
+        enemy[0] = new Enemy(200, 250, 30, 30, 0f, this);
 //        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
     }
     public void update() {
