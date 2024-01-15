@@ -5,7 +5,6 @@ import Controller.GameController;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Enemy extends Entity{
 
@@ -53,7 +52,7 @@ public class Enemy extends Entity{
         int enemyY = (int) currHitBox.y;
 
 
-        Rectangle2D.Float playerHitBox = game.getPlayer().getHitBox();
+        Rectangle2D.Float playerHitBox = game.getPlayer1().getHitBox();
         int playerX = (int) playerHitBox.x;
         int playerY = (int) playerHitBox.y;
 

@@ -5,7 +5,8 @@ import java.util.Random;
 
 
 public class Game {
-    private Player player;
+    private Player player1;
+    private Player player2;
     private Wall[] walls;
     private Enemy[] enemy;
     private Entity[] entities;
@@ -17,7 +18,8 @@ public class Game {
     public Game(int entityHeight, int entityWidth) {
         this.entityHeight = entityHeight;
         this.entityWidth = entityWidth;
-        player = new Player(100, 100, 30, 30, 1f, this);
+        player1 = new Player1(100, 100, 30, 30, 1f, this);
+        player2 = new Player2(150, 100, 30, 30, 1f, this);
 
         // Initialize walls array
         addWalls();
@@ -27,7 +29,8 @@ public class Game {
 
         // Initialize the entities array with the player, walls, and enemies
         entities = new Entity[enemy.length + walls.length + 1];
-        entities[0] = player;
+        entities[0] = player1;
+        entities[1] = player2;
 
         // Copy walls into entities
         System.arraycopy(walls, 0, entities, 1, walls.length);
@@ -67,7 +70,8 @@ public class Game {
 //        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
     }
     public void update() {
-        player.update();
+        player1.update();
+        player2.update();
         for (int i = 0; i < enemy.length; i++) {
             enemy[i].update();
         }
@@ -78,7 +82,8 @@ public class Game {
     }
 
     public void render(Graphics g) {
-        player.render(g);
+        player1.render(g);
+        player2.render(g);
         for (int i = 0; i < walls.length; i++) {
             walls[i].render(g);
         }
@@ -91,10 +96,12 @@ public class Game {
         return entities;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Player getPlayer1() {
+        return player1;
     }
-
+    public Player getPlayer2() {
+        return player2;
+    }
     public CollisionChecker getCollisionChecker() {
         return collisionChecker;
     }

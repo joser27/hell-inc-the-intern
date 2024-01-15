@@ -4,7 +4,7 @@ import java.awt.*;
 
 
 
-public class Player extends Entity {
+public abstract class Player extends Entity {
     Game game;
     int playerX;
     int playerY;
@@ -31,38 +31,10 @@ public class Player extends Entity {
         }
     }
 
-    public void updatePos() {
-        int xSpeed = 0;
-        int ySpeed = 0;
-        if (isLeft()) {
-            xSpeed -= getMovementSpeed();
-        }
-        if (isRight()) {
-            xSpeed += getMovementSpeed();
-        }
-        if (isDown()) {
-            ySpeed += getMovementSpeed();
-
-        }
-        if (isUp()) {
-            ySpeed -= getMovementSpeed();
-        }
-        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
-    }
-    public void render(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+    public abstract void updatePos();
 
 
-        Font font = new Font("Arial", Font.BOLD, 20);
-        g.setFont(font);
-        g.drawString("Player coords: " + playerY + " " + playerX, 100, 100);
-
-        g.setColor(Color.BLACK);
-        //System.err.println(playerX + "|" + playerY);
-
-        g.fillRect((playerY*48),(playerX*48),48,48);
-    }
+    public abstract void render(Graphics g);
     @Override
     public String toString() {
         return "PLAYER";

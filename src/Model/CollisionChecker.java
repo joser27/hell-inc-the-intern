@@ -46,7 +46,6 @@ public class CollisionChecker {
                 Entity target = targets[i];
                 Rectangle2D.Float targetHitBox = target.getHitBox();
                 if (hitBox.intersects(targetHitBox)) {
-                    System.err.println("COLLISION");
                     hitBox.x -= xSpeed;
                     while (!targetHitBox.intersects(hitBox)) {
                         hitBox.x += Math.signum(xSpeed);
