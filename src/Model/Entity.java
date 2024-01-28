@@ -67,6 +67,12 @@ public abstract class Entity {
         this.hitBox.x += xPos;
     }
 
+    public void setXHitBox(int x) {
+        hitBox.x = x;
+    }
+    public void setYHitBox(int y) {
+        hitBox.y = y;
+    }
     public Rectangle2D.Float getHitBox() {
         return hitBox;
     }

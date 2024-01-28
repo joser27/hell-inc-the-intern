@@ -41,6 +41,10 @@ public class KeyboardInputs implements KeyListener {
         else if (keyCode == KeyEvent.VK_RIGHT) {
             gameController.getGame().getPlayer2().setRight(true);
         }
+
+        if (keyCode == KeyEvent.VK_NUMPAD0) {
+            gameController.getGame().getPlayer2().shoot();
+        }
     }
 
     @Override

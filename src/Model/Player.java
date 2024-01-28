@@ -21,6 +21,7 @@ public abstract class Player extends Entity {
         int x = (int) getHitBox().x;
 
 
+
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[0].length; j++) {
                 if (y / 48 == i && x / 48 == j) {

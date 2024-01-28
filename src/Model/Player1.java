@@ -7,7 +7,10 @@ public class Player1 extends Player{
     public Player1(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
     }
-
+    public void respawn() {
+        setXHitBox(50);
+        setYHitBox(50);
+    }
     @Override
     public void updatePos() {
         int xSpeed = 0;
@@ -28,6 +31,7 @@ public class Player1 extends Player{
         game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
     }
 
+
     @Override
     public void render(Graphics g) {
         g.setColor(Color.YELLOW);
@@ -38,9 +42,12 @@ public class Player1 extends Player{
         g.setFont(font);
         g.drawString("Player1 coords: " + playerY + " " + playerX, 100, 100);
 
+
+
 //        g.setColor(Color.BLACK);
 //        //System.err.println(playerX + "|" + playerY);
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
     }
+
 }
