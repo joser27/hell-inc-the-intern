@@ -88,7 +88,7 @@ public class Enemy extends Entity{
 
 
     public void render(Graphics g) {
-        g.setColor(Color.ORANGE);
+        g.setColor(Color.BLUE);
         g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
         Font font = new Font("Arial", Font.BOLD, 20);

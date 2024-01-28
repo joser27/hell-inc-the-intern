@@ -51,6 +51,10 @@ public abstract class Entity {
         return movementSpeed;
     }
 
+    public void setMovementSpeed(float movementSpeed) {
+        this.movementSpeed = movementSpeed;
+    }
+
     public int getyPos() {
         return (int) hitBox.y;
     }

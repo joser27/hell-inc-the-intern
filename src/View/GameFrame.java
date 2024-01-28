@@ -47,9 +47,6 @@ public class GameFrame {
             System.err.println("No image file");
         }
 
-        frame.setVisible(false);
-
-
         gameOver.pack();
         gameOver.setLocationRelativeTo(null);
 

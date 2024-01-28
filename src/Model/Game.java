@@ -1,5 +1,9 @@
 package Model;
 
+import Model.gamestates.Gamestate;
+import Model.gamestates.LoadMenu;
+import Model.gamestates.Playing;
+
 import java.awt.*;
 import java.util.Random;
 
@@ -11,15 +15,16 @@ public class Game {
     private Enemy[] enemy;
     private Entity[] entities;
 
+
     private CollisionChecker collisionChecker;
     private int entityWidth;
     private int entityHeight;
     private Random random = new Random();
-    private int time = 60;
+    private int time = 45;
     public Game(int entityHeight, int entityWidth) {
         this.entityHeight = entityHeight;
         this.entityWidth = entityWidth;
-        player1 = new Player1(100, 100, 30, 30, 1f, this);
+        player1 = new Player1(25*48, 16*48, 30, 30, 1f, this);
         player2 = new Player2(150, 100, 30, 30, 1f, this);
 
         // Initialize walls array
@@ -40,6 +45,7 @@ public class Game {
         System.arraycopy(enemy, 0, entities, 1 + walls.length, enemy.length);
 
         collisionChecker = new CollisionChecker();
+
     }
 
     public void addWalls() {
@@ -84,15 +90,11 @@ public class Game {
     }
 
     public void render(Graphics g) {
-        player1.render(g);
-        player2.render(g);
-
-
-
-
         for (int i = 0; i < walls.length; i++) {
             walls[i].render(g);
         }
+        player1.render(g);
+        player2.render(g);
         for (int i = 0; i < enemy.length; i++) {
             enemy[i].render(g);
         }
@@ -102,8 +104,8 @@ public class Game {
         Font font = new Font("Arial", Font.BOLD, 20);
         g.setFont(font);
         g.drawString("Time: " + time, 575, 40);
-
     }
+
 
     public Entity[] getEntities() {
         return entities;
@@ -126,4 +128,5 @@ public class Game {
     public void setTime(int time) {
         this.time -= time;
     }
+
 }
