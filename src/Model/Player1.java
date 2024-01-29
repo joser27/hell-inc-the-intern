@@ -69,10 +69,10 @@ public class Player1 extends Player{
 
     @Override
     public void render(Graphics g) {
-//        g.setColor(Color.YELLOW);
-//        g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
-        Image scaledImg = getBufferedImage().getScaledInstance(getWidth()+40,getHeight(),Image.SCALE_DEFAULT);
-        g.drawImage(scaledImg,getxPos()-20, getyPos(),null);
+        g.setColor(Color.YELLOW);
+        g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+//        Image scaledImg = getBufferedImage().getScaledInstance(getWidth()+40,getHeight(),Image.SCALE_DEFAULT);
+//        g.drawImage(scaledImg,getxPos()-20, getyPos(),null);
 
 
         Font font = new Font("Arial", Font.BOLD, 18);

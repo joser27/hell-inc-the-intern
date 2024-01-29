@@ -132,8 +132,8 @@ public class Player2 extends Player{
 
         g.setColor(Color.RED);
         g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
-        Image scaledImg = getBufferedImage().getScaledInstance(getWidth(),getHeight(),Image.SCALE_FAST);
-        g.drawImage(scaledImg,getxPos(),getyPos(),null);
+//        Image scaledImg = getBufferedImage().getScaledInstance(getWidth(),getHeight(),Image.SCALE_FAST);
+//        g.drawImage(scaledImg,getxPos(),getyPos(),null);
 
         if (!canShoot) {
             BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
@@ -164,7 +164,14 @@ public class Player2 extends Player{
                     break;
                 case 3:
                     // Facing down (no inversion)
-                    g.drawImage(gun, getxPos(), getyPos(), null);
+                    // Facing up (vertical flip, horizontal flip, and rotate 90 degrees clockwise)
+                    AffineTransform txDown = AffineTransform.getScaleInstance(1, 1);
+                    txDown.translate(gun.getWidth(null), gun.getHeight(null));
+                    txDown.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
+                    AffineTransformOp flipOpDown = new AffineTransformOp(txDown, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                    BufferedImage flippedGunDown = flipOpDown.filter(gun, null);
+
+                    g.drawImage(flippedGunDown, getxPos(), getyPos()-10, null);
                     break;
                 default:
                     break;
