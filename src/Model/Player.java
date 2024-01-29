@@ -16,7 +16,6 @@ public abstract class Player extends Entity {
 
     public void update() {
 
-
         int y = (int) getHitBox().y;
         int x = (int) getHitBox().x;
 

@@ -2,7 +2,7 @@ package Model;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.Random;
+import java.awt.image.BufferedImage;
 
 public abstract class Entity {
     private boolean left, right,up,down;
@@ -11,6 +11,11 @@ public abstract class Entity {
     private float movementSpeed;
     private Rectangle2D.Float hitBox;
     private Game game;
+    private int health = 100;
+
+    //0 = right, 1 = left, 2 = up, 3 = down
+    private int facingDir = 0;
+    private BufferedImage bufferedImage;
 
     public Entity(int xPos,  int yPos, int width, int height, float movementSpeed,  Game game) {
         this.xPos = xPos;
@@ -31,6 +36,9 @@ public abstract class Entity {
     }
 
     public void update() {
+
+
+
         float xSpeed = 0f;
         float ySpeed = 0f;
 
@@ -54,6 +62,8 @@ public abstract class Entity {
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
     }
+
+
 
     public int getyPos() {
         return (int) hitBox.y;
@@ -130,5 +140,31 @@ public abstract class Entity {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public int getFacingDir() {
+        return facingDir;
+    }
+
+    public void setFacingDir(int facingDir) {
+        this.facingDir = facingDir;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+    public void setHealth(int health) {
+        this.health = health;
+    }
+    public void decrementHealth(int health) {
+        this.health += health;
+    }
+
+    public BufferedImage getBufferedImage() {
+        return bufferedImage;
+    }
+
+    public void setBufferedImage(BufferedImage bufferedImage) {
+        this.bufferedImage = bufferedImage;
     }
 }

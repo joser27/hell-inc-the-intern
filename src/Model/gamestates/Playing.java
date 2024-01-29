@@ -7,6 +7,7 @@ import Model.Player2;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 public class Playing extends State implements Statemethods{
 
@@ -26,24 +27,25 @@ public class Playing extends State implements Statemethods{
     }
 
     @Override
-    public void mouseClicked(Graphics g) {
+    public void mouseClicked(MouseEvent e) {
 
     }
 
     @Override
-    public void mousePressed(Graphics g) {
+    public void mousePressed(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseReleased(Graphics g) {
+    public void mouseReleased(MouseEvent e) {
 
     }
 
     @Override
-    public void mouseMoved(Graphics g) {
+    public void mouseMoved(MouseEvent e) {
 
     }
+
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -75,10 +77,15 @@ public class Playing extends State implements Statemethods{
             getGame().getPlayer2().setRight(true);
         }
 
+        //Player 2 ability
         if (keyCode == KeyEvent.VK_NUMPAD0) {
             getGame().getPlayer2().placeMine();
         }
+        if (keyCode == KeyEvent.VK_NUMPAD1) {
+            getGame().getPlayer2().shoot();
+        }
 
+        //Player 1 ability
         if (keyCode == KeyEvent.VK_F) {
             getGame().getPlayer1().speedBoost();
         }

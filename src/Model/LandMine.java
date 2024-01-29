@@ -7,6 +7,7 @@ public class LandMine {
     private Rectangle landMineHitBox;
     private int landMineSize = 10;
     private boolean exploded = false;
+
     public LandMine(int xPos, int yPos, int width, int height) {
         landMineHitBox = new Rectangle(xPos,yPos,width,height);
     }
@@ -23,6 +24,7 @@ public class LandMine {
     public void render(Graphics g) {
         g.fillRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);
     }
+
 
 
     public Rectangle getLandMineHitBox() {

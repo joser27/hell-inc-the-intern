@@ -1,8 +1,8 @@
 package Controller;
 
 import Model.Game;
-import Model.LandMine;
 import Model.LevelLoader;
+import Model.gamestates.GameOver;
 import Model.gamestates.Gamestate;
 import Model.gamestates.LoadMenu;
 import Model.gamestates.Playing;
@@ -10,11 +10,11 @@ import View.GameFrame;
 import View.GamePanel;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class GameController {
-    private LoadMenu menu;
-    private Playing playing;
+    private LoadMenu menuState;
+    private Playing playingState;
+    private GameOver gameOverState;
     private Game game;
     private GamePanel gamePanel;
     private GameFrame gameFrame;
@@ -28,7 +28,6 @@ public class GameController {
     public static final int screenHeight = maxScreenRow * tileSize;
     private LevelLoader levelLoader;
     int[][] world;
-    private int timer = 0;
     public GameController() {
         game = new Game(tileSize,tileSize);
         levelLoader = new LevelLoader();
@@ -37,50 +36,57 @@ public class GameController {
         gameLoop = new GameLoop(game,gamePanel,this);
         gamePanel.setGameLoop(gameLoop);
         gameFrame = new GameFrame(gamePanel);
+
+        // Inputs
         KeyboardInputs keyboardInputs = new KeyboardInputs(this);
+        MouseInputs mouseInputs = new MouseInputs(this);
         gamePanel.addKeyListener(keyboardInputs);
-        playing = new Playing(game);
-        menu = new LoadMenu(game);
+        gamePanel.addMouseListener(mouseInputs);
+        gamePanel.addMouseMotionListener(mouseInputs);
+
+        // Game States
+        playingState = new Playing(game);
+        menuState = new LoadMenu(game);
+        gameOverState = new GameOver(game);
         gameLoop.startGameLoop();
 
     }
 
     void update() {
         switch(Gamestate.state){
-            case MENU -> menu.update();
+            case MENU -> menuState.update();
+            case GAMEOVER -> gameOverState.update();
             case PLAYING -> {
-                playing.update();
-                updateTools();
+                playingState.update();
+                gameOverUpdate();
             }
         }
     }
 
-    public void updateTools() {
-        ArrayList<LandMine> landMine = game.getPlayer2().getLandMine();
-        for (LandMine mine : landMine) {
-            if (mine.getLandMineHitBox().intersects(game.getPlayer1().getHitBox())) {
-                game.getPlayer1().respawn();
-            }
-        }
-        timer++;
-        if (timer == 120) {
-            timer = 0;
-            game.setTime(1);
-        }
-        if (game.getTime() == 0) {
-            gameLoop.stopGameLoop();
-            gameFrame.gameOverScreen();
-        }
-        if (game.getPlayer1().getHitBox().intersects(game.getPlayer2().getHitBox())) {
-            gameLoop.stopGameLoop();
-            gameFrame.gameOverScreen();
+    private void gameOverUpdate() {
+        if (getGame().isGameOver()) {
+            Gamestate.state = Gamestate.GAMEOVER;
         }
     }
+
 
     public void render(Graphics g) {
         switch(Gamestate.state){
-            case MENU -> menu.render(g);
-            case PLAYING -> playing.render(g);
+            case MENU -> menuState.render(g);
+            case GAMEOVER -> {
+                playingState.render(g);
+                StringBuilder winner = new StringBuilder("");
+                if (game.getPlayerWinner() == 1) {
+                    winner.append("YELLOW");
+                } else {
+                    winner.append("RED");
+                }
+
+                gameOverState.setPlayerWinner(String.valueOf(winner));
+                gameOverState.render(g);
+            }
+            case PLAYING -> playingState.render(g);
+
         }
     }
 
@@ -100,11 +106,11 @@ public class GameController {
         return tileSize;
     }
 
-    public LoadMenu getMenu() {
-        return menu;
+    public LoadMenu getMenuState() {
+        return menuState;
     }
 
-    public Playing getPlaying() {
-        return playing;
+    public Playing getPlayingState() {
+        return playingState;
     }
 }
