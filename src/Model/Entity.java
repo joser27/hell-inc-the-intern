@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import static Model.utilz.Constants.PlayerConstants.*;
+
 public abstract class Entity {
     private boolean left, right,up,down;
     private int yPos, xPos;
@@ -16,6 +18,13 @@ public abstract class Entity {
     //0 = right, 1 = left, 2 = up, 3 = down
     private int facingDir = 0;
     private BufferedImage bufferedImage;
+    int[] action;
+    protected int aniTick, aniIndex, aniSpeed = 15;
+    protected int actionOffset;
+    protected int animationCol, animationRow, animationFrames;
+    protected String playerAction = RUNNING_DOWN;
+    protected String lastPlayerAction = "";
+    protected boolean isMoving = false;
 
     public Entity(int xPos,  int yPos, int width, int height, float movementSpeed,  Game game) {
         this.xPos = xPos;
@@ -34,7 +43,44 @@ public abstract class Entity {
         g.setColor(Color.PINK);
         g.fillRect((int) hitBox.x, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
     }
+    protected void updateAnimationTick() {
+        action = GetSpriteAmountColRow(playerAction);//COL,ROW,ANIMATION LENGTH
+        if (playerAction.equals(IDLE)) {
+            if (getFacingDir() == 0) {//0 = right, 1 = left, 2 = up, 3 = down
+                action[0] = 0;
+                action[1] = 2;
+            }
+            if (getFacingDir() == 1) {//0 = right, 1 = left, 2 = up, 3 = down
+                action[0] = 0;
+                action[1] = 6;
+            }
+            if (getFacingDir() == 2) {//0 = right, 1 = left, 2 = up, 3 = down
+                action[0] = 0;
+                action[1] = 4;
+            }
+            if (getFacingDir() == 3) {//0 = right, 1 = left, 2 = up, 3 = down
+                action[0] = 0;
+                action[1] = 0;
+            }
+        }
 
+        if (!playerAction.equals(lastPlayerAction)) {// Animation action has changed, reset animation index
+            aniIndex = 0;
+            lastPlayerAction = playerAction;
+        }
+
+        aniTick++;
+        if (aniTick >= aniSpeed) {
+            aniTick = 0;
+            aniIndex++;
+            animationCol = action[0];
+            animationRow = action[1];
+            animationFrames = action[2];
+            if (aniIndex >= animationFrames) {
+                aniIndex = actionOffset;
+            }
+        }
+    }
     public void update() {
 
 

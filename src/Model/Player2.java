@@ -29,13 +29,13 @@ public class Player2 extends Player{
     private int landMineDecayTime = 800;
     private int landMineDetonateTime = 900;
     private BufferedImage[][] img;
-    private String playerAction = RUNNING_DOWN;
-    private int aniTick, aniIndex, aniSpeed = 15;
-    private int actionOffset;
-    private int animationCol, animationRow, animationFrames;
-    private String lastPlayerAction = "";
-    private boolean isMoving = false;
-    int[] action;
+//    private String playerAction = RUNNING_DOWN;
+//    private int aniTick, aniIndex, aniSpeed = 15;
+//    private int actionOffset;
+//    private int animationCol, animationRow, animationFrames;
+//    private String lastPlayerAction = "";
+//    private boolean isMoving = false;
+
 
     public Player2(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
@@ -43,10 +43,7 @@ public class Player2 extends Player{
         img = new BufferedImage[24][8];
         for (int i = 0; i < 24; i++) {
             for (int j = 0; j < 8; j++) {
-                //768 x 256
-//                img[i][j] = getBufferedImage().getSubimage(i,j,(768/24) * i,(256/8) * j);
                 img[i][j] = getBufferedImage().getSubimage((768/24) * i, (256/8) * j, 768/24, 256/8);
-
             }
         }
         landMine = new ArrayList<>();
@@ -105,81 +102,44 @@ public class Player2 extends Player{
 //            }
 //        }
 //    }
-    private void updateAnimationTick() {
-        action = GetSpriteAmountColRow(playerAction);//COL,ROW,ANIMATION LENGTH
-        if (playerAction.equals(IDLE)) {
-            if (getFacingDir() == 0) {//0 = right, 1 = left, 2 = up, 3 = down
-                action[0] = 0;
-                action[1] = 2;
-            }
-            if (getFacingDir() == 1) {//0 = right, 1 = left, 2 = up, 3 = down
-                action[0] = 0;
-                action[1] = 6;
-            }
-            if (getFacingDir() == 2) {//0 = right, 1 = left, 2 = up, 3 = down
-                action[0] = 0;
-                action[1] = 4;
-            }
-            if (getFacingDir() == 3) {//0 = right, 1 = left, 2 = up, 3 = down
-                action[0] = 0;
-                action[1] = 0;
-            }
-        }
 
-        if (!playerAction.equals(lastPlayerAction)) {// Animation action has changed, reset animation index
-            aniIndex = 0;
-            lastPlayerAction = playerAction;
-        }
 
-        aniTick++;
-        if (aniTick >= aniSpeed) {
-            aniTick = 0;
-            aniIndex++;
-            animationCol = action[0];
-            animationRow = action[1];
-            animationFrames = action[2];
-            if (aniIndex >= animationFrames) {
-                aniIndex = actionOffset;
-            }
-        }
-    }
-
-    @Override
-    public void updatePos() {
-
-        int xSpeed = 0;
-        int ySpeed = 0;
-        isMoving=false;
-        if (isLeft()) {
-            xSpeed -= getMovementSpeed();
-            setFacingDir(1);
-            playerAction = RUNNING_LEFT;
-            isMoving=true;
-        }
-        if (isRight()) {
-            xSpeed += getMovementSpeed();
-            setFacingDir(0);
-            playerAction = RUNNING_RIGHT;
-            isMoving=true;
-        }
-        if (isDown()) {
-            ySpeed += getMovementSpeed();
-            setFacingDir(3);
-            playerAction = RUNNING_DOWN;
-            isMoving=true;
-        }
-        if (isUp()) {
-            ySpeed -= getMovementSpeed();
-            setFacingDir(2);
-            playerAction = RUNNING_UP;
-            isMoving=true;
-        }
-        if (!isMoving) {
-            playerAction = IDLE;
-
-        }
-        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
-    }
+//    @Override
+//    public void updatePos() {
+//
+//        int xSpeed = 0;
+//        int ySpeed = 0;
+//        isMoving=false;
+//        if (isLeft()) {
+//            xSpeed -= getMovementSpeed();
+//            setFacingDir(1);
+//            playerAction = RUNNING_LEFT;
+//            isMoving=true;
+//        }
+//        if (isRight()) {
+//            xSpeed += getMovementSpeed();
+//            setFacingDir(0);
+//            playerAction = RUNNING_RIGHT;
+//            isMoving=true;
+//        }
+//        if (isDown()) {
+//            ySpeed += getMovementSpeed();
+//            setFacingDir(3);
+//            playerAction = RUNNING_DOWN;
+//            isMoving=true;
+//        }
+//        if (isUp()) {
+//            ySpeed -= getMovementSpeed();
+//            setFacingDir(2);
+//            playerAction = RUNNING_UP;
+//            isMoving=true;
+//        }
+//        if (!isMoving) {
+//            playerAction = IDLE;
+//
+//        }
+//        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
+//    }
     public void placeMine() {
         if (landMineCount > 0) {
             landMineCount--;

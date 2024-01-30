@@ -2,6 +2,7 @@ package Model;
 
 import java.awt.*;
 
+import static Model.utilz.Constants.PlayerConstants.*;
 
 
 public abstract class Player extends Entity {
@@ -31,7 +32,41 @@ public abstract class Player extends Entity {
         }
     }
 
-    public abstract void updatePos();
+    public void updatePos() {
+
+        int xSpeed = 0;
+        int ySpeed = 0;
+        isMoving=false;
+        if (isLeft()) {
+            xSpeed -= getMovementSpeed();
+            setFacingDir(1);
+            playerAction = RUNNING_LEFT;
+            isMoving=true;
+        }
+        if (isRight()) {
+            xSpeed += getMovementSpeed();
+            setFacingDir(0);
+            playerAction = RUNNING_RIGHT;
+            isMoving=true;
+        }
+        if (isDown()) {
+            ySpeed += getMovementSpeed();
+            setFacingDir(3);
+            playerAction = RUNNING_DOWN;
+            isMoving=true;
+        }
+        if (isUp()) {
+            ySpeed -= getMovementSpeed();
+            setFacingDir(2);
+            playerAction = RUNNING_UP;
+            isMoving=true;
+        }
+        if (!isMoving) {
+            playerAction = IDLE;
+
+        }
+        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
+    }
 
 
     public abstract void render(Graphics g);
