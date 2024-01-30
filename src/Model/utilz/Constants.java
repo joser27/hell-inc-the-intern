@@ -7,13 +7,26 @@ public class Constants {
 //        public static final int RUNNING_DOWN_COL = 2;
 //        public static final int IDLE = 1;
 //        public static final int ATTACKING = 2;
-    public static final int RUNNING_DOWN = 0;
-        public static int[] GetSpriteAmountColRow(int player_action) {
+        public static final String  RUNNING_DOWN = "DOWN";
+        public static final String RUNNING_UP = "UP";
+        public static final String RUNNING_LEFT = "LEFT";
+        public static final String RUNNING_RIGHT = "RIGHT";
+        public static int[] GetSpriteAmountColRow(String player_action) {
             // Return number of sprites in animation
             switch(player_action) {
                 case RUNNING_DOWN -> {
-                    return new int[]{0,2,2};//COL,ROW,ANIMATION LENGTH
+                    return new int[]{2,0,2};//COL,ROW,ANIMATION LENGTH
                 }
+                case RUNNING_UP -> {
+                    return new int[]{2,4,2};//COL,ROW,ANIMATION LENGTH
+                }
+                case RUNNING_LEFT -> {
+                    return new int[]{2,6,2};//COL,ROW,ANIMATION LENGTH
+                }
+                case RUNNING_RIGHT -> {
+                    return new int[]{2,2,2};//COL,ROW,ANIMATION LENGTH
+                }
+
                 default -> {
                     return new int[]{0,0,0};
                 }
