@@ -7,6 +7,7 @@ public class Constants {
 //        public static final int RUNNING_DOWN_COL = 2;
 //        public static final int IDLE = 1;
 //        public static final int ATTACKING = 2;
+        public static final String  IDLE = "IDLE";
         public static final String  RUNNING_DOWN = "DOWN";
         public static final String RUNNING_UP = "UP";
         public static final String RUNNING_LEFT = "LEFT";
@@ -25,6 +26,9 @@ public class Constants {
                 }
                 case RUNNING_RIGHT -> {
                     return new int[]{2,2,2};//COL,ROW,ANIMATION LENGTH
+                }
+                case IDLE -> {
+                    return new int[]{0,0,1};//COL,ROW,ANIMATION LENGTH
                 }
 
                 default -> {
