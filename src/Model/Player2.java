@@ -12,6 +12,10 @@ import java.awt.image.RescaleOp;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+
+import static Model.utilz.Constants.PlayerConstants.GetSpriteAmountColRow;
+import static Model.utilz.Constants.PlayerConstants.RUNNING_DOWN;
+
 /*
  * The Runner
  */
@@ -26,17 +30,30 @@ public class Player2 extends Player{
     private int landMineTimer = 0;
     private int landMineDecayTime = 800;
     private int landMineDetonateTime = 900;
-
-
+    private BufferedImage[][] img;
+    private int playerAction = RUNNING_DOWN;// THE ROW
+//    private int actionOffset = 20;// THE COL
+    private int aniTick, aniIndex, aniSpeed = 30;
+    private int actionOffset;
     public Player2(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
-        setBufferedImage(LoadSave.GetSpriteAtlas(LoadSave.PLAYER2_IMG));
+        setBufferedImage(LoadSave.GetSpriteAtlas(LoadSave.PLAYER1_ATLAS));
+        img = new BufferedImage[24][8];
+        for (int i = 0; i < 24; i++) {
+            for (int j = 0; j < 8; j++) {
+                //768 x 256
+//                img[i][j] = getBufferedImage().getSubimage(i,j,(768/24) * i,(256/8) * j);
+                img[i][j] = getBufferedImage().getSubimage((768/24) * i, (256/8) * j, 768/24, 256/8);
+
+            }
+        }
         landMine = new ArrayList<>();
         bullets = new ArrayList<>();
     }
 
 
     public void update() {
+        updateAnimationTick();
         shootTimer++;
         if (shootTimer>= shootCD) {
             canShoot = true;
@@ -69,6 +86,35 @@ public class Player2 extends Player{
                 }
             }
 
+        }
+    }
+//    private void updateAnimationTick() {
+//        aniTick++;
+//        if (aniTick >= aniSpeed) {
+//            aniTick=0;
+//            aniIndex++;
+//            int[] action = GetSpriteAmountColRow(playerAction);
+//            if (playerAction == 0) {// Running down
+//                actionOffset = action[1];
+//                System.out.println(action[1]);
+//            }
+//            if (aniIndex >= actionOffset+action[2]) {
+//                aniIndex = actionOffset;
+//            }
+//        }
+//    }
+    private void updateAnimationTick() {
+        aniTick++;
+        if (aniTick >= aniSpeed) {
+            aniTick=0;
+            aniIndex++;
+            int[] action = GetSpriteAmountColRow(playerAction);
+            if (playerAction == 0) {// Running down
+                actionOffset = action[1];
+            }
+            if (aniIndex >= actionOffset+action[2]) {
+                aniIndex = actionOffset;
+            }
         }
     }
     @Override
@@ -130,52 +176,67 @@ public class Player2 extends Player{
     @Override
     public void render(Graphics g) {
 
-        g.setColor(Color.RED);
-        g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
-//        Image scaledImg = getBufferedImage().getScaledInstance(getWidth(),getHeight(),Image.SCALE_FAST);
-//        g.drawImage(scaledImg,getxPos(),getyPos(),null);
+//        g.setColor(Color.RED);
+//        g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
-        if (!canShoot) {
-            BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
 
-            switch (getFacingDir()) {
-                case 0:
-                    // Facing right (no inversion)
-                    g.drawImage(gun, getxPos()+15, getyPos(), null);
-                    break;
-                case 1:
-                    // Facing left (horizontal flip)
-                    AffineTransform txLeft = AffineTransform.getScaleInstance(-1, 1);
-                    txLeft.translate(-gun.getWidth(null), 0);
-                    AffineTransformOp flipOpLeft = new AffineTransformOp(txLeft, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    BufferedImage flippedGunLeft = flipOpLeft.filter(gun, null);
+        g.drawImage(img[aniIndex][playerAction].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
 
-                    g.drawImage(flippedGunLeft, getxPos()-15, getyPos(), null);
-                    break;
-                case 2:
-                    // Facing up (vertical flip, horizontal flip, and rotate 90 degrees clockwise)
-                    AffineTransform txUp = AffineTransform.getScaleInstance(-1, -1);
-                    txUp.translate(-gun.getWidth(null), -gun.getHeight(null));
-                    txUp.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-                    AffineTransformOp flipOpUp = new AffineTransformOp(txUp, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    BufferedImage flippedGunUp = flipOpUp.filter(gun, null);
+        BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
 
-                    g.drawImage(flippedGunUp, getxPos()-30, getyPos()-10, null);
-                    break;
-                case 3:
-                    // Facing down (no inversion)
-                    // Facing up (vertical flip, horizontal flip, and rotate 90 degrees clockwise)
-                    AffineTransform txDown = AffineTransform.getScaleInstance(1, 1);
-                    txDown.translate(gun.getWidth(null), gun.getHeight(null));
-                    txDown.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-                    AffineTransformOp flipOpDown = new AffineTransformOp(txDown, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    BufferedImage flippedGunDown = flipOpDown.filter(gun, null);
+        switch (getFacingDir()) {
+            case 0:
+                // Facing right (no inversion)
+                g.drawImage(gun, getxPos()+15, getyPos(), null);
 
-                    g.drawImage(flippedGunDown, getxPos(), getyPos()-10, null);
-                    break;
-                default:
-                    break;
-            }
+                // Char Sprite face
+                //g.drawImage(img[2][2].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+
+                break;
+            case 1:
+                // Facing left (horizontal flip)
+                AffineTransform txLeft = AffineTransform.getScaleInstance(-1, 1);
+                txLeft.translate(-gun.getWidth(null), 0);
+                AffineTransformOp flipOpLeft = new AffineTransformOp(txLeft, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                BufferedImage flippedGunLeft = flipOpLeft.filter(gun, null);
+
+                g.drawImage(flippedGunLeft, getxPos()-15, getyPos(), null);
+
+                // Char Sprite face
+                //g.drawImage(img[2][6].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+
+                break;
+            case 2:
+                // Facing up (vertical flip, horizontal flip, and rotate 90 degrees clockwise)
+                AffineTransform txUp = AffineTransform.getScaleInstance(-1, -1);
+                txUp.translate(-gun.getWidth(null), -gun.getHeight(null));
+                txUp.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
+                AffineTransformOp flipOpUp = new AffineTransformOp(txUp, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                BufferedImage flippedGunUp = flipOpUp.filter(gun, null);
+
+                g.drawImage(flippedGunUp, getxPos()-30, getyPos()-10, null);
+
+                // Char Sprite face
+                //g.drawImage(img[2][4].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+
+                break;
+            case 3:
+                // Facing down (inversion)
+                AffineTransform txDown = AffineTransform.getScaleInstance(1, 1);
+                txDown.translate(gun.getWidth(null), gun.getHeight(null));
+                txDown.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
+                AffineTransformOp flipOpDown = new AffineTransformOp(txDown, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                BufferedImage flippedGunDown = flipOpDown.filter(gun, null);
+
+                g.drawImage(flippedGunDown, getxPos(), getyPos()-10, null);
+
+                // Char Sprite face
+                //g.drawImage(img[7][7].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+
+                break;
+            default:
+                break;
+
         }
 
 
