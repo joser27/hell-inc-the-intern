@@ -1,9 +1,5 @@
 package Model;
 
-import Model.gamestates.Gamestate;
-import Model.gamestates.LoadMenu;
-import Model.gamestates.Playing;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,6 +10,7 @@ public class Game {
     private Player2 player2;
     private Wall[] walls;
     private Enemy[] enemy;
+    private Player[] players;
     private Entity[] entities;
     private boolean gameOver = false;
     private CollisionChecker collisionChecker;
@@ -29,23 +26,30 @@ public class Game {
         this.entityWidth = entityWidth;
         player1 = new Player1(13*48, 7*48, 20, 25, .5f, this);
         player2 = new Player2(3*48, 7*48, 20, 25, .5f, this);
-
+        players = new Player[2];
+        players[0] = player1;
+        players[1] = player2;
         // Initialize walls array
         addWalls();
+        enemy = new Enemy[0];
+//        generateRandomEnemy();
 
-        enemy = new Enemy[1];
-        generateRandomEnemy();
 
-        // Initialize the entities array with the player, walls, and enemies
-        entities = new Entity[enemy.length + walls.length + 1];
-        entities[0] = player1;
-        entities[1] = player2;
+        int sizeOfEntities = enemy.length + walls.length + players.length;
+        entities = new Entity[sizeOfEntities];
+        Entity[] allEntities = new Entity[sizeOfEntities];
 
-        // Copy walls into entities
-        System.arraycopy(walls, 0, entities, 1, walls.length);
+        // Copy walls into allEntities
+        System.arraycopy(walls, 0, allEntities, 0, walls.length);
 
-        // Copy enemies into entities
-        System.arraycopy(enemy, 0, entities, 1 + walls.length, enemy.length);
+        // Copy enemy into allEntities
+        System.arraycopy(enemy, 0, allEntities, walls.length, enemy.length);
+
+        // Copy players into allEntities
+        System.arraycopy(players, 0, allEntities, walls.length + enemy.length, players.length);
+
+        // Copy allEntities into entities
+        System.arraycopy(allEntities, 0, entities, 0, sizeOfEntities);
 
         collisionChecker = new CollisionChecker();
 
@@ -75,10 +79,10 @@ public class Game {
         }
     }
 
-    public void generateRandomEnemy() {
-        enemy[0] = new Enemy(200, 250, 30, 30, 0f, this);
-//        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
-    }
+//    public void generateRandomEnemy() {
+//        enemy[0] = new Enemy(200, 250, 30, 30, 0f, this);
+////        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
+//    }
     public void update() {
         timer++;
         if (timer == 120) {
@@ -152,7 +156,7 @@ public class Game {
     }
     public void render(Graphics g) {
         entitiesRender(g);
-        timeRender(g);
+        timerRender(g);
     }
     private void entitiesRender(Graphics g) {
         for (int i = 0; i < walls.length; i++) {
@@ -165,7 +169,7 @@ public class Game {
             enemy[i].render(g);
         }
     }
-    private void timeRender(Graphics g) {
+    private void timerRender(Graphics g) {
         g.setColor(Color.WHITE);
         g.fillRect(575,10,150,50);
         g.setColor(Color.RED);

@@ -77,9 +77,9 @@ public class GameController {
                 playingState.render(g);
                 StringBuilder winner = new StringBuilder("");
                 if (game.getPlayerWinner() == 1) {
-                    winner.append("YELLOW");
+                    winner.append("CHASER");
                 } else {
-                    winner.append("RED");
+                    winner.append("RUNNER");
                 }
 
                 gameOverState.setPlayerWinner(String.valueOf(winner));

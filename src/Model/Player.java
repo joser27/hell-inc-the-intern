@@ -7,8 +7,8 @@ import static Model.utilz.Constants.PlayerConstants.*;
 
 public abstract class Player extends Entity {
     Game game;
-    private int playerX;
-    private int playerY;
+    int playerX;
+    int playerY;
     public Player(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos,yPos,width,height,movementSpeed,game);
         this.game = game;
@@ -32,41 +32,7 @@ public abstract class Player extends Entity {
         }
     }
 
-    public void updatePos() {
 
-        float xSpeed = 0;
-        float ySpeed = 0;
-        isMoving=false;
-        if (isLeft()) {
-            xSpeed -= getMovementSpeed();
-            setFacingDir(1);
-            playerAction = RUNNING_LEFT;
-            isMoving=true;
-        }
-        if (isRight()) {
-            xSpeed += getMovementSpeed();
-            setFacingDir(0);
-            playerAction = RUNNING_RIGHT;
-            isMoving=true;
-        }
-        if (isDown()) {
-            ySpeed += getMovementSpeed();
-            setFacingDir(3);
-            playerAction = RUNNING_DOWN;
-            isMoving=true;
-        }
-        if (isUp()) {
-            ySpeed -= getMovementSpeed();
-            setFacingDir(2);
-            playerAction = RUNNING_UP;
-            isMoving=true;
-        }
-        if (!isMoving) {
-            playerAction = IDLE;
-
-        }
-        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
-    }
 
 
     public abstract void render(Graphics g);

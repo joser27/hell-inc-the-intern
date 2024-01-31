@@ -52,6 +52,41 @@ public class Player1 extends Player{
         }
 
     }
+    public void updatePos() {
+
+        float xSpeed = 0;
+        float ySpeed = 0;
+        isMoving=false;
+        if (isLeft()) {
+            xSpeed -= getMovementSpeed();
+            setFacingDir(1);
+            playerAction = RUNNING_LEFT;
+            isMoving=true;
+        }
+        if (isRight()) {
+            xSpeed += getMovementSpeed();
+            setFacingDir(0);
+            playerAction = RUNNING_RIGHT;
+            isMoving=true;
+        }
+        if (isDown()) {
+            ySpeed += getMovementSpeed();
+            setFacingDir(3);
+            playerAction = RUNNING_DOWN;
+            isMoving=true;
+        }
+        if (isUp()) {
+            ySpeed -= getMovementSpeed();
+            setFacingDir(2);
+            playerAction = RUNNING_UP;
+            isMoving=true;
+        }
+        if (!isMoving) {
+            playerAction = IDLE;
+
+        }
+        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
+    }
     public void update() {
         updateAnimationTick();
         updatePos();
@@ -107,7 +142,6 @@ public class Player1 extends Player{
                 setMovementSpeed(prevMS);
             }
         }
-
     }
 //    @Override
 //    public void updatePos() {
@@ -146,10 +180,9 @@ public class Player1 extends Player{
 
 
         g.setColor(Color.WHITE);
-        g.drawString("YELLOW PLAYER TAG, RED PLAYER RUN ", 50, 40);
         Font font = new Font("Arial", Font.BOLD, 18);
         g.setFont(font);
-        g.drawString("Player1 coords: " + getyPos()/48 + " " + getxPos()/48 + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 50, 100);
+        g.drawString("Player1 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 50, 100);
 
 //        g.setColor(Color.BLACK);
 //        //System.err.println(playerX + "|" + playerY);
