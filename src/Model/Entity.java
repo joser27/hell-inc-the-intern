@@ -19,7 +19,7 @@ public abstract class Entity {
     private int facingDir = 0;
     private BufferedImage bufferedImage;
     int[] action;
-    protected int aniTick, aniIndex, aniSpeed = 15;
+    protected int aniTick, aniIndex, aniSpeed = 20;
     protected int actionOffset;
     protected int animationCol, animationRow, animationFrames;
     protected String playerAction = RUNNING_DOWN;

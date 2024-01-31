@@ -86,8 +86,11 @@ public class Playing extends State implements Statemethods{
         }
 
         //Player 1 ability
-        if (keyCode == KeyEvent.VK_F) {
+        if (keyCode == KeyEvent.VK_SPACE) {
             getGame().getPlayer1().speedBoost();
+        }
+        if (keyCode == KeyEvent.VK_F) {
+            getGame().getPlayer1().attack();
         }
     }
 

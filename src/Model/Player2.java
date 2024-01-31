@@ -25,9 +25,7 @@ public class Player2 extends Player{
     private boolean canShoot = true;
     private int shootCD = 60;
     private int shootTimer = 0;
-    private int landMineTimer = 0;
-    private int landMineDecayTime = 800;
-    private int landMineDetonateTime = 900;
+
     private BufferedImage[][] img;
 //    private String playerAction = RUNNING_DOWN;
 //    private int aniTick, aniIndex, aniSpeed = 15;
@@ -63,13 +61,17 @@ public class Player2 extends Player{
 
 
         if (landMine.size()>0) {
-            landMineTimer++;
-            if (landMineTimer >= landMineDecayTime) {
-                landMine.get(0).explode();
 
-                if (landMineTimer >= landMineDetonateTime) {
-                    landMine.remove(0);
-                    landMineTimer = 0;
+            Iterator<LandMine> iterator = landMine.iterator();
+
+            while (iterator.hasNext()) {
+                LandMine landMine = iterator.next();
+                landMine.update();
+
+                if (landMine.getLandMineTimer()>landMine.getLandMineDecayTime()) {
+                    landMine.explode();
+                    if (landMine.getLandMineTimer()>landMine.getLandMineDetonateTime())
+                        iterator.remove();
                 }
             }
         }
@@ -143,7 +145,7 @@ public class Player2 extends Player{
     public void placeMine() {
         if (landMineCount > 0) {
             landMineCount--;
-            landMine.add(new LandMine(getxPos(), getyPos(), 10, 10));
+            landMine.add(new LandMine(getxPos()+5, getyPos()+15, 10, 10));
         }
     }
     public void shoot() {
@@ -170,13 +172,18 @@ public class Player2 extends Player{
     }
     @Override
     public void render(Graphics g) {
+        if (landMine !=null) {
+            for (LandMine mine : landMine) {
+                mine.render(g);
+            }
+        }
         //Hit box
 //        g.setColor(Color.RED);
 //        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
 
                         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
-        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-29,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-29, getyPos()-32,null);
 
         BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
 
@@ -237,15 +244,12 @@ public class Player2 extends Player{
             }
         }
 
+        g.setColor(Color.WHITE);
         Font font = new Font("Arial", Font.BOLD, 18);
         g.setFont(font);
         g.drawString("Player2 coords: " + getyPos()/48 + " " + getxPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 50, 150);
 
-        if (landMine !=null) {
-            for (LandMine mine : landMine) {
-                mine.render(g);
-            }
-        }
+
         if (bullets !=null) {
             for (Bullet bullet : bullets) {
                 bullet.render(g);

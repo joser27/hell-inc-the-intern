@@ -15,9 +15,7 @@ public class Game {
     private Wall[] walls;
     private Enemy[] enemy;
     private Entity[] entities;
-
     private boolean gameOver = false;
-
     private CollisionChecker collisionChecker;
     private int entityWidth;
     private int entityHeight;
@@ -25,11 +23,12 @@ public class Game {
     private int time = 450;
     private int timer = 0;
     private int playerWinner = 1;
+    private int player1AttackLimiter;
     public Game(int entityHeight, int entityWidth) {
         this.entityHeight = entityHeight;
         this.entityWidth = entityWidth;
-        player1 = new Player1(13*48, 7*48, 30, 30, 1f, this);
-        player2 = new Player2(3*48, 7*48, 30, 30, 1f, this);
+        player1 = new Player1(13*48, 7*48, 20, 25, .5f, this);
+        player2 = new Player2(3*48, 7*48, 20, 25, .5f, this);
 
         // Initialize walls array
         addWalls();
@@ -90,9 +89,20 @@ public class Game {
             gameOver = true;
             playerWinner = 2;
         }
-        if (getPlayer1().getHitBox().intersects(getPlayer2().getHitBox())) {
-            gameOver = true;
-            playerWinner = 1;
+        if (getPlayer1().getAttackHitBox() != null) {
+            if (getPlayer1().isAttackingMelee()) {
+                player1AttackLimiter++;
+                if (player1AttackLimiter > 5) {
+                    if (getPlayer1().getAttackHitBox().intersects(getPlayer2().getHitBox())) {
+                        player2.decrementHealth(-1);
+                        if (player2.getHealth() <= 0) {
+                            gameOver = true;
+                        }
+                    }
+                    player1AttackLimiter=0;
+                }
+
+            }
         }
         entitiesUpdates();
         bulletsUpdates();
@@ -126,7 +136,6 @@ public class Game {
             }
             if (getPlayer1().getHealth()<=0) {
                 player1.respawn();
-                player1.setHealth(100);
             }
         }
     }
@@ -149,8 +158,9 @@ public class Game {
         for (int i = 0; i < walls.length; i++) {
             walls[i].render(g);
         }
-        player1.render(g);
+
         player2.render(g);
+        player1.render(g);
         for (int i = 0; i < enemy.length; i++) {
             enemy[i].render(g);
         }

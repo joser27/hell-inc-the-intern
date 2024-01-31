@@ -7,8 +7,8 @@ import static Model.utilz.Constants.PlayerConstants.*;
 
 public abstract class Player extends Entity {
     Game game;
-    int playerX;
-    int playerY;
+    private int playerX;
+    private int playerY;
     public Player(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos,yPos,width,height,movementSpeed,game);
         this.game = game;
@@ -34,8 +34,8 @@ public abstract class Player extends Entity {
 
     public void updatePos() {
 
-        int xSpeed = 0;
-        int ySpeed = 0;
+        float xSpeed = 0;
+        float ySpeed = 0;
         isMoving=false;
         if (isLeft()) {
             xSpeed -= getMovementSpeed();

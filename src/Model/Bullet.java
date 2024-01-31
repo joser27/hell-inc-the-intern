@@ -6,9 +6,9 @@ public class Bullet {
     private Rectangle bullet;
     private boolean vertical;
     private boolean horizontal;
-    private int bulletSpeed = 4;
-    private int bulletSize = 10;
-    private int bulletDistance = 60;
+    private int bulletSpeed = 6;
+    private int bulletSize = 8;
+    private int bulletDistance = 75;
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     public Bullet(int xPos, int yPos) {
@@ -29,7 +29,7 @@ public class Bullet {
     }
     public void render(Graphics g) {
         g.setColor(Color.BLACK);
-        g.fillRect(bullet.x, bullet.y, bulletSize, bulletSize);
+        g.fillOval(bullet.x, bullet.y, bulletSize, bulletSize);
     }
 
     public Rectangle getBullet() {
