@@ -22,12 +22,13 @@ public class Player2 extends Player{
     private int landMineCount = 10;
     private ArrayList<LandMine> landMine;
     private ArrayList<Bullet> bullets;
-    private boolean canShoot = true;
+    private boolean canShoot = false;
     private int shootCD = 60;
     private int shootTimer = 0;
     private VectorGun vectorGun;
     private Shotgun shotgun;
     private BufferedImage[][] img;
+    private int bowDelayShootTick;
 //    private String playerAction = RUNNING_DOWN;
 //    private int aniTick, aniIndex, aniSpeed = 15;
 //    private int actionOffset;
@@ -90,13 +91,53 @@ public class Player2 extends Player{
     public void update() {
 
         updateAnimationTick();
-        shootTimer++;
-        if (shootTimer>= shootCD) {
-            canShoot = true;
-        } else {
-            canShoot = false;
-        }
         updatePos();
+
+        if (canShoot) {
+            switch (getFacingDir()) {
+                case 0:
+                    playerAction = HUMAN_ATTACK_RIGHT;
+                    break;
+                case 1:
+                    playerAction = HUMAN_ATTACK_LEFT;
+                    break;
+                case 2:
+                    playerAction = HUMAN_ATTACK_UP;
+                    break;
+                case 3:
+                    playerAction = HUMAN_ATTACK_DOWN;
+                    break;
+            }
+
+            bowDelayShootTick++;
+            if (bowDelayShootTick > 50) {
+                canShoot = false;
+                bowDelayShootTick = 0;
+
+                // 0 = right, 1 = left, 2 = up, 3 = down
+                Bullet bullet = new Bullet(getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                switch (getFacingDir()) {
+                    case 0:
+                        bullet.setHorizontal(true);
+                        bullet.setBulletSpeed(bullet.getBulletSpeed());
+                        break;
+                    case 1:
+                        bullet.setHorizontal(true);
+                        bullet.setBulletSpeed(bullet.getBulletSpeed() * -1);
+                        break;
+                    case 2:
+                        bullet.setVertical(true);
+                        bullet.setBulletSpeed(bullet.getBulletSpeed() * -1);
+                        break;
+                    case 3:
+                        bullet.setVertical(true);
+                        bullet.setBulletSpeed(bullet.getBulletSpeed());
+                        break;
+                }
+                bullets.add(bullet);
+            }
+        }
+
 
 
         if (landMine.size()>0) {
@@ -189,26 +230,7 @@ public class Player2 extends Player{
         }
     }
     public void shoot() {
-        if (canShoot) {
-            shootTimer = 0;
-            //0 = right, 1 = left, 2 = up, 3 = down
-            Bullet bullet = new Bullet(getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
-            if (getFacingDir() == 0) {
-                bullet.setHorizontal(true);
-                bullet.setBulletSpeed(bullet.getBulletSpeed());
-            } else if (getFacingDir() == 1) {
-                bullet.setHorizontal(true);
-                bullet.setBulletSpeed(bullet.getBulletSpeed() * -1);
-            } else if (getFacingDir() == 2) {
-                bullet.setVertical(true);
-                bullet.setBulletSpeed(bullet.getBulletSpeed() * -1);
-            } else if (getFacingDir() == 3) {
-                bullet.setVertical(true);
-                bullet.setBulletSpeed(bullet.getBulletSpeed());
-            }
-
-            bullets.add(bullet);
-        }
+        canShoot = true;
     }
     @Override
     public void render(Graphics g) {
@@ -219,72 +241,70 @@ public class Player2 extends Player{
             }
         }
 
-        //Hit box
-//        g.setColor(Color.RED);
-//        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+
 
 
                         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
-        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-29, getyPos()-32,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-29, getyPos()-24,null);
 
-        BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
+//        BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
 
-        if (!canShoot) {
-            switch (getFacingDir()) {
-                case 0:
-                    // Facing right (no inversion)
-                    g.drawImage(gun, getxPos() + 15, getyPos(), null);
-
-                    // Char Sprite face
-                    //g.drawImage(img[2][2].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-
-                    break;
-                case 1:
-                    // Facing left (horizontal flip)
-                    AffineTransform txLeft = AffineTransform.getScaleInstance(-1, 1);
-                    txLeft.translate(-gun.getWidth(null), 0);
-                    AffineTransformOp flipOpLeft = new AffineTransformOp(txLeft, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    BufferedImage flippedGunLeft = flipOpLeft.filter(gun, null);
-
-                    g.drawImage(flippedGunLeft, getxPos() - 15, getyPos(), null);
-
-                    // Char Sprite face
-                    //g.drawImage(img[2][6].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-
-                    break;
-                case 2:
-                    // Facing up (vertical flip, horizontal flip, and rotate 90 degrees clockwise)
-                    AffineTransform txUp = AffineTransform.getScaleInstance(-1, -1);
-                    txUp.translate(-gun.getWidth(null), -gun.getHeight(null));
-                    txUp.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-                    AffineTransformOp flipOpUp = new AffineTransformOp(txUp, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    BufferedImage flippedGunUp = flipOpUp.filter(gun, null);
-
-                    g.drawImage(flippedGunUp, getxPos() - 30, getyPos() - 10, null);
-
-                    // Char Sprite face
-                    //g.drawImage(img[2][4].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-
-                    break;
-                case 3:
-                    // Facing down (inversion)
-                    AffineTransform txDown = AffineTransform.getScaleInstance(1, 1);
-                    txDown.translate(gun.getWidth(null), gun.getHeight(null));
-                    txDown.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-                    AffineTransformOp flipOpDown = new AffineTransformOp(txDown, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-                    BufferedImage flippedGunDown = flipOpDown.filter(gun, null);
-
-                    g.drawImage(flippedGunDown, getxPos(), getyPos() - 10, null);
-
-                    // Char Sprite face
-                    //g.drawImage(img[7][7].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-
-                    break;
-                default:
-                    break;
-
-            }
-        }
+//        if (!canShoot) {
+//            switch (getFacingDir()) {
+//                case 0:
+//                    // Facing right (no inversion)
+//                    g.drawImage(gun, getxPos() + 15, getyPos(), null);
+//
+//                    // Char Sprite face
+//                    //g.drawImage(img[2][2].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+//
+//                    break;
+//                case 1:
+//                    // Facing left (horizontal flip)
+//                    AffineTransform txLeft = AffineTransform.getScaleInstance(-1, 1);
+//                    txLeft.translate(-gun.getWidth(null), 0);
+//                    AffineTransformOp flipOpLeft = new AffineTransformOp(txLeft, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+//                    BufferedImage flippedGunLeft = flipOpLeft.filter(gun, null);
+//
+//                    g.drawImage(flippedGunLeft, getxPos() - 15, getyPos(), null);
+//
+//                    // Char Sprite face
+//                    //g.drawImage(img[2][6].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+//
+//                    break;
+//                case 2:
+//                    // Facing up (vertical flip, horizontal flip, and rotate 90 degrees clockwise)
+//                    AffineTransform txUp = AffineTransform.getScaleInstance(-1, -1);
+//                    txUp.translate(-gun.getWidth(null), -gun.getHeight(null));
+//                    txUp.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
+//                    AffineTransformOp flipOpUp = new AffineTransformOp(txUp, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+//                    BufferedImage flippedGunUp = flipOpUp.filter(gun, null);
+//
+//                    g.drawImage(flippedGunUp, getxPos() - 30, getyPos() - 10, null);
+//
+//                    // Char Sprite face
+//                    //g.drawImage(img[2][4].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+//
+//                    break;
+//                case 3:
+//                    // Facing down (inversion)
+//                    AffineTransform txDown = AffineTransform.getScaleInstance(1, 1);
+//                    txDown.translate(gun.getWidth(null), gun.getHeight(null));
+//                    txDown.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
+//                    AffineTransformOp flipOpDown = new AffineTransformOp(txDown, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+//                    BufferedImage flippedGunDown = flipOpDown.filter(gun, null);
+//
+//                    g.drawImage(flippedGunDown, getxPos(), getyPos() - 10, null);
+//
+//                    // Char Sprite face
+//                    //g.drawImage(img[7][7].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
+//
+//                    break;
+//                default:
+//                    break;
+//
+//            }
+//        }
 
         g.setColor(Color.WHITE);
         Font font = new Font("Arial", Font.BOLD, 15);
@@ -292,16 +312,23 @@ public class Player2 extends Player{
         g.drawString("Player2 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 80, 150);
 
 
-        if (bullets !=null) {
-            for (Bullet bullet : bullets) {
+        if (bullets != null) {
+            Iterator<Bullet> iterator = bullets.iterator();
+            while (iterator.hasNext()) {
+                Bullet bullet = iterator.next();
                 bullet.render(g);
-            }
+                }
         }
+
+
 
 //        g.setColor(Color.BLACK);
 //        //System.err.println(playerX + "|" + playerY);
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
+        //Hit box
+//        g.setColor(Color.RED);
+//        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public ArrayList<LandMine> getLandMine() {

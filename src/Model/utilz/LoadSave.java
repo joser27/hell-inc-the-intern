@@ -18,6 +18,7 @@ public class LoadSave {
     public static final String EARTH_TILESET = "Earth-tileset.png";
     public static final String GRASS_TILESET = "Set 1.2.png";
     public static final String TREE_4 = "Tree-3-4.png";
+    public static final String ARROW_PROJECTILE = "arrowProjectile.png";
     public static BufferedImage GetSpriteAtlas(String fileName) {
         BufferedImage image = null;
         String imagePathWalk = "/" + fileName;

@@ -14,7 +14,7 @@ import static Model.utilz.Constants.PlayerConstants.*;
 public class Player1 extends Player{
 
     private int speedBoostLimit = 0;
-    private int speedBoostUsages = 40;
+    private int speedBoostUsages = 10;
     private boolean speedBoostOn = false;
     float prevMS = getMovementSpeed();
     boolean godMode = false;
@@ -108,23 +108,23 @@ public class Player1 extends Player{
              case 0 -> {
                  attackHitBox.x = getxPos()+10;
                  attackHitBox.y = getyPos()-6;
-                 if (attackingMelee)playerAction = ATTACK_RIGHT;
+                 if (attackingMelee)playerAction = OGRE_ATTACK_RIGHT;
 
              }
              case 1 -> {
                  attackHitBox.x = getxPos()-18;
                  attackHitBox.y = getyPos()-6;
-                 if (attackingMelee)playerAction = ATTACK_LEFT;
+                 if (attackingMelee)playerAction = OGRE_ATTACK_LEFT;
              }
              case 2 -> {
                  attackHitBox.x = getxPos()-6;
                  attackHitBox.y = getyPos()-15;
-                 if (attackingMelee)playerAction = ATTACK_UP;
+                 if (attackingMelee)playerAction = OGRE_ATTACK_UP;
              }
              case 3 -> {
                  attackHitBox.x = getxPos()-6;
                  attackHitBox.y = getyPos()+4;
-                 if (attackingMelee)playerAction = ATTACK_DOWN;
+                 if (attackingMelee)playerAction = OGRE_ATTACK_DOWN;
              }
          }
 
@@ -166,15 +166,14 @@ public class Player1 extends Player{
 
     @Override
     public void render(Graphics g) {
-//        g.setColor(Color.YELLOW);
-//        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+
 //        g.drawRect((int) attackHitBox.x, (int) attackHitBox.y,  30, 30);
 
 //        if (attackingMelee) {
 //            g.drawRect((int) attackHitBox.x, (int) attackHitBox.y,  30, 30);
 //
 //        }
-        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-29, getyPos()-32,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-29, getyPos()-24,null);
 
 
 
@@ -188,6 +187,9 @@ public class Player1 extends Player{
 //        //System.err.println(playerX + "|" + playerY);
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
+        //Hitbox
+//        g.setColor(Color.YELLOW);
+//        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public boolean isGodMode() {

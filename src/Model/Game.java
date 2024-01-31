@@ -94,7 +94,7 @@ public class Game {
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 1) {
-                    walls[wallIndex] = new Wall(j * entityWidth, i * entityHeight, entityWidth, entityHeight, 0, this);
+                    walls[wallIndex] = new Wall(j * entityWidth, i * entityHeight, entityWidth-18, entityHeight-20, 0, this);
                     wallIndex++;
                 }
             }

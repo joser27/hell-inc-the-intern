@@ -1,6 +1,9 @@
 package Model;
 
+import Model.utilz.LoadSave;
+
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Bullet {
     private Rectangle bullet;
@@ -11,8 +14,10 @@ public class Bullet {
     private int bulletDistance = 75;
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
+    Image img;
     public Bullet(int xPos, int yPos) {
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
+        img = LoadSave.GetSpriteAtlas(LoadSave.ARROW_PROJECTILE).getScaledInstance(20,20,Image.SCALE_DEFAULT);
     }
 
     public void update() {
@@ -28,9 +33,39 @@ public class Bullet {
         }
     }
     public void render(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillOval(bullet.x, bullet.y, bulletSize, bulletSize);
+        Graphics2D g2d = (Graphics2D) g.create();
+
+        // Set the rotation angle and adjustment based on the bullet's direction
+        double rotationAngle = 0.0;
+        int adjustmentX = 0;
+        int adjustmentY = 0;
+
+
+        if (horizontal && bulletSpeed > 0) {
+//            System.err.println("Going right");
+        } else if (horizontal && bulletSpeed < 0) {
+//            System.err.println("Going left");
+            rotationAngle = Math.PI; // 180 degrees for left
+//            adjustmentX = -30; // Move 20 pixels left when facing left
+        } else if (vertical && bulletSpeed > 0) {
+//            System.err.println("Going down");
+            rotationAngle = Math.PI / 2; // 90 degrees for down
+            adjustmentY = +6;
+        } else if (vertical && bulletSpeed < 0) {
+//            System.err.println("Going up");
+            rotationAngle = -Math.PI / 2; // -90 degrees for up
+            adjustmentY = -6;
+        }
+
+        // Apply rotation transformation and adjustment
+        g2d.rotate(rotationAngle, bullet.x + img.getWidth(null) / 2, bullet.y + img.getHeight(null) / 2);
+        g2d.drawImage(img, bullet.x + adjustmentX, bullet.y+adjustmentY, null);
+
+        // Dispose of the created Graphics2D object
+        g2d.dispose();
     }
+
+
 
     public Rectangle getBullet() {
         return bullet;

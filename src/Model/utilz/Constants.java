@@ -3,19 +3,19 @@ package Model.utilz;
 public class Constants {
 
     public static class PlayerConstants {
-//        public static final int RUNNING_DOWN_ROW = 0;
-//        public static final int RUNNING_DOWN_COL = 2;
-//        public static final int IDLE = 1;
-//        public static final int ATTACKING = 2;
         public static final String  IDLE = "IDLE";
         public static final String  RUNNING_DOWN = "DOWN";
         public static final String RUNNING_UP = "UP";
         public static final String RUNNING_LEFT = "LEFT";
         public static final String RUNNING_RIGHT = "RIGHT";
-        public static final String ATTACK_DOWN = "ATTACK_DOWN";
-        public static final String ATTACK_UP = "ATTACK_UP";
-        public static final String ATTACK_LEFT = "ATTACK_LEFT";
-        public static final String ATTACK_RIGHT = "ATTACK_RIGHT";
+        public static final String OGRE_ATTACK_DOWN = "ATTACK_DOWN";
+        public static final String OGRE_ATTACK_UP = "ATTACK_UP";
+        public static final String OGRE_ATTACK_LEFT = "ATTACK_LEFT";
+        public static final String OGRE_ATTACK_RIGHT = "ATTACK_RIGHT";
+        public static final String HUMAN_ATTACK_DOWN = "HUMAN-ATTACK_DOWN";
+        public static final String HUMAN_ATTACK_UP = "HUMAN_ATTACK_UP";
+        public static final String HUMAN_ATTACK_LEFT = "HUMAN_ATTACK_LEFT";
+        public static final String HUMAN_ATTACK_RIGHT = "HUMAN_ATTACK_RIGHT";
         public static int[] GetSpriteAmountColRow(String player_action) {
             // Return number of sprites in animation
             switch(player_action) {
@@ -34,18 +34,31 @@ public class Constants {
                 case IDLE -> {
                     return new int[]{0,0,1};//COL,ROW,ANIMATION LENGTH
                 }
-                case ATTACK_DOWN -> {
+                case OGRE_ATTACK_DOWN -> {
                     return new int[]{5,0,4};//COL,ROW,ANIMATION LENGTH
                 }
-                case ATTACK_UP -> {
+                case OGRE_ATTACK_UP -> {
                     return new int[]{5,4,4};//COL,ROW,ANIMATION LENGTH
                 }
-                case ATTACK_LEFT -> {
+                case OGRE_ATTACK_LEFT -> {
                     return new int[]{5,6,4};//COL,ROW,ANIMATION LENGTH
                 }
-                case ATTACK_RIGHT -> {
+                case OGRE_ATTACK_RIGHT -> {
                     return new int[]{5,2,4};//COL,ROW,ANIMATION LENGTH
                 }
+                case HUMAN_ATTACK_RIGHT -> {
+                    return new int[]{8,2,4};//COL,ROW,ANIMATION LENGTH
+                }
+                case HUMAN_ATTACK_LEFT -> {
+                    return new int[]{8,6,4};//COL,ROW,ANIMATION LENGTH
+                }
+                case HUMAN_ATTACK_UP -> {
+                    return new int[]{8,4,4};//COL,ROW,ANIMATION LENGTH
+                }
+                case HUMAN_ATTACK_DOWN -> {
+                    return new int[]{8,0,0};//COL,ROW,ANIMATION LENGTH
+                }
+
 
                 default -> {
                     return new int[]{0,0,0};
