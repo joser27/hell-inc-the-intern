@@ -25,7 +25,8 @@ public class Player2 extends Player{
     private boolean canShoot = true;
     private int shootCD = 60;
     private int shootTimer = 0;
-
+    private VectorGun vectorGun;
+    private Shotgun shotgun;
     private BufferedImage[][] img;
 //    private String playerAction = RUNNING_DOWN;
 //    private int aniTick, aniIndex, aniSpeed = 15;
@@ -46,6 +47,9 @@ public class Player2 extends Player{
         }
         landMine = new ArrayList<>();
         bullets = new ArrayList<>();
+
+
+
     }
 
     public void updatePos() {
@@ -84,6 +88,7 @@ public class Player2 extends Player{
         game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
     }
     public void update() {
+
         updateAnimationTick();
         shootTimer++;
         if (shootTimer>= shootCD) {
@@ -207,11 +212,13 @@ public class Player2 extends Player{
     }
     @Override
     public void render(Graphics g) {
+
         if (landMine !=null) {
             for (LandMine mine : landMine) {
                 mine.render(g);
             }
         }
+
         //Hit box
 //        g.setColor(Color.RED);
 //        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
@@ -280,9 +287,9 @@ public class Player2 extends Player{
         }
 
         g.setColor(Color.WHITE);
-        Font font = new Font("Arial", Font.BOLD, 18);
+        Font font = new Font("Arial", Font.BOLD, 15);
         g.setFont(font);
-        g.drawString("Player2 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 50, 150);
+        g.drawString("Player2 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 80, 150);
 
 
         if (bullets !=null) {

@@ -18,24 +18,12 @@ public class GamePanel extends JPanel {
         Dimension dimension = new Dimension(gameController.getScreenWidth(), gameController.getScreenHeight());
         setPreferredSize(dimension);
         setLayout(null);
-        setBackground(new Color( 135, 206, 235));
+        setBackground(new Color( 79,131,52,255));
         setDoubleBuffered(true);
         setFocusable(true);
     }
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-//        // Draw vertical lines
-//        for (int x = 0; x <= gameController.getScreenWidth(); x += gameController.getTileSize()) {
-//            g.drawLine(x, 0, x, gameController.getScreenHeight());
-//        }
-//
-//        // Draw horizontal lines
-//        for (int y = 0; y <= gameController.getScreenHeight(); y += gameController.getTileSize()) {
-//            g.drawLine(0, y, gameController.getScreenWidth(), y);
-//        }
-
-
         gameLoop.render(g);
     }
 

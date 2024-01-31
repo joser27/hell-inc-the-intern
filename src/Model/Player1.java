@@ -180,9 +180,9 @@ public class Player1 extends Player{
 
 
         g.setColor(Color.WHITE);
-        Font font = new Font("Arial", Font.BOLD, 18);
+        Font font = new Font("Arial", Font.BOLD, 15);
         g.setFont(font);
-        g.drawString("Player1 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 50, 100);
+        g.drawString("Player1 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 80, 100);
 
 //        g.setColor(Color.BLACK);
 //        //System.err.println(playerX + "|" + playerY);

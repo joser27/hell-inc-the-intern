@@ -1,6 +1,9 @@
 package Model;
 
+import Model.utilz.LoadSave;
+
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,10 +20,13 @@ public class Game {
     private int entityWidth;
     private int entityHeight;
     private Random random = new Random();
-    private int time = 450;
+    private int time = 60;
     private int timer = 0;
     private int playerWinner = 1;
     private int player1AttackLimiter;
+    private BufferedImage[][] grassTile;
+    private BufferedImage rockImg;
+
     public Game(int entityHeight, int entityWidth) {
         this.entityHeight = entityHeight;
         this.entityWidth = entityWidth;
@@ -53,6 +59,22 @@ public class Game {
 
         collisionChecker = new CollisionChecker();
 
+        BufferedImage tempImg = LoadSave.GetSpriteAtlas(LoadSave.GRASS_TILESET);
+        grassTile = new BufferedImage[16][9];
+        int subimageWidth = 256 / 16;
+        int subimageHeight = 144 / 9;
+
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 9; j++) {
+                int subimageX = subimageWidth * i;
+                int subimageY = subimageHeight * j;
+                    grassTile[i][j] = tempImg.getSubimage(subimageX, subimageY, subimageWidth, subimageHeight);
+            }
+        }
+        rockImg = LoadSave.GetSpriteAtlas(LoadSave.STONE_1);
+
+
+
     }
 
     public void addWalls() {
@@ -84,6 +106,9 @@ public class Game {
 ////        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
 //    }
     public void update() {
+        if (time == 39) {
+
+        }
         timer++;
         if (timer == 120) {
             timer = 0;
@@ -155,16 +180,28 @@ public class Game {
 
     }
     public void render(Graphics g) {
+
+        for (int i = 0; i < LevelLoader.world.length; i++) {
+            for (int j = 0; j < LevelLoader.world[i].length; j++) {
+                if (LevelLoader.world[i][j] == 0) {
+                    g.drawImage(grassTile[1][3], 48 * j, 48 * i, null);
+                }
+                if (LevelLoader.world[i][j] == 3) {
+                    g.drawImage(rockImg, 48 * j, 48 * i, null);
+                }
+            }
+        }
         entitiesRender(g);
         timerRender(g);
+
     }
     private void entitiesRender(Graphics g) {
-        for (int i = 0; i < walls.length; i++) {
-            walls[i].render(g);
-        }
 
         player2.render(g);
         player1.render(g);
+        for (int i = 0; i < walls.length; i++) {
+            walls[i].render(g);
+        }
         for (int i = 0; i < enemy.length; i++) {
             enemy[i].render(g);
         }
