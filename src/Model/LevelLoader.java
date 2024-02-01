@@ -1,12 +1,18 @@
 package Model;
 
+import Model.utilz.LoadSave;
+
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class LevelLoader {
     private int size = 50;
+    private BufferedImage[][] grassTile;
+    private BufferedImage rockImg;
+    private BufferedImage rockImg2;
     public static final int[][] world =  {// 24 col x 18 row (1=WALL, 2=GRASS, 3=ROCK1, 4=ROCK2)
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             {1, 2, 2, 2, 2, 2, 0, 2, 1, 2, 2, 2, 2, 1, 2, 2, 3, 1, 1, 2, 3, 2, 2, 2, 2, 0, 1},
@@ -29,10 +35,39 @@ public class LevelLoader {
     };
 
     public LevelLoader() {
-        //loadLevel();
+        BufferedImage tempImg = LoadSave.GetSpriteAtlas(LoadSave.GRASS_TILESET);
+        grassTile = new BufferedImage[16][9];
+        int subimageWidth = 256 / 16;
+        int subimageHeight = 144 / 9;
+
+
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 9; j++) {
+                int subimageX = subimageWidth * i;
+                int subimageY = subimageHeight * j;
+                grassTile[i][j] = tempImg.getSubimage(subimageX, subimageY, subimageWidth, subimageHeight);
+            }
+        }
+        rockImg = LoadSave.GetSpriteAtlas(LoadSave.STONE_1);
+        rockImg2 = LoadSave.GetSpriteAtlas(LoadSave.STONE_2);
     }
 
 
+    public void render(Graphics g) {
+        for (int i = 0; i < LevelLoader.world.length; i++) {
+            for (int j = 0; j < LevelLoader.world[i].length; j++) {
+                if (LevelLoader.world[i][j] == 0) {
+                    g.drawImage(grassTile[1][3], 48 * j, 48 * i, null);
+                }
+                if (LevelLoader.world[i][j] == 3) {
+                    g.drawImage(rockImg, 48 * j, 48 * i, null);
+                }
+                if (LevelLoader.world[i][j] == 4) {
+                    g.drawImage(rockImg2, 48 * j, 48 * i, null);
+                }
+            }
+        }
+    }
 
 
 //    private void loadLevel() {

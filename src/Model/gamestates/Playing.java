@@ -77,6 +77,7 @@ public class Playing extends State implements Statemethods{
             getGame().getPlayer2().setRight(true);
         }
 
+
         //Player 2 ability
         if (keyCode == KeyEvent.VK_NUMPAD0) {
             getGame().getPlayer2().placeMine();

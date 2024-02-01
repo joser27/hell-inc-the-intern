@@ -1,10 +1,12 @@
 package Model;
 
+import Controller.GameController;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 
@@ -24,17 +26,21 @@ public class Game {
     private int timer = 0;
     private int playerWinner = 1;
     private int player1AttackLimiter;
-    private BufferedImage[][] grassTile;
-    private BufferedImage rockImg;
-    private BufferedImage rockImg2;
-    Medkit medkit;
-    boolean placedMedkit = false;
+
+    ArrayList<Medkit> activeMedkits = new ArrayList<>();
+    private boolean placedMedkit = false;
+    private int[][] world;
+    private LevelLoader levelLoader;
+    private int xLvlOffset;
+    private int lvlMovingTick;
 
     public Game(int entityHeight, int entityWidth) {
         this.entityHeight = entityHeight;
         this.entityWidth = entityWidth;
-        player1 = new Player1(13*48, 7*48, 20, 25, .5f, this);
-        player2 = new Player2(3*48, 7*48, 20, 25, .5f, this);
+        levelLoader = new LevelLoader();
+        world = levelLoader.getWorld();
+        player1 = new Player1(13*48, 7*48, 20* GameController.scale, 25*GameController.scale, .5f, this);
+        player2 = new Player2(3*48, 7*48, 20* GameController.scale, 25* GameController.scale, .5f, this);
         players = new Player[2];
         players[0] = player1;
         players[1] = player2;
@@ -62,30 +68,13 @@ public class Game {
 
         collisionChecker = new CollisionChecker();
 
-        BufferedImage tempImg = LoadSave.GetSpriteAtlas(LoadSave.GRASS_TILESET);
-        grassTile = new BufferedImage[16][9];
-        int subimageWidth = 256 / 16;
-        int subimageHeight = 144 / 9;
-
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 9; j++) {
-                int subimageX = subimageWidth * i;
-                int subimageY = subimageHeight * j;
-                    grassTile[i][j] = tempImg.getSubimage(subimageX, subimageY, subimageWidth, subimageHeight);
-            }
-        }
-        rockImg = LoadSave.GetSpriteAtlas(LoadSave.STONE_1);
-        rockImg2 = LoadSave.GetSpriteAtlas(LoadSave.STONE_2);
-
-
-
     }
 
     public void addWalls() {
         int count = 0;
 
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
+        for (int i = 0; i < world.length; i++) {
+            for (int j = 0; j < world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 1) {
                     count++;
                 }
@@ -95,10 +84,10 @@ public class Game {
 
         // Populate walls array based on LevelLoader.world
         int wallIndex = 0;
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
+        for (int i = 0; i < world.length; i++) {
+            for (int j = 0; j < world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 1) {
-                    walls[wallIndex] = new Wall(j * entityWidth, i * entityHeight, entityWidth-18, entityHeight-20, 0, this);
+                    walls[wallIndex] = new Wall(j * entityWidth, i * entityHeight, entityWidth, entityHeight, 0, this);
                     wallIndex++;
                 }
             }
@@ -109,12 +98,40 @@ public class Game {
 //        enemy[0] = new Enemy(200, 250, 30, 30, 0f, this);
 ////        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
 //    }
+    private boolean medkitSpawnedAt58 = false;
+    private boolean medkitSpawnedAt56 = false;
+    private boolean medkitSpawnedAt54 = false;
     public void update() {
-        if (time == 58 && !placedMedkit) {
+        if (time == 58 && !medkitSpawnedAt58) {
+            medkitSpawnedAt58 = true;
             placedMedkit = true;
-            medkit = new Medkit(200,200);
+            activeMedkits.add(new Medkit(200, 200));
+            activeMedkits.get(activeMedkits.size()-1).setActive(true);
         }
-
+        if (time == 56 && !medkitSpawnedAt56) {
+            medkitSpawnedAt56 = true;
+            placedMedkit = true;
+            activeMedkits.add(new Medkit(300, 200));
+            activeMedkits.get(activeMedkits.size()-1).setActive(true);
+        }
+        if (time == 54 && !medkitSpawnedAt54) {
+            medkitSpawnedAt54 = true;
+            placedMedkit = true;
+            activeMedkits.add(new Medkit(300, 300));
+            activeMedkits.get(activeMedkits.size()-1).setActive(true);
+        }
+        Iterator<Medkit> iterator = activeMedkits.iterator();
+        while (iterator.hasNext()) {
+            Medkit medkit = iterator.next();
+            if (medkit.getHitBox().intersects(getPlayer1().getHitBox())) {
+                player1.useMedkit();
+                iterator.remove();
+            }
+            if (medkit.getHitBox().intersects(getPlayer2().getHitBox())) {
+                player2.useMedkit();
+                iterator.remove();
+            }
+        }
         timer++;
         if (timer == 120) {
             timer = 0;
@@ -145,6 +162,11 @@ public class Game {
     }
 
     private void entitiesUpdates() {
+//        lvlMovingTick++;
+//        if (lvlMovingTick>10) {
+//            lvlMovingTick=0;
+//            xLvlOffset++;
+//        }
         player1.update();
         player2.update();
 
@@ -186,32 +208,25 @@ public class Game {
 
     }
     public void render(Graphics g) {
-
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
-                if (LevelLoader.world[i][j] == 0) {
-                    g.drawImage(grassTile[1][3], 48 * j, 48 * i, null);
-                }
-                if (LevelLoader.world[i][j] == 3) {
-                    g.drawImage(rockImg, 48 * j, 48 * i, null);
-                }
-                if (LevelLoader.world[i][j] == 4) {
-                    g.drawImage(rockImg2, 48 * j, 48 * i, null);
-                }
+        Iterator<Medkit> iterator = activeMedkits.iterator();
+        while (iterator.hasNext()) {
+            Medkit medkit = iterator.next();
+            if (medkit.isActive()) {
+                medkit.render(g);
             }
         }
+        levelLoader.render(g);
         entitiesRender(g);
         timerRender(g);
-        if (medkit!=null) {
-            medkit.render(g);
-        }
     }
     private void entitiesRender(Graphics g) {
 
+
         player2.render(g);
         player1.render(g);
+
         for (int i = 0; i < walls.length; i++) {
-            walls[i].render(g);
+            walls[i].render(g,xLvlOffset);
         }
         for (int i = 0; i < enemy.length; i++) {
             enemy[i].render(g);
@@ -254,7 +269,12 @@ public class Game {
         return gameOver;
     }
 
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
     public int getPlayerWinner() {
         return playerWinner;
     }
+
 }

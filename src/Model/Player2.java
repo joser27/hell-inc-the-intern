@@ -312,7 +312,7 @@ public class Player2 extends Player{
         g.drawString("Player2 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 80, 150);
 
 
-        if (bullets != null) {
+        if (bullets.size()  >0) {
             Iterator<Bullet> iterator = bullets.iterator();
             while (iterator.hasNext()) {
                 Bullet bullet = iterator.next();
@@ -327,8 +327,8 @@ public class Player2 extends Player{
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
         //Hit box
-//        g.setColor(Color.RED);
-//        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+        g.setColor(Color.RED);
+        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public ArrayList<LandMine> getLandMine() {

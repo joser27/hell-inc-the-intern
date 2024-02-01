@@ -34,6 +34,9 @@ public abstract class Player extends Entity {
 
 
 
+    public void useMedkit() {
+        incrementHealth(50);
+    }
 
     public abstract void render(Graphics g);
     @Override

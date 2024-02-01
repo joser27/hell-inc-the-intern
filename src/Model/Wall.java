@@ -13,16 +13,18 @@ public class Wall extends Entity {
         super(xPos, yPos, width, height, movementSpeed, game);
 
         img = LoadSave.GetSpriteAtlas(LoadSave.TREE_4).getScaledInstance((int) getHitBox().width + 35, (int) getHitBox().height+50,Image.SCALE_DEFAULT);
+    }
 
-
+    public void update(int xLvlOffset) {
+        getHitBox().x += xLvlOffset;
     }
 
 
 
-    @Override
-    public void render(Graphics g) {
-        g.drawImage(img,(int) getHitBox().x-18, (int) getHitBox().y-48,null);
-//        g.drawRect((int) getHitBox().x, (int) getHitBox().y, (int) getHitBox().width, (int) getHitBox().height);
+
+    public void render(Graphics g,int xLvlOffset) {
+//        g.drawImage(img,(int) getHitBox().x-18 - xLvlOffset, (int) getHitBox().y-48,null);
+        g.fillRect((int) getHitBox().x, (int) getHitBox().y, (int) getHitBox().width, (int) getHitBox().height);
     }
 
 }

@@ -202,6 +202,9 @@ public abstract class Entity {
     public void setHealth(int health) {
         this.health = health;
     }
+    public void incrementHealth(int health) {
+        this.health += health;
+    }
     public void decrementHealth(int health) {
         this.health += health;
     }

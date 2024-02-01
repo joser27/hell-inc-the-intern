@@ -28,6 +28,7 @@ public class GameOver extends State implements Statemethods {
         g.drawString("GAME OVER!!", 580, 400);
         g.drawString("PLAYER " +  playerWinner, 570, 450);
         g.drawString("WINS", 620, 500);
+        g.drawString("PRESS ENTER TO PLAY AGAIN", 500, 590);
     }
 
     @Override
@@ -52,7 +53,11 @@ public class GameOver extends State implements Statemethods {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+        int keyCode = e.getKeyCode();
+        if (keyCode == KeyEvent.VK_ENTER) {
+            Gamestate.state = Gamestate.PLAYING;
+            getGame().setGameOver(false);
+        }
     }
 
     @Override
