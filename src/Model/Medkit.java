@@ -3,21 +3,19 @@ package Model;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class Medkit implements Item {
     int xPos, yPos;
-    BufferedImage[][] img;
+    BufferedImage img;
+    Rectangle2D.Float hitBox;
+    private int size = 25;
     public Medkit(int xPos, int yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
-//        img = new BufferedImage[45][16];
-//        BufferedImage fullImg = LoadSave.GetSpriteAtlas(LoadSave.ZOMBIE_PACK_TILESET);
-//        for (int i = 0; i < 45; i++) {
-//            for (int j = 0; j < 16; j++) {
-//                img[i][j] = fullImg.getSubimage((764/45) * i, (300/16) * j, 764/45, 300/16);
-//            }
-//        }
+        img = LoadSave.GetSpriteAtlas(LoadSave.MEDKIT_TILE);
+        hitBox = new Rectangle2D.Float(xPos,yPos,size,size);
     }
     @Override
     public void update() {
@@ -26,6 +24,7 @@ public class Medkit implements Item {
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(img[1][7].getScaledInstance(200,200,Image.SCALE_DEFAULT),xPos,yPos,null);
+        g.drawImage(img.getScaledInstance((int) hitBox.width, (int) hitBox.height,Image.SCALE_DEFAULT),xPos,yPos,null);
+        g.drawRect((int) hitBox.x, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
     }
 }

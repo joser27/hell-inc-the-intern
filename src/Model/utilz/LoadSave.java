@@ -15,6 +15,7 @@ public class LoadSave {
     public static final String VECTOR_45 = "Vector 45 acp spritesheet - 75 ms per frame.png";
     public static final String STONE_1 = "Stone-1.png";
     public static final String STONE_2 = "Stone-2.png";
+    public static final String MEDKIT_TILE = "452_Zombie Apocalypse Tileset Reference.png";
     public static final String EARTH_TILESET = "Earth-tileset.png";
     public static final String GRASS_TILESET = "Set 1.2.png";
     public static final String TREE_4 = "Tree-3-4.png";

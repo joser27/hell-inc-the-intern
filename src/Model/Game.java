@@ -26,6 +26,9 @@ public class Game {
     private int player1AttackLimiter;
     private BufferedImage[][] grassTile;
     private BufferedImage rockImg;
+    private BufferedImage rockImg2;
+    Medkit medkit;
+    boolean placedMedkit = false;
 
     public Game(int entityHeight, int entityWidth) {
         this.entityHeight = entityHeight;
@@ -72,6 +75,7 @@ public class Game {
             }
         }
         rockImg = LoadSave.GetSpriteAtlas(LoadSave.STONE_1);
+        rockImg2 = LoadSave.GetSpriteAtlas(LoadSave.STONE_2);
 
 
 
@@ -106,9 +110,11 @@ public class Game {
 ////        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
 //    }
     public void update() {
-        if (time == 39) {
-
+        if (time == 58 && !placedMedkit) {
+            placedMedkit = true;
+            medkit = new Medkit(200,200);
         }
+
         timer++;
         if (timer == 120) {
             timer = 0;
@@ -189,11 +195,16 @@ public class Game {
                 if (LevelLoader.world[i][j] == 3) {
                     g.drawImage(rockImg, 48 * j, 48 * i, null);
                 }
+                if (LevelLoader.world[i][j] == 4) {
+                    g.drawImage(rockImg2, 48 * j, 48 * i, null);
+                }
             }
         }
         entitiesRender(g);
         timerRender(g);
-
+        if (medkit!=null) {
+            medkit.render(g);
+        }
     }
     private void entitiesRender(Graphics g) {
 
