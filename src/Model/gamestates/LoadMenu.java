@@ -4,13 +4,10 @@ import Controller.GameController;
 import Model.Game;
 import Model.utilz.LoadSave;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class LoadMenu extends State implements Statemethods {
     private BufferedImage startButtonImg;
@@ -47,7 +44,7 @@ public class LoadMenu extends State implements Statemethods {
 
         // Draw the black text
         g.setColor(Color.BLACK);
-        g.drawString("MENU", GameController.screenWidth / 2, 300);
+        g.drawString("MENU", GameController.GAME_WIDTH / 2, 300);
     }
 
     @Override

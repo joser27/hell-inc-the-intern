@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.Game;
-import Model.LevelLoader;
 import Model.gamestates.GameOver;
 import Model.gamestates.Gamestate;
 import Model.gamestates.LoadMenu;
@@ -20,12 +19,12 @@ public class GameController {
     private GameFrame gameFrame;
     private GameLoop gameLoop;
     private static final int originalTileSize = 16; //16x16 tile
-    public static final int scale = 3;
-    public static final int tileSize = originalTileSize * scale; //48x48 tile
-    public static final int maxScreenCol = 22;//27 original
-    public static final int maxScreenRow = 13;//18 original
-    public static final int screenWidth = maxScreenCol * tileSize;
-    public static final int screenHeight = maxScreenRow * tileSize;
+    public static final int SCALE = 4;
+    public static final int TILE_SIZE = originalTileSize * SCALE; //48x48 tile
+    public static final int TILES_IN_WIDTH = 20;//27 original
+    public static final int TILES_IN_HEIGHT = 11;//18 original
+    public static final int GAME_WIDTH = TILES_IN_WIDTH * TILE_SIZE;
+    public static final int GAME_HEIGHT = TILES_IN_HEIGHT * TILE_SIZE;
 
 
 
@@ -97,15 +96,15 @@ public class GameController {
     }
 
     public int getScreenWidth() {
-        return screenWidth;
+        return GAME_WIDTH;
     }
 
     public int getScreenHeight() {
-        return screenHeight;
+        return GAME_HEIGHT;
     }
 
     public int getTileSize() {
-        return tileSize;
+        return TILE_SIZE;
     }
 
     public LoadMenu getMenuState() {

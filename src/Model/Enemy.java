@@ -11,7 +11,7 @@ public class Enemy extends Entity{
     private Game game;
     private int gameFreezeFrames = 30;
     private int myX, myY;
-    Node[][] node = new Node[GameController.maxScreenCol][GameController.maxScreenRow]; // 27, 18
+    Node[][] node = new Node[GameController.TILES_IN_WIDTH][GameController.TILES_IN_HEIGHT]; // 27, 18
     Node startNode, goalNode, currentNode;
     ArrayList<Node> openList = new ArrayList<>();
     ArrayList<Node> checkedList = new ArrayList<>();
@@ -26,11 +26,11 @@ public class Enemy extends Entity{
         int col = 0;
         int row = 0;
 
-        while (col < GameController.maxScreenCol && row < GameController.maxScreenRow) {
+        while (col < GameController.TILES_IN_WIDTH && row < GameController.TILES_IN_HEIGHT) {
             node[col][row] = new Node(col,row);
 
             col++;
-            if (col == GameController.maxScreenCol) {
+            if (col == GameController.TILES_IN_WIDTH) {
                 col = 0;
                 row++;
             }

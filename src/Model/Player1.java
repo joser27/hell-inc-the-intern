@@ -34,9 +34,18 @@ public class Player1 extends Player{
         img = new BufferedImage[24][8];
         for (int i = 0; i < 24; i++) {
             for (int j = 0; j < 8; j++) {
-                img[i][j] = getBufferedImage().getSubimage((768/24) * i, (256/8) * j, 768/24, 256/8);
+                Image scaledImage = getBufferedImage().getSubimage((768/24) * i, (256/8) * j, 768/24, 256/8).getScaledInstance(26 * GameController.SCALE, 26 * GameController.SCALE, Image.SCALE_DEFAULT);
+
+                // Convert Image to BufferedImage
+                BufferedImage bufferedImage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                Graphics g = bufferedImage.getGraphics();
+                g.drawImage(scaledImage, 0, 0, null);
+                g.dispose();
+
+                img[i][j] = bufferedImage;
             }
         }
+
         attackHitBox = new Rectangle2D.Float(getxPos(),getyPos(),30,30);
     }
     public void respawn() {
@@ -169,13 +178,13 @@ public class Player1 extends Player{
 
     public void render(Graphics g,int xLvlOffset) {
 
-//        g.drawRect((int) attackHitBox.x, (int) attackHitBox.y,  30, 30);
+        g.drawRect((int) attackHitBox.x-xLvlOffset, (int) attackHitBox.y,  30, 30);
 
 //        if (attackingMelee) {
 //            g.drawRect((int) attackHitBox.x, (int) attackHitBox.y,  30, 30);
 //
 //        }
-        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(26* GameController.scale,26*GameController.scale,Image.SCALE_DEFAULT),getxPos()-9*GameController.scale - xLvlOffset, getyPos()-8*GameController.scale,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE,null);
 
 
 
@@ -183,7 +192,7 @@ public class Player1 extends Player{
         g.setColor(Color.WHITE);
         Font font = new Font("Arial", Font.BOLD, 15);
         g.setFont(font);
-        g.drawString("Player1 coords: " + getxPos()/GameController.tileSize + " " + getyPos()/GameController.tileSize + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 80, 100);
+        g.drawString("Player1 coords: " + getxPos()/GameController.TILE_SIZE + " " + getyPos()/GameController.TILE_SIZE + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 80, 100);
 
 //        g.setColor(Color.BLACK);
 //        //System.err.println(playerX + "|" + playerY);
@@ -191,7 +200,7 @@ public class Player1 extends Player{
 //        g.fillRect((playerY*48),(playerX*48),48,48);
         //Hitbox
         g.setColor(Color.YELLOW);
-        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+        g.drawRect(getxPos()-xLvlOffset,getyPos(), (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public boolean isGodMode() {

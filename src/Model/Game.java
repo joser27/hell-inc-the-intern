@@ -1,10 +1,8 @@
 package Model;
 
 import Controller.GameController;
-import Model.utilz.LoadSave;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -36,20 +34,17 @@ public class Game {
     public Game() {
         levelLoader = new LevelLoader();
         world = levelLoader.getWorld();
-        player1 = new Player1(13*GameController.tileSize, 7*GameController.tileSize, 6*GameController.scale, 8*GameController.scale, .16f*GameController.scale, this);
-        player2 = new Player2(3*GameController.tileSize, 7*GameController.tileSize, 6* GameController.scale, 8* GameController.scale, .16f*GameController.scale, this);
+        player1 = new Player1(13*GameController.TILE_SIZE, 7*GameController.TILE_SIZE, 6*GameController.SCALE, 8*GameController.SCALE, .16f*GameController.SCALE, this);
+        player2 = new Player2(3*GameController.TILE_SIZE, 7*GameController.TILE_SIZE, 6* GameController.SCALE, 8* GameController.SCALE, .16f*GameController.SCALE, this);
         players = new Player[2];
         players[0] = player1;
         players[1] = player2;
         // Initialize walls array
-        //addWalls();
+        addWalls();
         enemy = new Enemy[0];
 //        generateRandomEnemy();
 
 
-        Wall wall = new Wall(999,999,20,20,0f,this);
-        walls = new Wall[1];
-        walls[0]=wall;
         int sizeOfEntities = enemy.length + walls.length + players.length;
         entities = new Entity[sizeOfEntities];
         Entity[] allEntities = new Entity[sizeOfEntities];
@@ -87,7 +82,7 @@ public class Game {
         for (int i = 0; i < world.length; i++) {
             for (int j = 0; j < world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 1) {
-                    walls[wallIndex] = new Wall(j * GameController.tileSize, i * GameController.tileSize, GameController.tileSize, GameController.tileSize, 0, this);
+                    walls[wallIndex] = new Wall(j * GameController.TILE_SIZE, i * GameController.TILE_SIZE, GameController.TILE_SIZE, GameController.TILE_SIZE, 0, this);
                     wallIndex++;
                 }
             }
@@ -222,7 +217,7 @@ public class Game {
     private void entitiesRender(Graphics g, int xLvlOffset) {
 
 
-        player2.render(g);
+        player2.render(g,xLvlOffset);
         player1.render(g,xLvlOffset);
 
         for (int i = 0; i < walls.length; i++) {

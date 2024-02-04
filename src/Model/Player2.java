@@ -4,12 +4,7 @@ import Controller.GameController;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
-import java.awt.color.ColorSpace;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.awt.image.RescaleOp;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -44,7 +39,15 @@ public class Player2 extends Player{
         img = new BufferedImage[24][8];
         for (int i = 0; i < 24; i++) {
             for (int j = 0; j < 8; j++) {
-                img[i][j] = getBufferedImage().getSubimage((768/24) * i, (256/8) * j, 768/24, 256/8);
+                Image scaledImage = getBufferedImage().getSubimage((768/24) * i, (256/8) * j, 768/24, 256/8).getScaledInstance(26 * GameController.SCALE, 26 * GameController.SCALE, Image.SCALE_DEFAULT);
+
+                // Convert Image to BufferedImage
+                BufferedImage bufferedImage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                Graphics g = bufferedImage.getGraphics();
+                g.drawImage(scaledImage, 0, 0, null);
+                g.dispose();
+
+                img[i][j] = bufferedImage;
             }
         }
         landMine = new ArrayList<>();
@@ -233,8 +236,8 @@ public class Player2 extends Player{
     public void shoot() {
         canShoot = true;
     }
-    @Override
-    public void render(Graphics g) {
+
+    public void render(Graphics g,int xLvlOffset) {
 
         if (landMine !=null) {
             for (LandMine mine : landMine) {
@@ -246,7 +249,7 @@ public class Player2 extends Player{
 
 
                         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
-        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(26* GameController.scale,26*GameController.scale,Image.SCALE_DEFAULT),getxPos()-9*GameController.scale, getyPos()-8*GameController.scale,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE,null);
 
 //        BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
 
@@ -329,7 +332,7 @@ public class Player2 extends Player{
 //        g.fillRect((playerY*48),(playerX*48),48,48);
         //Hit box
         g.setColor(Color.RED);
-        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+        g.drawRect(getxPos()-xLvlOffset,getyPos(), (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public ArrayList<LandMine> getLandMine() {
