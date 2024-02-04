@@ -222,4 +222,8 @@ public class Player1 extends Player{
     public void setGodMode(boolean godMode) {
         this.godMode = godMode;
     }
+
+    public int getSpeedBoostUsages() {
+        return speedBoostUsages;
+    }
 }

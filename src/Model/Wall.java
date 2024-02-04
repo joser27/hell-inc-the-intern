@@ -23,8 +23,8 @@ public class Wall extends Entity {
 
 
     public void render(Graphics g,int xLvlOffset) {
-//        g.drawImage(img,(int) getHitBox().x-18 - xLvlOffset, (int) getHitBox().y-48,null);
-        g.fillRect((int) getHitBox().x-xLvlOffset, (int) getHitBox().y, (int) getHitBox().width, (int) getHitBox().height);
+        g.drawImage(img,(int) getHitBox().x-18 - xLvlOffset, (int) getHitBox().y-48,null);
+//        g.fillRect((int) getHitBox().x-xLvlOffset, (int) getHitBox().y, (int) getHitBox().width, (int) getHitBox().height);
     }
 
 }

@@ -226,6 +226,14 @@ public class Game {
         for (int i = 0; i < enemy.length; i++) {
             enemy[i].render(g);
         }
+
+        g.setColor(Color.WHITE);
+        Font font = new Font("Arial", Font.BOLD, 15);
+        g.setFont(font);
+
+        g.drawString("Player1 coords: " + getPlayer1().getxPos()/GameController.TILE_SIZE + " " + getPlayer1().getyPos()/GameController.TILE_SIZE + ", Boosts: " + getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
+        g.drawString("Player2 coords: " + getPlayer2().getxPos()/48 + " " + getPlayer2().getyPos()/48 + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
+
     }
     private void timerRender(Graphics g) {
         g.setColor(Color.WHITE);

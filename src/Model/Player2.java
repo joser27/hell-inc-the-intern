@@ -310,10 +310,10 @@ public class Player2 extends Player{
 //            }
 //        }
 
-        g.setColor(Color.WHITE);
-        Font font = new Font("Arial", Font.BOLD, 15);
-        g.setFont(font);
-        g.drawString("Player2 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 80, 150);
+//        g.setColor(Color.WHITE);
+//        Font font = new Font("Arial", Font.BOLD, 15);
+//        g.setFont(font);
+//        g.drawString("Player2 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 80, 150);
 
 
         if (bullets.size()  >0) {
@@ -341,5 +341,9 @@ public class Player2 extends Player{
 
     public ArrayList<Bullet> getBullets() {
         return bullets;
+    }
+
+    public int getLandMineCount() {
+        return landMineCount;
     }
 }
