@@ -1,5 +1,6 @@
 package Model;
 
+import Controller.GameController;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -245,7 +246,7 @@ public class Player2 extends Player{
 
 
                         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
-        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-29, getyPos()-24,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(26* GameController.scale,26*GameController.scale,Image.SCALE_DEFAULT),getxPos()-9*GameController.scale, getyPos()-8*GameController.scale,null);
 
 //        BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
 

@@ -53,17 +53,17 @@ public class LevelLoader {
     }
 
 
-    public void render(Graphics g) {
+    public void render(Graphics g, int xLvlOffset) {
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 0) {
-                    g.drawImage(grassTile[1][3], 48 * j, 48 * i, null);
+                    g.drawImage(grassTile[1][3], 48 * j - xLvlOffset, 48 * i, null);
                 }
                 if (LevelLoader.world[i][j] == 3) {
-                    g.drawImage(rockImg, 48 * j, 48 * i, null);
+                    g.drawImage(rockImg, 48 * j - xLvlOffset, 48 * i, null);
                 }
                 if (LevelLoader.world[i][j] == 4) {
-                    g.drawImage(rockImg2, 48 * j, 48 * i, null);
+                    g.drawImage(rockImg2, 48 * j - xLvlOffset, 48 * i, null);
                 }
             }
         }

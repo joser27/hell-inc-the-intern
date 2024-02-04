@@ -38,7 +38,7 @@ public abstract class Player extends Entity {
         incrementHealth(50);
     }
 
-    public abstract void render(Graphics g);
+
     @Override
     public String toString() {
         return "PLAYER";

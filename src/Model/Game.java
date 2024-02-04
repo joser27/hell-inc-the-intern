@@ -19,10 +19,9 @@ public class Game {
     private Entity[] entities;
     private boolean gameOver = false;
     private CollisionChecker collisionChecker;
-    private int entityWidth;
-    private int entityHeight;
+    private int tileSize;
     private Random random = new Random();
-    private int time = 60;
+    private int time = 600;
     private int timer = 0;
     private int playerWinner = 1;
     private int player1AttackLimiter;
@@ -34,22 +33,23 @@ public class Game {
     private int xLvlOffset;
     private int lvlMovingTick;
 
-    public Game(int entityHeight, int entityWidth) {
-        this.entityHeight = entityHeight;
-        this.entityWidth = entityWidth;
+    public Game() {
         levelLoader = new LevelLoader();
         world = levelLoader.getWorld();
-        player1 = new Player1(13*48, 7*48, 20* GameController.scale, 25*GameController.scale, .5f, this);
-        player2 = new Player2(3*48, 7*48, 20* GameController.scale, 25* GameController.scale, .5f, this);
+        player1 = new Player1(13*GameController.tileSize, 7*GameController.tileSize, 6*GameController.scale, 8*GameController.scale, .16f*GameController.scale, this);
+        player2 = new Player2(3*GameController.tileSize, 7*GameController.tileSize, 6* GameController.scale, 8* GameController.scale, .16f*GameController.scale, this);
         players = new Player[2];
         players[0] = player1;
         players[1] = player2;
         // Initialize walls array
-        addWalls();
+        //addWalls();
         enemy = new Enemy[0];
 //        generateRandomEnemy();
 
 
+        Wall wall = new Wall(999,999,20,20,0f,this);
+        walls = new Wall[1];
+        walls[0]=wall;
         int sizeOfEntities = enemy.length + walls.length + players.length;
         entities = new Entity[sizeOfEntities];
         Entity[] allEntities = new Entity[sizeOfEntities];
@@ -87,7 +87,7 @@ public class Game {
         for (int i = 0; i < world.length; i++) {
             for (int j = 0; j < world[i].length; j++) {
                 if (LevelLoader.world[i][j] == 1) {
-                    walls[wallIndex] = new Wall(j * entityWidth, i * entityHeight, entityWidth, entityHeight, 0, this);
+                    walls[wallIndex] = new Wall(j * GameController.tileSize, i * GameController.tileSize, GameController.tileSize, GameController.tileSize, 0, this);
                     wallIndex++;
                 }
             }
@@ -207,7 +207,7 @@ public class Game {
         }
 
     }
-    public void render(Graphics g) {
+    public void render(Graphics g, int xLvlOffset) {
         Iterator<Medkit> iterator = activeMedkits.iterator();
         while (iterator.hasNext()) {
             Medkit medkit = iterator.next();
@@ -215,15 +215,15 @@ public class Game {
                 medkit.render(g);
             }
         }
-        levelLoader.render(g);
-        entitiesRender(g);
+        levelLoader.render(g,xLvlOffset);
+        entitiesRender(g,xLvlOffset);
         timerRender(g);
     }
-    private void entitiesRender(Graphics g) {
+    private void entitiesRender(Graphics g, int xLvlOffset) {
 
 
         player2.render(g);
-        player1.render(g);
+        player1.render(g,xLvlOffset);
 
         for (int i = 0; i < walls.length; i++) {
             walls[i].render(g,xLvlOffset);

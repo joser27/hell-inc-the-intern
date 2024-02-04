@@ -21,19 +21,16 @@ public class GameController {
     private GameLoop gameLoop;
     private static final int originalTileSize = 16; //16x16 tile
     public static final int scale = 3;
-    private static final int tileSize = originalTileSize * scale; //48x48 tile
-    public static final int maxScreenCol = 27;//27 original
-    public static final int maxScreenRow = 18;//18 original
+    public static final int tileSize = originalTileSize * scale; //48x48 tile
+    public static final int maxScreenCol = 22;//27 original
+    public static final int maxScreenRow = 13;//18 original
     public static final int screenWidth = maxScreenCol * tileSize;
     public static final int screenHeight = maxScreenRow * tileSize;
-    public static final int maxScreenColVisible = 18;
-    public static final int maxScreenRowVisible = 12;
-    public static final int screenWidthVisible = maxScreenCol * tileSize;
-    public static final int screenHeightVisible = maxScreenRow * tileSize;
+
 
 
     public GameController() {
-        game = new Game(tileSize,tileSize);
+        game = new Game();
         gamePanel = new GamePanel(this);
         gameLoop = new GameLoop(game,gamePanel,this);
         gamePanel.setGameLoop(gameLoop);

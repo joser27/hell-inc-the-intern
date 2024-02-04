@@ -1,5 +1,6 @@
 package Model;
 
+import Controller.GameController;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -25,6 +26,7 @@ public class Player1 extends Player{
     private int attackingTimer;
     private int attackingDuration;
     private boolean canAttack = true;
+
     public Player1(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
         setBufferedImage(LoadSave.GetSpriteAtlas(LoadSave.PLAYER2_ATLAS));
@@ -164,8 +166,8 @@ public class Player1 extends Player{
 //    }
 
 
-    @Override
-    public void render(Graphics g) {
+
+    public void render(Graphics g,int xLvlOffset) {
 
 //        g.drawRect((int) attackHitBox.x, (int) attackHitBox.y,  30, 30);
 
@@ -173,7 +175,7 @@ public class Player1 extends Player{
 //            g.drawRect((int) attackHitBox.x, (int) attackHitBox.y,  30, 30);
 //
 //        }
-        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-29, getyPos()-24,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow].getScaledInstance(26* GameController.scale,26*GameController.scale,Image.SCALE_DEFAULT),getxPos()-9*GameController.scale - xLvlOffset, getyPos()-8*GameController.scale,null);
 
 
 
@@ -181,15 +183,15 @@ public class Player1 extends Player{
         g.setColor(Color.WHITE);
         Font font = new Font("Arial", Font.BOLD, 15);
         g.setFont(font);
-        g.drawString("Player1 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 80, 100);
+        g.drawString("Player1 coords: " + getxPos()/GameController.tileSize + " " + getyPos()/GameController.tileSize + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 80, 100);
 
 //        g.setColor(Color.BLACK);
 //        //System.err.println(playerX + "|" + playerY);
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
         //Hitbox
-//        g.setColor(Color.YELLOW);
-//        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+        g.setColor(Color.YELLOW);
+        g.drawRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public boolean isGodMode() {

@@ -1,16 +1,19 @@
 package Model.gamestates;
 
-import Model.Game;
-import Model.Player;
-import Model.Player1;
-import Model.Player2;
+import Controller.GameController;
+import Model.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class Playing extends State implements Statemethods{
-
+    private int xLvlOffset;
+    private int leftBorder = (int) (.4 * GameController.screenWidth);
+    private int rightBorder = (int) (.6 * GameController.screenWidth);
+    private int lvlTilesWide = LevelLoader.world.length;
+    private int maxTilesOffset = GameController.maxScreenCol;
+    private int maxLvlOffsetX = maxTilesOffset * GameController.tileSize;
     public Playing(Game game) {
         super(game);
 
@@ -19,11 +22,28 @@ public class Playing extends State implements Statemethods{
     @Override
     public void update() {
         getGame().update();
+        checkPlayerCloseToBorder();
+    }
+
+    private void checkPlayerCloseToBorder() {
+        int playerX = (int) getGame().getPlayer1().getHitBox().x;
+        int diff = playerX - xLvlOffset;
+
+        if (diff>rightBorder) {
+            xLvlOffset+=diff-rightBorder;
+        } else if (diff<leftBorder) {
+            xLvlOffset+=diff-leftBorder;
+        }
+        if (xLvlOffset>maxLvlOffsetX) {
+            xLvlOffset=maxTilesOffset;
+        } else if (xLvlOffset<0) {
+            xLvlOffset=0;
+        }
     }
 
     @Override
     public void render(Graphics g) {
-        getGame().render(g);
+        getGame().render(g,xLvlOffset);
     }
 
     @Override
