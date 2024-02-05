@@ -93,28 +93,8 @@ public class Game {
 //        enemy[0] = new Enemy(200, 250, 30, 30, 0f, this);
 ////        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
 //    }
-    private boolean medkitSpawnedAt58 = false;
-    private boolean medkitSpawnedAt56 = false;
-    private boolean medkitSpawnedAt54 = false;
+
     public void update() {
-        if (time == 58 && !medkitSpawnedAt58) {
-            medkitSpawnedAt58 = true;
-            placedMedkit = true;
-            activeMedkits.add(new Medkit(200, 200));
-            activeMedkits.get(activeMedkits.size()-1).setActive(true);
-        }
-        if (time == 56 && !medkitSpawnedAt56) {
-            medkitSpawnedAt56 = true;
-            placedMedkit = true;
-            activeMedkits.add(new Medkit(300, 200));
-            activeMedkits.get(activeMedkits.size()-1).setActive(true);
-        }
-        if (time == 54 && !medkitSpawnedAt54) {
-            medkitSpawnedAt54 = true;
-            placedMedkit = true;
-            activeMedkits.add(new Medkit(300, 300));
-            activeMedkits.get(activeMedkits.size()-1).setActive(true);
-        }
         Iterator<Medkit> iterator = activeMedkits.iterator();
         while (iterator.hasNext()) {
             Medkit medkit = iterator.next();
@@ -202,21 +182,96 @@ public class Game {
         }
 
     }
-    public void render(Graphics g, int xLvlOffset) {
-        Iterator<Medkit> iterator = activeMedkits.iterator();
-        while (iterator.hasNext()) {
-            Medkit medkit = iterator.next();
-            if (medkit.isActive()) {
-                medkit.render(g);
+    public void renderLeftScreen(Graphics g, int xLvlOffset) {//Player 2 is left
+        int screenWidth = GameController.GAME_WIDTH;
+        int screenHeight = GameController.GAME_HEIGHT;
+        int tileSize = GameController.TILE_SIZE;
+
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 0, screenWidth / 2, screenHeight);
+
+        for (int i = 0; i < LevelLoader.world.length; i++) {
+            for (int j = 0; j < LevelLoader.world[i].length; j++) {
+                if (LevelLoader.world[i][j] == 1) {
+                    int x = GameController.TILE_SIZE * j-xLvlOffset;
+                    int y = GameController.TILE_SIZE * i;
+
+                    // Ensure the rendering is within the left half of the screen
+                    if (x >= 0 && x + tileSize <= screenWidth / 2) {
+                        g.setColor(Color.ORANGE);
+                        g.fillRect(x, y, tileSize, tileSize);
+                    }
+                }
             }
         }
-        levelLoader.render(g,xLvlOffset);
-        entitiesRender(g,xLvlOffset);
-        timerRender(g);
+//        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2) {
+//            player1.render(g,xLvlOffset);
+//        }
+            player2.render(g, xLvlOffset);
+        if (player1.getxPos() - xLvlOffset < GameController.GAME_WIDTH / 2) {
+            player1.render(g,xLvlOffset);
+
+        }
+
+
+        g.setColor(Color.WHITE);
+        g.drawString("Player2 coords: " + getPlayer2().getxPos()/48 + " " + getPlayer2().getyPos()/48 + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
+
     }
+
+    public void renderRightScreen(Graphics g, int xLvlOffset) {//player 1 is right
+        int screenWidth = GameController.GAME_WIDTH;
+        int screenHeight = GameController.GAME_HEIGHT;
+        int tileSize = GameController.TILE_SIZE;
+
+        g.setColor(Color.RED);
+        g.fillRect(screenWidth / 2, 0, screenWidth / 2, screenHeight);
+
+        for (int i = 0; i < LevelLoader.world.length; i++) {
+            for (int j = 0; j < LevelLoader.world[i].length; j++) {
+                if (LevelLoader.world[i][j] == 1) {
+                    int x = GameController.TILE_SIZE * j - xLvlOffset;
+                    int y = GameController.TILE_SIZE * i;
+
+                    // Ensure the rendering is within the right half of the screen
+                    if (x >= screenWidth / 2 && x + tileSize <= screenWidth) {
+                        g.setColor(Color.YELLOW);
+                        g.fillRect(x, y, tileSize, tileSize);
+                    }
+                }
+            }
+        }
+        player1.render(g,xLvlOffset);
+
+        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2) {
+            player2.render(g,xLvlOffset);
+
+        }
+
+
+        g.setColor(Color.WHITE);
+        g.drawString("Player1 coords: " + getPlayer1().getxPos()/GameController.TILE_SIZE + " " + getPlayer1().getyPos()/GameController.TILE_SIZE + ", Boosts: " + getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
+
+    }
+
+//    public void render(Graphics g, int xLvlOffset) {
+//        Iterator<Medkit> iterator = activeMedkits.iterator();
+//        while (iterator.hasNext()) {
+//            Medkit medkit = iterator.next();
+//            if (medkit.isActive()) {
+//                medkit.render(g);
+//            }
+//        }
+//        levelLoader.render(g,xLvlOffset);
+//        entitiesRender(g,xLvlOffset);
+//        timerRender(g);
+//        g.setColor(Color.WHITE);
+//        Font font = new Font("Arial", Font.BOLD, 15);
+//        g.setFont(font);
+//        g.drawString("Player1 coords: " + getPlayer1().getxPos()/GameController.TILE_SIZE + " " + getPlayer1().getyPos()/GameController.TILE_SIZE + ", Boosts: " + getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
+//        g.drawString("Player2 coords: " + getPlayer2().getxPos()/48 + " " + getPlayer2().getyPos()/48 + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
+//    }
     private void entitiesRender(Graphics g, int xLvlOffset) {
-
-
         player2.render(g,xLvlOffset);
         player1.render(g,xLvlOffset);
 
@@ -226,14 +281,6 @@ public class Game {
         for (int i = 0; i < enemy.length; i++) {
             enemy[i].render(g);
         }
-
-        g.setColor(Color.WHITE);
-        Font font = new Font("Arial", Font.BOLD, 15);
-        g.setFont(font);
-
-        g.drawString("Player1 coords: " + getPlayer1().getxPos()/GameController.TILE_SIZE + " " + getPlayer1().getyPos()/GameController.TILE_SIZE + ", Boosts: " + getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
-        g.drawString("Player2 coords: " + getPlayer2().getxPos()/48 + " " + getPlayer2().getyPos()/48 + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
-
     }
     private void timerRender(Graphics g) {
         g.setColor(Color.WHITE);

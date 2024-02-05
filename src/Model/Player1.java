@@ -178,29 +178,12 @@ public class Player1 extends Player{
 
     public void render(Graphics g,int xLvlOffset) {
 
-        g.drawRect((int) attackHitBox.x-xLvlOffset, (int) attackHitBox.y,  30, 30);
+            g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y, 30, 30);
+            g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE, null);
+            //Hitbox
+            // g.setColor(Color.YELLOW);
+            // g.drawRect(getxPos() - xLvlOffset, getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
-//        if (attackingMelee) {
-//            g.drawRect((int) attackHitBox.x, (int) attackHitBox.y,  30, 30);
-//
-//        }
-        g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE,null);
-
-
-
-
-        g.setColor(Color.WHITE);
-        Font font = new Font("Arial", Font.BOLD, 15);
-        g.setFont(font);
-        g.drawString("Player1 coords: " + getxPos()/GameController.TILE_SIZE + " " + getyPos()/GameController.TILE_SIZE + ", Boosts: " + speedBoostUsages + "; HP:" + getHealth(), 80, 100);
-
-//        g.setColor(Color.BLACK);
-//        //System.err.println(playerX + "|" + playerY);
-//
-//        g.fillRect((playerY*48),(playerX*48),48,48);
-        //Hitbox
-        g.setColor(Color.YELLOW);
-        g.drawRect(getxPos()-xLvlOffset,getyPos(), (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public boolean isGodMode() {

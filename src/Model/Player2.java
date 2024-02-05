@@ -245,75 +245,9 @@ public class Player2 extends Player{
             }
         }
 
-
-
-
                         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
+
         g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE,null);
-
-//        BufferedImage gun = LoadSave.GetSpriteAtlas(LoadSave.PISTOL_STATIC_IMG);
-
-//        if (!canShoot) {
-//            switch (getFacingDir()) {
-//                case 0:
-//                    // Facing right (no inversion)
-//                    g.drawImage(gun, getxPos() + 15, getyPos(), null);
-//
-//                    // Char Sprite face
-//                    //g.drawImage(img[2][2].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-//
-//                    break;
-//                case 1:
-//                    // Facing left (horizontal flip)
-//                    AffineTransform txLeft = AffineTransform.getScaleInstance(-1, 1);
-//                    txLeft.translate(-gun.getWidth(null), 0);
-//                    AffineTransformOp flipOpLeft = new AffineTransformOp(txLeft, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-//                    BufferedImage flippedGunLeft = flipOpLeft.filter(gun, null);
-//
-//                    g.drawImage(flippedGunLeft, getxPos() - 15, getyPos(), null);
-//
-//                    // Char Sprite face
-//                    //g.drawImage(img[2][6].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-//
-//                    break;
-//                case 2:
-//                    // Facing up (vertical flip, horizontal flip, and rotate 90 degrees clockwise)
-//                    AffineTransform txUp = AffineTransform.getScaleInstance(-1, -1);
-//                    txUp.translate(-gun.getWidth(null), -gun.getHeight(null));
-//                    txUp.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-//                    AffineTransformOp flipOpUp = new AffineTransformOp(txUp, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-//                    BufferedImage flippedGunUp = flipOpUp.filter(gun, null);
-//
-//                    g.drawImage(flippedGunUp, getxPos() - 30, getyPos() - 10, null);
-//
-//                    // Char Sprite face
-//                    //g.drawImage(img[2][4].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-//
-//                    break;
-//                case 3:
-//                    // Facing down (inversion)
-//                    AffineTransform txDown = AffineTransform.getScaleInstance(1, 1);
-//                    txDown.translate(gun.getWidth(null), gun.getHeight(null));
-//                    txDown.rotate(Math.PI / 2); // Rotate 90 degrees clockwise
-//                    AffineTransformOp flipOpDown = new AffineTransformOp(txDown, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-//                    BufferedImage flippedGunDown = flipOpDown.filter(gun, null);
-//
-//                    g.drawImage(flippedGunDown, getxPos(), getyPos() - 10, null);
-//
-//                    // Char Sprite face
-//                    //g.drawImage(img[7][7].getScaledInstance(80,80,Image.SCALE_DEFAULT),getxPos()-25, getyPos()-25,null);
-//
-//                    break;
-//                default:
-//                    break;
-//
-//            }
-//        }
-
-//        g.setColor(Color.WHITE);
-//        Font font = new Font("Arial", Font.BOLD, 15);
-//        g.setFont(font);
-//        g.drawString("Player2 coords: " + getxPos()/48 + " " + getyPos()/48 + ", Mines: " + landMineCount + "; HP: " + getHealth(), 80, 150);
 
 
         if (bullets.size()  >0) {

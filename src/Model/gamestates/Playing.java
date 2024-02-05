@@ -8,12 +8,21 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class Playing extends State implements Statemethods{
-    private int xLvlOffset;
-    private int leftBorder = (int) (0.4 * GameController.GAME_WIDTH);
-    private int rightBorder = (int) (0.6 * GameController.GAME_WIDTH);
-    private int lvlTilesWide = LevelLoader.world[0].length;
-    private int maxTilesOffset = lvlTilesWide - GameController.TILES_IN_WIDTH;
-    private int maxLvlOffsetX = maxTilesOffset * GameController.TILE_SIZE;
+    //Player 1
+    private int p1xLvlOffset;
+    private int p1leftBorder = (int) (0.6 * GameController.GAME_WIDTH);
+    private int p1rightBorder = (int) (0.9 * GameController.GAME_WIDTH);
+    private int p1lvlTilesWide = LevelLoader.world[0].length;
+    private int p1maxTilesOffset = p1lvlTilesWide - GameController.TILES_IN_WIDTH;
+    private int p1maxLvlOffsetX = p1maxTilesOffset * GameController.TILE_SIZE;
+
+    //player 2
+    private int p2xLvlOffset;
+    private int p2leftBorder = (int) (0.1 * GameController.GAME_WIDTH);
+    private int p2rightBorder = (int) (0.4 * GameController.GAME_WIDTH);
+    private int p2lvlTilesWide = LevelLoader.world[0].length;
+    private int p2maxTilesOffset = p2lvlTilesWide - GameController.TILES_IN_WIDTH;
+    private int p2maxLvlOffsetX = p2maxTilesOffset * GameController.TILE_SIZE;
     public Playing(Game game) {
         super(game);
 
@@ -23,28 +32,49 @@ public class Playing extends State implements Statemethods{
     @Override
     public void update() {
         getGame().update();
-        checkCloseToBorder();
+        p1checkCloseToBorder();
+        p2checkCloseToBorder();
     }
 
-    private void checkCloseToBorder() {
+    private void p1checkCloseToBorder() {
         int playerX = (int) getGame().getPlayer1().getHitBox().getX();
-        int diff = playerX - xLvlOffset;
+        int diff = playerX - p1xLvlOffset;
 
-        if (diff > rightBorder)
-            xLvlOffset += diff - rightBorder;
-        else if (diff < leftBorder)
-            xLvlOffset += diff - leftBorder;
+        if (diff > p1rightBorder)
+            p1xLvlOffset += diff - p1rightBorder;
+        else if (diff < p1leftBorder)
+            p1xLvlOffset += diff - p1leftBorder;
 
-        if (xLvlOffset > maxLvlOffsetX)
-            xLvlOffset = maxLvlOffsetX;
-        else if (xLvlOffset < 0)
-            xLvlOffset = 0;
+//        if (xLvlOffset > maxLvlOffsetX)
+//            xLvlOffset = maxLvlOffsetX;
+//        else if (xLvlOffset < 0)
+//            xLvlOffset = 0;
+    }
+    private void p2checkCloseToBorder() {
+        int playerX = (int) getGame().getPlayer2().getHitBox().getX();
+        int diff = playerX - p2xLvlOffset;
 
+        if (diff > p2rightBorder)
+            p2xLvlOffset += diff - p2rightBorder;
+        else if (diff < p2leftBorder)
+            p2xLvlOffset += diff - p2leftBorder;
+
+//        if (xLvlOffset > maxLvlOffsetX)
+//            xLvlOffset = maxLvlOffsetX;
+//        else if (xLvlOffset < 0)
+//            xLvlOffset = 0;
     }
 
     @Override
     public void render(Graphics g) {
-        getGame().render(g,xLvlOffset);
+//        getGame().render(g,xLvlOffset);
+//
+//        g.drawLine(GameController.GAME_WIDTH/2,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
+//        g.setColor(Color.BLACK);
+//        g.fillRect(0,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
+        getGame().renderLeftScreen(g, p2xLvlOffset);
+        getGame().renderRightScreen(g, p1xLvlOffset);
+
     }
 
     @Override
