@@ -69,12 +69,24 @@ public class Playing extends State implements Statemethods{
     public void render(Graphics g) {
 //        getGame().render(g,xLvlOffset);
 //
-//        g.drawLine(GameController.GAME_WIDTH/2,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
+        g.setColor(Color.BLACK);
+        g.drawLine(GameController.GAME_WIDTH/2,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
 //        g.setColor(Color.BLACK);
 //        g.fillRect(0,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
         getGame().renderLeftScreen(g, p2xLvlOffset);
         getGame().renderRightScreen(g, p1xLvlOffset);
 
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.setColor(Color.BLACK);
+
+// Set the stroke to a thicker line
+        g2d.setStroke(new BasicStroke(10)); // You can adjust the thickness as needed
+
+        g2d.drawLine(GameController.GAME_WIDTH / 2, 0, GameController.GAME_WIDTH / 2, GameController.GAME_HEIGHT);
+
+// Reset the stroke to avoid affecting other drawings
+        g2d.setStroke(new BasicStroke(1)); // Reset to default thickness
     }
 
     @Override

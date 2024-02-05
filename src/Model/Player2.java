@@ -254,7 +254,7 @@ public class Player2 extends Player{
             Iterator<Bullet> iterator = bullets.iterator();
             while (iterator.hasNext()) {
                 Bullet bullet = iterator.next();
-                bullet.render(g);
+                bullet.render(g,xLvlOffset);
                 }
         }
 

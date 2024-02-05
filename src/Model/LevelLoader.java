@@ -68,7 +68,15 @@ public class LevelLoader {
             }
         }
     }
-
+    public Image getGrassImage() {
+        return grassTile[1][3];
+    }
+    public Image getRock1Image() {
+        return rockImg;
+    }
+    public Image getRock2Image() {
+        return rockImg2;
+    }
 
 //    private void loadLevel() {
 //        world = new int[size][size];
