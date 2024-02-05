@@ -180,7 +180,6 @@ public class Game {
                 }
             }
         }
-
     }
     public void renderLeftScreen(Graphics g, int xLvlOffset) {//Player 2 is left
         int screenWidth = GameController.GAME_WIDTH;
@@ -190,36 +189,21 @@ public class Game {
         g.setColor(Color.BLUE);
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
 
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
-                if (LevelLoader.world[i][j] == 1) {
-                    int x = GameController.TILE_SIZE * j-xLvlOffset;
-                    int y = GameController.TILE_SIZE * i;
-
-                    // Ensure the rendering is within the left half of the screen
-                    if (x >= 0 && x + tileSize <= screenWidth / 2) {
-                        g.setColor(Color.ORANGE);
-                        g.fillRect(x, y, tileSize, tileSize);
-                    }
-                }
-            }
-        }
-//        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2) {
-//            player1.render(g,xLvlOffset);
-//        }
-            player2.render(g, xLvlOffset);
+        player2.render(g, xLvlOffset);
         if (player1.getxPos() - xLvlOffset < GameController.GAME_WIDTH / 2) {
             player1.render(g,xLvlOffset);
 
         }
-
+        for (int i = 0; i < walls.length; i++) {
+            walls[i].render(g,xLvlOffset);
+        }
 
         g.setColor(Color.WHITE);
         g.drawString("Player2 coords: " + getPlayer2().getxPos()/48 + " " + getPlayer2().getyPos()/48 + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
 
     }
 
-    public void renderRightScreen(Graphics g, int xLvlOffset) {//player 1 is right
+    public void renderRightScreen(Graphics g, int xLvlOffset) {
         int screenWidth = GameController.GAME_WIDTH;
         int screenHeight = GameController.GAME_HEIGHT;
         int tileSize = GameController.TILE_SIZE;
@@ -227,32 +211,23 @@ public class Game {
         g.setColor(Color.RED);
         g.fillRect(screenWidth / 2, 0, screenWidth / 2, screenHeight);
 
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
-                if (LevelLoader.world[i][j] == 1) {
-                    int x = GameController.TILE_SIZE * j - xLvlOffset;
-                    int y = GameController.TILE_SIZE * i;
-
-                    // Ensure the rendering is within the right half of the screen
-                    if (x >= screenWidth / 2 && x + tileSize <= screenWidth) {
-                        g.setColor(Color.YELLOW);
-                        g.fillRect(x, y, tileSize, tileSize);
-                    }
-                }
+        player1.render(g, xLvlOffset);
+        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2) {
+            player2.render(g, xLvlOffset);
+        }
+        for (int i = 0; i < walls.length; i++) {
+            // Check if the wall is in the right half of the screen before rendering
+            if (walls[i].getHitBox().x -xLvlOffset> screenWidth / 2) {
+                walls[i].render(g, xLvlOffset);
             }
         }
-        player1.render(g,xLvlOffset);
-
-        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2) {
-            player2.render(g,xLvlOffset);
-
-        }
-
-
         g.setColor(Color.WHITE);
-        g.drawString("Player1 coords: " + getPlayer1().getxPos()/GameController.TILE_SIZE + " " + getPlayer1().getyPos()/GameController.TILE_SIZE + ", Boosts: " + getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
-
+        g.drawString("Player1 coords: " + getPlayer1().getxPos() / GameController.TILE_SIZE + " " +
+                getPlayer1().getyPos() / GameController.TILE_SIZE + ", Boosts: " +
+                getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
     }
+
+
 
 //    public void render(Graphics g, int xLvlOffset) {
 //        Iterator<Medkit> iterator = activeMedkits.iterator();
