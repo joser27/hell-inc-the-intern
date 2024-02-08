@@ -237,7 +237,7 @@ public class Player2 extends Player{
         canShoot = true;
     }
 
-    public void render(Graphics g,int xLvlOffset) {
+    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
 
         if (landMine !=null) {
             for (LandMine mine : landMine) {
@@ -247,14 +247,14 @@ public class Player2 extends Player{
 
                         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
 
-        g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE,null);
+        g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE- yLvlOffset,null);
 
 
         if (bullets.size()  >0) {
             Iterator<Bullet> iterator = bullets.iterator();
             while (iterator.hasNext()) {
                 Bullet bullet = iterator.next();
-                bullet.render(g,xLvlOffset);
+                bullet.render(g,xLvlOffset,yLvlOffset);
                 }
         }
 
@@ -265,8 +265,8 @@ public class Player2 extends Player{
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
         //Hit box
-        g.setColor(Color.RED);
-        g.drawRect(getxPos()-xLvlOffset,getyPos(), (int) getHitBox().width, (int) getHitBox().height);
+//        g.setColor(Color.RED);
+//        g.drawRect(getxPos()-xLvlOffset,getyPos()- yLvlOffset, (int) getHitBox().width, (int) getHitBox().height);
     }
 
     public ArrayList<LandMine> getLandMine() {

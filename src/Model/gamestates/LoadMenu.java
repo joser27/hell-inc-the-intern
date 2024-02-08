@@ -14,13 +14,13 @@ public class LoadMenu extends State implements Statemethods {
     private Image scaledImg;
     private int x , y;
     private int startPlacementX = 500, startPlacementY = 500;
-    private int startButtonWidth = 300, startButtonHeight = 280;
+    private int startButtonWidth = 900, startButtonHeight = 840;
 
 
     public LoadMenu(Game game) {
         super(game);
         startButtonImg = LoadSave.GetSpriteAtlas(LoadSave.START_BUTTON);
-        scaledImg = startButtonImg.getScaledInstance(startButtonWidth,startButtonHeight,Image.SCALE_DEFAULT);
+        scaledImg = startButtonImg.getScaledInstance(startButtonWidth / GameController.SCALE,startButtonHeight/ GameController.SCALE,Image.SCALE_DEFAULT);
     }
 
     @Override

@@ -157,6 +157,11 @@ public class Playing extends State implements Statemethods{
         if (keyCode == KeyEvent.VK_F) {
             getGame().getPlayer1().attack();
         }
+
+        //Pause menu
+        if (keyCode == KeyEvent.VK_ESCAPE) {
+            Gamestate.state = Gamestate.PAUSEMENU;
+        }
     }
 
     @Override

@@ -1,10 +1,7 @@
 package Controller;
 
 import Model.Game;
-import Model.gamestates.GameOver;
-import Model.gamestates.Gamestate;
-import Model.gamestates.LoadMenu;
-import Model.gamestates.Playing;
+import Model.gamestates.*;
 import View.GameFrame;
 import View.GamePanel;
 
@@ -14,6 +11,7 @@ public class GameController {
     private LoadMenu menuState;
     private Playing playingState;
     private GameOver gameOverState;
+    private PauseMenu pauseMenu;
     private Game game;
     private GamePanel gamePanel;
     private GameFrame gameFrame;
@@ -48,6 +46,8 @@ public class GameController {
         playingState = new Playing(game);
         menuState = new LoadMenu(game);
         gameOverState = new GameOver(game);
+        pauseMenu = new PauseMenu(game);
+
         gameLoop.startGameLoop();
 
     }
@@ -89,7 +89,11 @@ public class GameController {
                 //game.setGameOver(false);
                 playingState.render(g);
             }
-
+            case PAUSEMENU -> {
+                //game.setGameOver(false);
+                playingState.render(g);
+                pauseMenu.render(g);
+            }
         }
     }
 
@@ -121,4 +125,7 @@ public class GameController {
         return gameOverState;
     }
 
+    public PauseMenu getPauseMenu() {
+        return pauseMenu;
+    }
 }

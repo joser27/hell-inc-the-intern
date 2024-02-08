@@ -31,7 +31,7 @@ public class Bullet {
             bulletDecayed = true;
         }
     }
-    public void render(Graphics g, int xLvlOffset) {
+    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         Graphics2D g2d = (Graphics2D) g.create();
 
         // Set the rotation angle and adjustment based on the bullet's direction
@@ -58,7 +58,7 @@ public class Bullet {
 
         // Apply rotation transformation and adjustment
         g2d.rotate(rotationAngle, bullet.x + img.getWidth(null) / 2, bullet.y + img.getHeight(null) / 2);
-        g2d.drawImage(img, (bullet.x + adjustmentX) - xLvlOffset, bullet.y+adjustmentY, null);
+        g2d.drawImage(img, (bullet.x + adjustmentX) - xLvlOffset, bullet.y+adjustmentY- yLvlOffset, null);
 
         // Dispose of the created Graphics2D object
         g2d.dispose();

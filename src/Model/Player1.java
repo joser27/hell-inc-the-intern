@@ -176,10 +176,10 @@ public class Player1 extends Player{
 
 
 
-    public void render(Graphics g,int xLvlOffset) {
+    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
 
             g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y, 30, 30);
-            g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE, null);
+            g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
             //Hitbox
             // g.setColor(Color.YELLOW);
             // g.drawRect(getxPos() - xLvlOffset, getyPos(), (int) getHitBox().width, (int) getHitBox().height);
