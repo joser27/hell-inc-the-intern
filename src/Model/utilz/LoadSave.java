@@ -1,12 +1,16 @@
 package Model.utilz;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class LoadSave {
 
+    public static final String FONT_DEFAULT = "res\\Daydream.ttf";
+    public static final String FONT_MINECRAFT = "res\\Minecraft.ttf";
     public static final String START_BUTTON = "startButton.png";
     public static final String PLAYER1_ATLAS = "Character-Base.png";
     public static final String PLAYER2_ATLAS = "Orc-Peon-Cyan.png";
@@ -39,6 +43,23 @@ public class LoadSave {
             }
         }
         return image;
+    }
+
+    public static Font GetFont(String fileName, int size) {
+        Font font = null;
+        try {
+            File fontFile = new File(fileName);
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+
+            // Use the font in your application
+            font = new Font(customFont.getFontName(), Font.PLAIN, size);
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+        return font;
     }
 
 

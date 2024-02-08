@@ -45,7 +45,14 @@ public class PauseMenu extends State implements Statemethods {
         g.drawImage(img[0][1],posX,posY+img[0][0].getHeight(),null);      g.drawImage(img[1][1],posX+img[0][0].getWidth(),posY+img[0][0].getHeight(),null);     g.drawImage(img[2][1],posX+img[0][0].getWidth()*2,posY+img[0][0].getHeight(),null);
         g.drawImage(img[0][2],posX,posY+img[0][0].getHeight()*2,null);    g.drawImage(img[1][2],posX+img[0][0].getWidth(),posY+img[0][0].getHeight()*2,null);   g.drawImage(img[2][2],posX+img[0][0].getWidth()*2,posY+img[0][0].getHeight()*2,null);
 
+        Font font = LoadSave.GetFont(LoadSave.FONT_MINECRAFT,26);
+        g.setFont(font);
+        g.setColor(Color.BLACK);
+        g.drawString("Exit This is my Font", (int) (posX*1.4), (int) (posY*3.5));
 
+        g.setFont(font);
+        g.setColor(Color.BLACK);
+        g.drawString("Exit This is my other Font", (int) (posX*1.4), (int) (posY*3.8));
     }
 
     @Override
