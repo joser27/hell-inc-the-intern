@@ -13,8 +13,16 @@ public class Playing extends State implements Statemethods{
     private int p1leftBorder = (int) (0.75 * GameController.GAME_WIDTH);
     private int p1rightBorder = (int) (0.75 * GameController.GAME_WIDTH);
     private int p1lvlTilesWide = LevelLoader.world[0].length;
-    private int p1maxTilesOffset = p1lvlTilesWide - GameController.TILES_IN_WIDTH;
-    private int p1maxLvlOffsetX = p1maxTilesOffset * GameController.TILE_SIZE;
+//    private int p1maxTilesOffset = p1lvlTilesWide - GameController.TILES_IN_WIDTH;
+//    private int p1maxLvlOffsetX = p1maxTilesOffset * GameController.TILE_SIZE;
+
+    // YLvlOffset
+    private int p1yLvlOffset;
+    private int p1topBorder = (int) (0.25 * GameController.GAME_WIDTH);
+    private int p1downBorder = (int) (0.25 * GameController.GAME_WIDTH);
+    private int p1lvlTilesHeight = LevelLoader.world.length;
+//    private int p1maxYTilesOffset = p1lvlTilesWide - GameController.TILES_IN_WIDTH;
+//    private int p1maxLvlOffsetX = p1maxTilesOffset * GameController.TILE_SIZE;
 
     //player 2
     private int p2xLvlOffset;
@@ -23,6 +31,14 @@ public class Playing extends State implements Statemethods{
     private int p2lvlTilesWide = LevelLoader.world[0].length;
     private int p2maxTilesOffset = p2lvlTilesWide - GameController.TILES_IN_WIDTH;
     private int p2maxLvlOffsetX = p2maxTilesOffset * GameController.TILE_SIZE;
+
+    //yLvlOffset
+    private int p2yLvlOffset;
+    private int p2topBorder = (int) (0.25 * GameController.GAME_WIDTH);
+    private int p2downBorder = (int) (0.25 * GameController.GAME_WIDTH);
+    private int p2lvlTilesHeight = LevelLoader.world.length;
+
+
     public Playing(Game game) {
         super(game);
 
@@ -45,6 +61,14 @@ public class Playing extends State implements Statemethods{
         else if (diff < p1leftBorder)
             p1xLvlOffset += diff - p1leftBorder;
 
+        int playerY = (int) getGame().getPlayer1().getHitBox().getY();
+        int diffY = playerY - p1yLvlOffset;
+
+        if (diffY > p1topBorder)
+            p1yLvlOffset += diffY - p1topBorder;
+        else if (diffY < p1downBorder)
+            p1yLvlOffset += diffY - p1downBorder;
+
 //        if (xLvlOffset > maxLvlOffsetX)
 //            xLvlOffset = maxLvlOffsetX;
 //        else if (xLvlOffset < 0)
@@ -59,6 +83,13 @@ public class Playing extends State implements Statemethods{
         else if (diff < p2leftBorder)
             p2xLvlOffset += diff - p2leftBorder;
 
+        int playerY = (int) getGame().getPlayer2().getHitBox().getY();
+        int diffY = playerY - p2yLvlOffset;
+
+        if (diffY > p2topBorder)
+            p2yLvlOffset += diffY - p2topBorder;
+        else if (diffY < p2downBorder)
+            p2yLvlOffset += diffY - p2downBorder;
 //        if (xLvlOffset > maxLvlOffsetX)
 //            xLvlOffset = maxLvlOffsetX;
 //        else if (xLvlOffset < 0)
@@ -74,20 +105,14 @@ public class Playing extends State implements Statemethods{
 //        g.setColor(Color.BLACK);
 //        g.fillRect(0,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
 
-        getGame().renderLeftScreen(g, p2xLvlOffset);
-        getGame().renderRightScreen(g, p1xLvlOffset);
+        getGame().renderLeftScreen(g, p2xLvlOffset, p2yLvlOffset);
+        getGame().renderRightScreen(g, p1xLvlOffset, p1yLvlOffset);
 
         Graphics2D g2d = (Graphics2D) g;
-
         g2d.setColor(Color.BLACK);
-
-// Set the stroke to a thicker line
-        g2d.setStroke(new BasicStroke(10)); // You can adjust the thickness as needed
-
+        g2d.setStroke(new BasicStroke(10));
         g2d.drawLine(GameController.GAME_WIDTH / 2, 0, GameController.GAME_WIDTH / 2, GameController.GAME_HEIGHT);
-
-// Reset the stroke to avoid affecting other drawings
-        g2d.setStroke(new BasicStroke(1)); // Reset to default thickness
+        g2d.setStroke(new BasicStroke(1));
     }
 
     @Override

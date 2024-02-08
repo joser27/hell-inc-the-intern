@@ -1,5 +1,6 @@
 package Model;
 
+import Controller.GameController;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ public class Wall extends Entity {
     public Wall(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
 
-        img = LoadSave.GetSpriteAtlas(LoadSave.TREE_4).getScaledInstance((int) getHitBox().width + 35, (int) getHitBox().height+50,Image.SCALE_DEFAULT);
+        img = LoadSave.GetSpriteAtlas(LoadSave.TREE_4).getScaledInstance((int) getHitBox().width + 11 * GameController.SCALE, (int) getHitBox().height+16 * GameController.SCALE,Image.SCALE_DEFAULT);
     }
 
     public void update(int xLvlOffset) {

@@ -28,7 +28,6 @@ public class Game {
     private boolean placedMedkit = false;
     private int[][] world;
     private LevelLoader levelLoader;
-    private int xLvlOffset;
     private int yLvlOffset = -200;
     private int lvlMovingTick;
 
@@ -184,11 +183,11 @@ public class Game {
         }
     }
 
-    public void renderLeftScreen(Graphics g, int xLvlOffset) {//Player 2 is left
+    public void renderLeftScreen(Graphics g, int xLvlOffset, int yLvlOffset) {//Player 2 is left
         int screenWidth = GameController.GAME_WIDTH;
         int screenHeight = GameController.GAME_HEIGHT;
         int tileSize = GameController.TILE_SIZE;
-        g.setColor(new Color( 79,131,52,255));
+        //g.setColor(new Color( 79,131,52,255));
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
 
 
@@ -224,11 +223,11 @@ public class Game {
 
     }
 
-    public void renderRightScreen(Graphics g, int xLvlOffset) {//Player 1 is right
+    public void renderRightScreen(Graphics g, int xLvlOffset, int yLvlOffset) {//Player 1 is right
         int screenWidth = GameController.GAME_WIDTH;
         int screenHeight = GameController.GAME_HEIGHT;
         int tileSize = GameController.TILE_SIZE;
-        g.setColor(new Color( 79,131,52,255));
+        //g.setColor(new Color( 79,131,52,255));
         g.fillRect(screenWidth / 2, 0, screenWidth / 2, screenHeight);
 
         //Bullets rending when offscreen

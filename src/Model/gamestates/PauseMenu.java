@@ -15,15 +15,20 @@ public class PauseMenu extends State implements Statemethods {
     private int hovX, hovY;
     private int posX, posY;
     private BufferedImage[][] img;
-    Color exitColor = Color.BLACK;
-    Color resumeColor = Color.BLACK;
+    private Color exitColor = Color.BLACK;
+    private Color resumeColor = Color.BLACK;
+    private int gameWidth = GameController.GAME_WIDTH;
+    private int gameHeight = GameController.GAME_HEIGHT;
+    private int pauseSizeWidth = (int) (gameWidth/7.5);
+    private int pauseSizeHeight = (int) (gameHeight/3.8);
+
     public PauseMenu(Game game) {
         super(game);
         img = new BufferedImage[20][9];
         BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.UI_SQUARES);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 9; j++) {
-                Image scaledImage = temp.getSubimage((320/20) * i, (144/9) * j, 320/20, 144/9).getScaledInstance(64 * GameController.SCALE, 70 * GameController.SCALE, Image.SCALE_DEFAULT);
+                Image scaledImage = temp.getSubimage((320/20) * i, (144/9) * j, 320/20, 144/9).getScaledInstance( pauseSizeWidth,  pauseSizeHeight, Image.SCALE_DEFAULT);
 
                 // Convert Image to BufferedImage
                 BufferedImage bufferedImage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -77,8 +82,8 @@ public class PauseMenu extends State implements Statemethods {
     @Override
     public void render(Graphics g) {
         g.setColor(new Color(127, 20, 20,200));
-        posX = (int) (((GameController.GAME_WIDTH - GameController.GAME_WIDTH / 2) / 2) + img[0][0].getWidth()/2.5);
-        posY = (int) (((GameController.GAME_HEIGHT - GameController.GAME_HEIGHT / 2) / 2) - img[0][0].getHeight()/2);
+        posX = (int) (((gameWidth - gameWidth / 2) / 2) + img[0][0].getWidth()/2.5);
+        posY = (int) (((gameHeight - gameHeight / 2) / 2) - img[0][0].getHeight()/2);
         g.drawImage(img[0][0],posX,posY,null);                               g.drawImage(img[1][0],posX+img[0][0].getWidth(),posY,null);                              g.drawImage(img[2][0],posX+img[0][0].getWidth()*2,posY,null);
         g.drawImage(img[0][1],posX,posY+img[0][0].getHeight(),null);      g.drawImage(img[1][1],posX+img[0][0].getWidth(),posY+img[0][0].getHeight(),null);     g.drawImage(img[2][1],posX+img[0][0].getWidth()*2,posY+img[0][0].getHeight(),null);
         g.drawImage(img[0][2],posX,posY+img[0][0].getHeight()*2,null);    g.drawImage(img[1][2],posX+img[0][0].getWidth(),posY+img[0][0].getHeight()*2,null);   g.drawImage(img[2][2],posX+img[0][0].getWidth()*2,posY+img[0][0].getHeight()*2,null);

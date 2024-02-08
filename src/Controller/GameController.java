@@ -27,6 +27,8 @@ public class GameController {
     private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     public static final int GAME_WIDTH = (int) screenSize.getWidth();
     public static final int GAME_HEIGHT = (int) screenSize.getHeight();
+//    public static final int GAME_WIDTH = (int) 1280;
+//    public static final int GAME_HEIGHT = (int) 1024;
 
     public GameController() {
         game = new Game();
