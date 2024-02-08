@@ -22,8 +22,13 @@ public class GameFrame {
     public void initFrame() {
         frame = new JFrame();
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.setVisible(true);
         frame.add(gamePanel);
+
+        // Make the frame full screen
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setUndecorated(true); // Optional: removes window decorations
+
+        frame.setVisible(true);
         frame.pack();
         frame.setLocationRelativeTo(null);
     }

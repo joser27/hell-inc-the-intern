@@ -10,16 +10,16 @@ import java.awt.event.MouseEvent;
 public class Playing extends State implements Statemethods{
     //Player 1
     private int p1xLvlOffset;
-    private int p1leftBorder = (int) (0.6 * GameController.GAME_WIDTH);
-    private int p1rightBorder = (int) (0.9 * GameController.GAME_WIDTH);
+    private int p1leftBorder = (int) (0.75 * GameController.GAME_WIDTH);
+    private int p1rightBorder = (int) (0.75 * GameController.GAME_WIDTH);
     private int p1lvlTilesWide = LevelLoader.world[0].length;
     private int p1maxTilesOffset = p1lvlTilesWide - GameController.TILES_IN_WIDTH;
     private int p1maxLvlOffsetX = p1maxTilesOffset * GameController.TILE_SIZE;
 
     //player 2
     private int p2xLvlOffset;
-    private int p2leftBorder = (int) (0.1 * GameController.GAME_WIDTH);
-    private int p2rightBorder = (int) (0.4 * GameController.GAME_WIDTH);
+    private int p2leftBorder = (int) (0.25 * GameController.GAME_WIDTH);
+    private int p2rightBorder = (int) (0.25 * GameController.GAME_WIDTH);
     private int p2lvlTilesWide = LevelLoader.world[0].length;
     private int p2maxTilesOffset = p2lvlTilesWide - GameController.TILES_IN_WIDTH;
     private int p2maxLvlOffsetX = p2maxTilesOffset * GameController.TILE_SIZE;
@@ -73,6 +73,7 @@ public class Playing extends State implements Statemethods{
         g.drawLine(GameController.GAME_WIDTH/2,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
 //        g.setColor(Color.BLACK);
 //        g.fillRect(0,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
+
         getGame().renderLeftScreen(g, p2xLvlOffset);
         getGame().renderRightScreen(g, p1xLvlOffset);
 

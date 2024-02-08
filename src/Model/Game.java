@@ -187,20 +187,49 @@ public class Game {
         int screenHeight = GameController.GAME_HEIGHT;
         int tileSize = GameController.TILE_SIZE;
 
-        g.setColor(new Color( 79,131,52,255));
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
 
 
-        levelLoader.render(g,xLvlOffset);
+        for (int i = 0; i < LevelLoader.world.length; i++) {
+            for (int j = 0; j < LevelLoader.world[i].length; j++) {
+                if ((j*GameController.TILE_SIZE) - xLvlOffset < GameController.GAME_WIDTH/2) {
+//                    g.setColor(Color.YELLOW);
+//                    g.fillRect(GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i,GameController.TILE_SIZE,GameController.TILE_SIZE);
+                    if (LevelLoader.world[i][j] == 0) {
+//                        g.setColor(Color.YELLOW);
+//                        g.fillRect(GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i,GameController.TILE_SIZE,GameController.TILE_SIZE);
+
+                        g.drawImage(levelLoader.getGrassImage(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
+
+                    }
+                    if (LevelLoader.world[i][j] == 3) {
+                        g.drawImage(levelLoader.getRock1Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
+                    }
+                    if (LevelLoader.world[i][j] == 4) {
+                        g.drawImage(levelLoader.getRock2Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
+                    }
+                }
+//                if (LevelLoader.world[i][j] == 0) {
+//                    g.drawImage(grassTile[1][3], GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
+//                }
+//                if (LevelLoader.world[i][j] == 3) {
+//                    g.drawImage(rockImg, GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
+//                }
+//                if (LevelLoader.world[i][j] == 4) {
+//                    g.drawImage(rockImg2, GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
+//                }
+            }
+        }
 
 
         player2.render(g, xLvlOffset);
-        if (player1.getxPos() - xLvlOffset < GameController.GAME_WIDTH / 2) {
+        if (player1.getxPos() - xLvlOffset < GameController.GAME_WIDTH / 2 ) {
             player1.render(g,xLvlOffset);
-
         }
         for (int i = 0; i < walls.length; i++) {
-            walls[i].render(g,xLvlOffset);
+            if (walls[i].getHitBox().x -xLvlOffset< GameController.GAME_WIDTH/2) {
+                walls[i].render(g, xLvlOffset);
+            }
         }
 
         g.setColor(Color.WHITE);
@@ -212,7 +241,7 @@ public class Game {
         int screenWidth = GameController.GAME_WIDTH;
         int screenHeight = GameController.GAME_HEIGHT;
         int tileSize = GameController.TILE_SIZE;
-        g.setColor(new Color( 79,131,52,255));
+
         g.fillRect(screenWidth / 2, 0, screenWidth / 2, screenHeight);
 
         //Bullets rending when offscreen
@@ -226,7 +255,7 @@ public class Game {
         }
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[i].length; j++) {
-                if ((j*GameController.TILE_SIZE) - xLvlOffset> GameController.GAME_WIDTH/2) {
+                if ((j*GameController.TILE_SIZE) - xLvlOffset> GameController.GAME_WIDTH/2 && (j*GameController.TILE_SIZE) - xLvlOffset< GameController.GAME_WIDTH) {
 //                    g.setColor(Color.YELLOW);
 //                    g.fillRect(GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i,GameController.TILE_SIZE,GameController.TILE_SIZE);
                     if (LevelLoader.world[i][j] == 0) {
@@ -255,12 +284,12 @@ public class Game {
             }
         }
         player1.render(g, xLvlOffset);
-        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2) {
+        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2 && player2.getxPos() - xLvlOffset < GameController.GAME_WIDTH) {
             player2.render(g, xLvlOffset);
         }
         for (int i = 0; i < walls.length; i++) {
             // Check if the wall is in the right half of the screen before rendering
-            if (walls[i].getHitBox().x -xLvlOffset> screenWidth / 2) {
+            if (walls[i].getHitBox().x -xLvlOffset> screenWidth / 2 && walls[i].getHitBox().x -xLvlOffset< screenWidth) {
                 walls[i].render(g, xLvlOffset);
             }
         }

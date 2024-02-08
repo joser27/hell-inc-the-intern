@@ -23,10 +23,12 @@ public class GameController {
     public static final int TILE_SIZE = originalTileSize * SCALE; //48x48 tile
     public static final int TILES_IN_WIDTH = 20;//27 original
     public static final int TILES_IN_HEIGHT = 11;//18 original
-    public static final int GAME_WIDTH = TILES_IN_WIDTH * TILE_SIZE;
-    public static final int GAME_HEIGHT = TILES_IN_HEIGHT * TILE_SIZE;
+//    public static final int GAME_WIDTH = TILES_IN_WIDTH * TILE_SIZE;
+//    public static final int GAME_HEIGHT = TILES_IN_HEIGHT * TILE_SIZE;
 
-
+    private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    public static final int GAME_WIDTH = (int) screenSize.getWidth();
+    public static final int GAME_HEIGHT = (int) screenSize.getHeight();
 
     public GameController() {
         game = new Game();
