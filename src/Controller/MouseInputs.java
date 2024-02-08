@@ -32,6 +32,8 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
         switch(Gamestate.state) {
             case MENU -> gameController.getMenuState().mouseReleased(e);
             case PLAYING -> gameController.getPlayingState().mouseReleased(e);
+            case PAUSEMENU -> gameController.getPauseMenu().mouseReleased(e);
+
         }
     }
 
@@ -55,6 +57,8 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
         switch(Gamestate.state) {
             case MENU -> gameController.getMenuState().mouseMoved(e);
             case PLAYING -> gameController.getPlayingState().mouseMoved(e);
+            case PAUSEMENU -> gameController.getPauseMenu().mouseMoved(e);
+
         }
     }
 }

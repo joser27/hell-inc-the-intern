@@ -56,6 +56,7 @@ public class GameController {
         switch(Gamestate.state){
             case MENU -> menuState.update();
             case GAMEOVER -> gameOverState.update();
+            case PAUSEMENU -> pauseMenu.update();
             case PLAYING -> {
                 playingState.update();
                 gameOverUpdate();
