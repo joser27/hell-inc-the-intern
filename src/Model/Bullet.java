@@ -57,8 +57,8 @@ public class Bullet {
         }
 
         // Apply rotation transformation and adjustment
-        g2d.rotate(rotationAngle, bullet.x + img.getWidth(null) / 2, bullet.y + img.getHeight(null) / 2);
-        g2d.drawImage(img, (bullet.x + adjustmentX) - xLvlOffset, bullet.y+adjustmentY- yLvlOffset, null);
+        g2d.rotate(rotationAngle, bullet.x-xLvlOffset + img.getWidth(null) / 2, bullet.y-yLvlOffset + img.getHeight(null) / 2);
+        g2d.drawImage(img, (bullet.x- xLvlOffset + adjustmentX), bullet.y- yLvlOffset+adjustmentY, null);
 
         // Dispose of the created Graphics2D object
         g2d.dispose();

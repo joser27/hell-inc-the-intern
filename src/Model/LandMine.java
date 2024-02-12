@@ -50,15 +50,15 @@ public class LandMine {
         landMineHitBox.x = (getLandMineHitBox().x/48) * 48;
         landMineHitBox.y = (getLandMineHitBox().y/48) * 48;
     }
-    public void render(Graphics g) {
-//        g.drawRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);
+    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
+        g.drawRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);
 
         if (exploded) {
-            g.drawImage(img[aniIndex][17], landMineHitBox.x-8, landMineHitBox.y, null);
-//            g.drawRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);
+            g.drawImage(img[aniIndex][17], landMineHitBox.x-8 - xLvlOffset, landMineHitBox.y- yLvlOffset, null);
+//            g.drawRect(landMineHitBox.x-xLvlOffset, landMineHitBox.y-yLvlOffset, landMineHitBox.width, landMineHitBox.height);
         } else {
             g.setColor(Color.BLACK);
-            g.fillOval(landMineHitBox.x, landMineHitBox.y+3, landMineHitBox.width, landMineHitBox.height / 2);
+            g.fillOval(landMineHitBox.x - xLvlOffset, landMineHitBox.y+3 - yLvlOffset, landMineHitBox.width, landMineHitBox.height / 2);
         }
     }
 

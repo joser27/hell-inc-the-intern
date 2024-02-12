@@ -187,7 +187,7 @@ public class Game {
         int screenWidth = GameController.GAME_WIDTH;
         int screenHeight = GameController.GAME_HEIGHT;
         int tileSize = GameController.TILE_SIZE;
-        //g.setColor(new Color( 79,131,52,255));
+        g.setColor(new Color( 79,131,52,255));
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
 
 
@@ -206,6 +206,7 @@ public class Game {
                 }
             }
         }
+
 
 
         player2.render(g, xLvlOffset, yLvlOffset);
@@ -227,7 +228,7 @@ public class Game {
         int screenWidth = GameController.GAME_WIDTH;
         int screenHeight = GameController.GAME_HEIGHT;
         int tileSize = GameController.TILE_SIZE;
-        //g.setColor(new Color( 79,131,52,255));
+        g.setColor(new Color( 79,131,52,255));
         g.fillRect(screenWidth / 2, 0, screenWidth / 2, screenHeight);
 
         //Bullets rending when offscreen
@@ -267,6 +268,15 @@ public class Game {
 //                if (LevelLoader.world[i][j] == 4) {
 //                    g.drawImage(rockImg2, GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
 //                }
+            }
+        }
+
+        if (player2.getLandMine().size()>0) {
+            ArrayList<LandMine> landMines = player2.getLandMine();
+            for (LandMine landMine : landMines) {
+                if (landMine.getLandMineHitBox().getX() -xLvlOffset > GameController.GAME_WIDTH/2) {
+                    landMine.render(g, xLvlOffset, yLvlOffset);
+                }
             }
         }
         player1.render(g, xLvlOffset,yLvlOffset);

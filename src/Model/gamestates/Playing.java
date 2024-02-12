@@ -107,6 +107,7 @@ public class Playing extends State implements Statemethods{
 
         getGame().renderLeftScreen(g, p2xLvlOffset, p2yLvlOffset);
         getGame().renderRightScreen(g, p1xLvlOffset, p1yLvlOffset);
+        g.setColor(Color.GREEN);
 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.BLACK);

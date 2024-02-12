@@ -13,14 +13,17 @@ public class LoadMenu extends State implements Statemethods {
     private BufferedImage startButtonImg;
     private Image scaledImg;
     private int x , y;
-    private int startPlacementX = 500, startPlacementY = 500;
+    private int startPlacementX = GameController.GAME_WIDTH/2, startPlacementY = GameController.GAME_HEIGHT/2;
     private int startButtonWidth = 900, startButtonHeight = 840;
+
 
 
     public LoadMenu(Game game) {
         super(game);
         startButtonImg = LoadSave.GetSpriteAtlas(LoadSave.START_BUTTON);
         scaledImg = startButtonImg.getScaledInstance(startButtonWidth / GameController.SCALE,startButtonHeight/ GameController.SCALE,Image.SCALE_DEFAULT);
+        startPlacementX = (GameController.GAME_WIDTH/2)-scaledImg.getWidth(null);
+        startPlacementY = (GameController.GAME_HEIGHT/2);
     }
 
     @Override
@@ -45,6 +48,11 @@ public class LoadMenu extends State implements Statemethods {
         // Draw the black text
         g.setColor(Color.BLACK);
         g.drawString("MENU", GameController.GAME_WIDTH / 2, 300);
+
+//        g.setColor(Color.BLACK);
+//        g.drawRect(GameController.GAME_WIDTH/2 - 200,200,200,200);
+//
+//        g.drawRect(GameController.GAME_WIDTH/2 - 200,400,200,200);
     }
 
     @Override

@@ -49,8 +49,8 @@ public class Player1 extends Player{
         attackHitBox = new Rectangle2D.Float(getxPos(),getyPos(),30,30);
     }
     public void respawn() {
-        setXHitBox(13*48);
-        setYHitBox(8*48);
+        setXHitBox(13*GameController.TILE_SIZE);
+        setYHitBox(8*GameController.TILE_SIZE);
         setHealth(100);
     }
     public void speedBoost() {

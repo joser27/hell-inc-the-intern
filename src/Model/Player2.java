@@ -53,8 +53,6 @@ public class Player2 extends Player{
         landMine = new ArrayList<>();
         bullets = new ArrayList<>();
 
-
-
     }
 
     public void updatePos() {
@@ -241,7 +239,7 @@ public class Player2 extends Player{
 
         if (landMine !=null) {
             for (LandMine mine : landMine) {
-                mine.render(g);
+                mine.render(g,xLvlOffset,yLvlOffset);
             }
         }
 
