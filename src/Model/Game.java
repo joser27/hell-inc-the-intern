@@ -30,7 +30,7 @@ public class Game {
     private LevelLoader levelLoader;
     private int yLvlOffset = -200;
     private int lvlMovingTick;
-
+    Medkit medkit;
 
     public Game() {
         levelLoader = new LevelLoader();
@@ -109,6 +109,10 @@ public class Game {
             }
         }
         timer++;
+        if (time == 599) {
+
+
+        }
         if (timer == 120) {
             timer = 0;
             setTime(1);

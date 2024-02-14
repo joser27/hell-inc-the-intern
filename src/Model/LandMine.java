@@ -1,5 +1,6 @@
 package Model;
 
+import Controller.GameController;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -45,10 +46,10 @@ public class LandMine {
 
     public void explode() {
         exploded = true;
-        landMineHitBox.width = 48;
-        landMineHitBox.height = 48;
-        landMineHitBox.x = (getLandMineHitBox().x/48) * 48;
-        landMineHitBox.y = (getLandMineHitBox().y/48) * 48;
+        landMineHitBox.width = GameController.SCALE;
+        landMineHitBox.height = GameController.SCALE;
+        landMineHitBox.x = (getLandMineHitBox().x/GameController.SCALE) * GameController.SCALE;
+        landMineHitBox.y = (getLandMineHitBox().y/GameController.SCALE) * GameController.SCALE;
     }
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
         g.drawRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);

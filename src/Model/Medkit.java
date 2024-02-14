@@ -1,5 +1,6 @@
 package Model;
 
+import Controller.GameController;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -10,8 +11,8 @@ public class Medkit implements Item {
     private int xPos, yPos;
     private Image img;
     private Rectangle2D.Float hitBox;
-    private int width = 16;
-    private int height = 16;
+    private int width = 3* GameController.SCALE;
+    private int height = 3*GameController.SCALE;
     private boolean active;
     public Medkit(int xPos, int yPos) {
         this.xPos = xPos;
