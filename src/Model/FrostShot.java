@@ -4,7 +4,7 @@ import Model.utilz.LoadSave;
 
 import java.awt.*;
 
-public class Bullet {
+public class FrostShot {
     private Rectangle bullet;
     private boolean vertical;
     private boolean horizontal;
@@ -14,7 +14,9 @@ public class Bullet {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     Image img;
-    public Bullet(int xPos, int yPos) {
+    public FrostShot(int xPos, int yPos) {
+
+        bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
         img = LoadSave.GetSpriteAtlas(LoadSave.ARROW_PROJECTILE).getScaledInstance(20,20,Image.SCALE_DEFAULT);
     }
