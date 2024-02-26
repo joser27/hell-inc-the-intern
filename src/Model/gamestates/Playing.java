@@ -141,46 +141,54 @@ public class Playing extends State implements Statemethods{
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
+        //Player 2
         if (keyCode == KeyEvent.VK_W) {
-            getGame().getPlayer1().setUp(true);
-        }
-        else if (keyCode == KeyEvent.VK_S) {
-            getGame().getPlayer1().setDown(true);
-        }
-        else if (keyCode == KeyEvent.VK_A) {
-            getGame().getPlayer1().setLeft(true);
-        }
-        else if (keyCode == KeyEvent.VK_D) {
-            getGame().getPlayer1().setRight(true);
-        }
-
-        if (keyCode == KeyEvent.VK_UP) {
             getGame().getPlayer2().setUp(true);
         }
-        else if (keyCode == KeyEvent.VK_DOWN) {
+        else if (keyCode == KeyEvent.VK_S) {
             getGame().getPlayer2().setDown(true);
         }
-        else if (keyCode == KeyEvent.VK_LEFT) {
+        else if (keyCode == KeyEvent.VK_A) {
             getGame().getPlayer2().setLeft(true);
         }
-        else if (keyCode == KeyEvent.VK_RIGHT) {
+        else if (keyCode == KeyEvent.VK_D) {
             getGame().getPlayer2().setRight(true);
+        }
+
+        //Player 1
+        if (keyCode == KeyEvent.VK_UP) {
+            getGame().getPlayer1().setUp(true);
+        }
+        else if (keyCode == KeyEvent.VK_DOWN) {
+            getGame().getPlayer1().setDown(true);
+        }
+        else if (keyCode == KeyEvent.VK_LEFT) {
+            getGame().getPlayer1().setLeft(true);
+        }
+        else if (keyCode == KeyEvent.VK_RIGHT) {
+            getGame().getPlayer1().setRight(true);
         }
 
 
         //Player 2 ability
-        if (keyCode == KeyEvent.VK_NUMPAD0) {
+        if (keyCode == KeyEvent.VK_F) {
             getGame().getPlayer2().placeMine();
         }
-        if (keyCode == KeyEvent.VK_NUMPAD1) {
-            getGame().getPlayer2().shoot();
+        if (keyCode == KeyEvent.VK_G) {
+            getGame().getPlayer2().shootFrostShot();
+        }
+        if (keyCode == KeyEvent.VK_H) {
+            getGame().getPlayer2().shootVolley();
+        }
+        if (keyCode == KeyEvent.VK_J) {
+            getGame().getPlayer2().shootEnchantedArrow();
         }
 
         //Player 1 ability
-        if (keyCode == KeyEvent.VK_SPACE) {
+        if (keyCode == KeyEvent.VK_NUMPAD1) {
             getGame().getPlayer1().speedBoost();
         }
-        if (keyCode == KeyEvent.VK_F) {
+        if (keyCode == KeyEvent.VK_NUMPAD2) {
             getGame().getPlayer1().attack();
         }
         if (keyCode == KeyEvent.VK_G) {
@@ -199,30 +207,30 @@ public class Playing extends State implements Statemethods{
 
         //Player 1
         if (keyCode == KeyEvent.VK_W) {
-            getGame().getPlayer1().setUp(false);
+            getGame().getPlayer2().setUp(false);
         }
         else if (keyCode == KeyEvent.VK_S) {
-            getGame().getPlayer1().setDown(false);
+            getGame().getPlayer2().setDown(false);
         }
         else if (keyCode == KeyEvent.VK_A) {
-            getGame().getPlayer1().setLeft(false);
+            getGame().getPlayer2().setLeft(false);
         }
         else if (keyCode == KeyEvent.VK_D) {
-            getGame().getPlayer1().setRight(false);
+            getGame().getPlayer2().setRight(false);
         }
 
         //Player 2
         if (keyCode == KeyEvent.VK_UP) {
-            getGame().getPlayer2().setUp(false);
+            getGame().getPlayer1().setUp(false);
         }
         else if (keyCode == KeyEvent.VK_DOWN) {
-            getGame().getPlayer2().setDown(false);
+            getGame().getPlayer1().setDown(false);
         }
         else if (keyCode == KeyEvent.VK_LEFT) {
-            getGame().getPlayer2().setLeft(false);
+            getGame().getPlayer1().setLeft(false);
         }
         else if (keyCode == KeyEvent.VK_RIGHT) {
-            getGame().getPlayer2().setRight(false);
+            getGame().getPlayer1().setRight(false);
         }
     }
 }

@@ -96,6 +96,21 @@ public class Game {
 //    }
 
     public void update() {
+
+        if (player2.getVolleyShot()!=null) {
+            player2.getVolleyShot().update();
+
+            if (player2.getVolleyShot().isBulletDecayed()) {
+                player2.removeVolleyShot();
+            }
+        }
+
+
+        if (getPlayer2().getxPos() / GameController.TILE_SIZE== 2 && getPlayer2().getyPos()/GameController.TILE_SIZE == 2) {
+            System.out.println("Player 2 on loc");
+        }
+
+
         Iterator<Medkit> iterator = activeMedkits.iterator();
         while (iterator.hasNext()) {
             Medkit medkit = iterator.next();
@@ -159,17 +174,17 @@ public class Game {
         }
     }
     private void bulletsUpdates() {
-        ArrayList<Bullet> bullets = player2.getBullets();
-        for (Bullet bullet : bullets) {
+        ArrayList<FrostShot> frostShots = player2.getBullets();
+        for (FrostShot frostShot : frostShots) {
             for (Wall wall : walls) {
-                if (bullet.getBulletHitBox().intersects(wall.getHitBox())) {
-                    bullet.setBulletDecayed(true);
+                if (frostShot.getBulletHitBox().intersects(wall.getHitBox())) {
+                    frostShot.setBulletDecayed(true);
                 }
             }
-            if (bullet.getBulletHitBox().intersects(getPlayer1().getHitBox())) {
+            if (frostShot.getBulletHitBox().intersects(getPlayer1().getHitBox())) {
                 getPlayer1().decrementHealth(-20);
 
-                bullet.setBulletDecayed(true);
+                frostShot.setBulletDecayed(true);
             }
             if (getPlayer1().getHealth()<=0) {
                 player1.respawn();
@@ -193,7 +208,8 @@ public class Game {
         int tileSize = GameController.TILE_SIZE;
         g.setColor(new Color( 79,131,52,255));
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
-
+        player2.renderMines(g,xLvlOffset,yLvlOffset);
+        player2.renderFrostShot(g,xLvlOffset,yLvlOffset);
 
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[i].length; j++) {
@@ -207,6 +223,10 @@ public class Game {
                     if (LevelLoader.world[i][j] == 4) {
                         g.drawImage(levelLoader.getRock2Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
                     }
+//                    if (LevelLoader.world[i][j] == 5) {
+//                        g.setColor(Color.PINK);
+//                        g.fillRect(GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, GameController.TILE_SIZE, GameController.TILE_SIZE);
+//                    }
                 }
             }
         }
@@ -214,9 +234,22 @@ public class Game {
 
 
         player2.render(g, xLvlOffset, yLvlOffset);
+
         if (player1.getxPos() - xLvlOffset < GameController.GAME_WIDTH / 2 ) {
             player1.render(g,xLvlOffset, yLvlOffset);
         }
+
+
+
+
+
+
+
+
+
+
+
+
         for (int i = 0; i < walls.length; i++) {
             if (walls[i].getHitBox().x -xLvlOffset< GameController.GAME_WIDTH/2) {
                 walls[i].render(g, xLvlOffset, yLvlOffset);
@@ -224,7 +257,7 @@ public class Game {
         }
 
         g.setColor(Color.WHITE);
-        g.drawString("Player2 coords: " + getPlayer2().getxPos()/48 + " " + getPlayer2().getyPos()/48 + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
+        g.drawString("Player2 coords: " + getPlayer2().getxPos() / GameController.TILE_SIZE + " " + getPlayer2().getyPos()/GameController.TILE_SIZE + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
 
     }
 
@@ -237,13 +270,24 @@ public class Game {
 
         //Bullets rending when offscreen
         if (player2.getBullets().size()>0) {
-            ArrayList<Bullet> bullets = player2.getBullets();
-            for (Bullet bullet : bullets) {
-                if (bullet.getBulletHitBox().getX()-xLvlOffset > GameController.GAME_WIDTH / 2) {
-                    bullet.render(g,xLvlOffset,yLvlOffset);
+            ArrayList<FrostShot> frostShots = player2.getBullets();
+            for (FrostShot frostShot : frostShots) {
+                if (frostShot.getBulletHitBox().getX()-xLvlOffset > GameController.GAME_WIDTH / 2) {
+                    frostShot.render(g,xLvlOffset,yLvlOffset);
                 }
             }
         }
+        //Mines rendering
+        if (player2.getLandMine().size()>0) {
+            ArrayList<LandMine> landMines = player2.getLandMine();
+            for (LandMine landMine : landMines) {
+                if (landMine.getLandMineHitBox().getX() -xLvlOffset > GameController.GAME_WIDTH/2) {
+                    landMine.render(g, xLvlOffset, yLvlOffset);
+                }
+            }
+        }
+
+
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[i].length; j++) {
                 if ((j*GameController.TILE_SIZE) - xLvlOffset> GameController.GAME_WIDTH/2 && (j*GameController.TILE_SIZE) - xLvlOffset< GameController.GAME_WIDTH) {
@@ -258,31 +302,23 @@ public class Game {
                     }
                     if (LevelLoader.world[i][j] == 3) {
                         g.drawImage(levelLoader.getRock1Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
-                }
+                    }
                     if (LevelLoader.world[i][j] == 4) {
                         g.drawImage(levelLoader.getRock2Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
                     }
                 }
-//                if (LevelLoader.world[i][j] == 0) {
-//                    g.drawImage(grassTile[1][3], GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
-//                }
-//                if (LevelLoader.world[i][j] == 3) {
-//                    g.drawImage(rockImg, GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
-//                }
-//                if (LevelLoader.world[i][j] == 4) {
-//                    g.drawImage(rockImg2, GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
-//                }
+
             }
         }
 
-        if (player2.getLandMine().size()>0) {
-            ArrayList<LandMine> landMines = player2.getLandMine();
-            for (LandMine landMine : landMines) {
-                if (landMine.getLandMineHitBox().getX() -xLvlOffset > GameController.GAME_WIDTH/2) {
-                    landMine.render(g, xLvlOffset, yLvlOffset);
-                }
-            }
-        }
+//        if (player2.getLandMine().size()>0) {
+//            ArrayList<LandMine> landMines = player2.getLandMine();
+//            for (LandMine landMine : landMines) {
+//                if (landMine.getLandMineHitBox().getX() -xLvlOffset > GameController.GAME_WIDTH/2) {
+//                    landMine.render(g, xLvlOffset, yLvlOffset);
+//                }
+//            }
+//        }
         player1.render(g, xLvlOffset,yLvlOffset);
         if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2 && player2.getxPos() - xLvlOffset < GameController.GAME_WIDTH) {
             player2.render(g, xLvlOffset, yLvlOffset);

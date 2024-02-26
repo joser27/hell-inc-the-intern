@@ -17,14 +17,17 @@ public class Player2 extends Player{
 
     private int landMineCount = 10;
     private ArrayList<LandMine> landMine;
-    private ArrayList<Bullet> bullets;
-    private boolean canShoot = false;
-    private int shootCD = 60;
-    private int shootTimer = 0;
-    private VectorGun vectorGun;
-    private Shotgun shotgun;
+    private ArrayList<FrostShot> frostShots;
+    private Volley volleyShot;
+    private EnchantedArrow enchantedArrow;
+    private boolean canShootFrostShot = false;
+    private int frostShotDelayShootTick;
+    private boolean canShootVolley = false;
+    private int volleyDelayShootTick;
+    private boolean canShootEnchantedArrow = false;
+    private int enchantedArrowDelayShootTick;
     private BufferedImage[][] img;
-    private int bowDelayShootTick;
+
 //    private String playerAction = RUNNING_DOWN;
 //    private int aniTick, aniIndex, aniSpeed = 15;
 //    private int actionOffset;
@@ -51,7 +54,7 @@ public class Player2 extends Player{
             }
         }
         landMine = new ArrayList<>();
-        bullets = new ArrayList<>();
+        frostShots = new ArrayList<>();
 
     }
 
@@ -90,58 +93,41 @@ public class Player2 extends Player{
         }
         game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
     }
-    public void update() {
+    public void updateFrostShot() {
 
-        updateAnimationTick();
-        updatePos();
+        if (canShootFrostShot) {
+            setShootDir();
 
-        if (canShoot) {
-            switch (getFacingDir()) {
-                case 0:
-                    playerAction = HUMAN_ATTACK_RIGHT;
-                    break;
-                case 1:
-                    playerAction = HUMAN_ATTACK_LEFT;
-                    break;
-                case 2:
-                    playerAction = HUMAN_ATTACK_UP;
-                    break;
-                case 3:
-                    playerAction = HUMAN_ATTACK_DOWN;
-                    break;
-            }
-
-            bowDelayShootTick++;
-            if (bowDelayShootTick > 50) {
-                canShoot = false;
-                bowDelayShootTick = 0;
+            frostShotDelayShootTick++;
+            if (frostShotDelayShootTick > 50) {
+                canShootFrostShot = false;
+                frostShotDelayShootTick = 0;
 
                 // 0 = right, 1 = left, 2 = up, 3 = down
-                Bullet bullet = new Bullet(getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                FrostShot frostShot = new FrostShot(getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
                 switch (getFacingDir()) {
                     case 0:
-                        bullet.setHorizontal(true);
-                        bullet.setBulletSpeed(bullet.getBulletSpeed());
+                        frostShot.setHorizontal(true);
+                        frostShot.setBulletSpeed(frostShot.getBulletSpeed());
                         break;
                     case 1:
-                        bullet.setHorizontal(true);
-                        bullet.setBulletSpeed(bullet.getBulletSpeed() * -1);
+                        frostShot.setHorizontal(true);
+                        frostShot.setBulletSpeed(frostShot.getBulletSpeed() * -1);
                         break;
                     case 2:
-                        bullet.setVertical(true);
-                        bullet.setBulletSpeed(bullet.getBulletSpeed() * -1);
+                        frostShot.setVertical(true);
+                        frostShot.setBulletSpeed(frostShot.getBulletSpeed() * -1);
                         break;
                     case 3:
-                        bullet.setVertical(true);
-                        bullet.setBulletSpeed(bullet.getBulletSpeed());
+                        frostShot.setVertical(true);
+                        frostShot.setBulletSpeed(frostShot.getBulletSpeed());
                         break;
                 }
-                bullets.add(bullet);
+                frostShots.add(frostShot);
             }
         }
-
-
-
+    }
+    public void updateLandMine() {
         if (landMine.size()>0) {
 
             Iterator<LandMine> iterator = landMine.iterator();
@@ -157,104 +143,173 @@ public class Player2 extends Player{
                 }
             }
         }
-        if (bullets!= null) {
-            Iterator<Bullet> iterator = bullets.iterator();
+    }
+    public void updateAndRemoveFrostShot() {
+        if (frostShots != null) {
+            Iterator<FrostShot> iterator = frostShots.iterator();
 
             while (iterator.hasNext()) {
-                Bullet bullet = iterator.next();
-                bullet.update();
+                FrostShot frostShot = iterator.next();
+                frostShot.update();
 
-                if (bullet.isBulletDecayed()) {
+                if (frostShot.isBulletDecayed()) {
                     iterator.remove();
                 }
             }
-
         }
-
     }
-//    private void updateAnimationTick() {
-//        aniTick++;
-//        if (aniTick >= aniSpeed) {
-//            aniTick=0;
-//            aniIndex++;
-//            int[] action = GetSpriteAmountColRow(playerAction);
-//            if (playerAction == 0) {// Running down
-//                actionOffset = action[1];
-//                System.out.println(action[1]);
-//            }
-//            if (aniIndex >= actionOffset+action[2]) {
-//                aniIndex = actionOffset;
-//            }
-//        }
-//    }
+    private void setShootDir() {
+        switch (getFacingDir()) {
+            case 0:
+                playerAction = HUMAN_ATTACK_RIGHT;
+                break;
+            case 1:
+                playerAction = HUMAN_ATTACK_LEFT;
+                break;
+            case 2:
+                playerAction = HUMAN_ATTACK_UP;
+                break;
+            case 3:
+                playerAction = HUMAN_ATTACK_DOWN;
+                break;
+        }
+    }
+    public void updateVolley() {
+        if (canShootVolley) {
+            setShootDir();
+            volleyDelayShootTick++;
+            if (volleyDelayShootTick > 150) {
+                canShootVolley = false;
+                volleyDelayShootTick = 0;
+                volleyShot = new Volley(getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                switch (getFacingDir()) {
+                    case 0:
+                        volleyShot.setHorizontal(true);
+                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
+                        break;
+                    case 1:
+                        volleyShot.setHorizontal(true);
+                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
+                        break;
+                    case 2:
+                        volleyShot.setVertical(true);
+                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
+                        break;
+                    case 3:
+                        volleyShot.setVertical(true);
+                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
+                        break;
+                }
+            }
+        }
+    }
+    public void updateEnchantedArrow() {
+        if (canShootEnchantedArrow) {
+            setShootDir();
+            enchantedArrowDelayShootTick++;
+            if (enchantedArrowDelayShootTick > 150) {
+                canShootEnchantedArrow = false;
+                enchantedArrowDelayShootTick = 0;
+                enchantedArrow = new EnchantedArrow(getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                switch (getFacingDir()) {
+                    case 0:
+                        enchantedArrow.setHorizontal(true);
+                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed());
+                        break;
+                    case 1:
+                        enchantedArrow.setHorizontal(true);
+                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed() * -1);
+                        break;
+                    case 2:
+                        enchantedArrow.setVertical(true);
+                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed() * -1);
+                        break;
+                    case 3:
+                        enchantedArrow.setVertical(true);
+                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed());
+                        break;
+                }
+            }
+        }
+        if (enchantedArrow!=null) {
+            enchantedArrow.update();
+            if (enchantedArrow.isBulletDecayed()) {
+                enchantedArrow = null;
+            }
+        }
+    }
+    public void update() {
+
+        updateAnimationTick();
+        updatePos();
+        updateFrostShot();
+        updateAndRemoveFrostShot();
+        updateLandMine();
+        updateVolley();
+        updateEnchantedArrow();
+    }
 
 
-//    @Override
-//    public void updatePos() {
-//
-//        int xSpeed = 0;
-//        int ySpeed = 0;
-//        isMoving=false;
-//        if (isLeft()) {
-//            xSpeed -= getMovementSpeed();
-//            setFacingDir(1);
-//            playerAction = RUNNING_LEFT;
-//            isMoving=true;
-//        }
-//        if (isRight()) {
-//            xSpeed += getMovementSpeed();
-//            setFacingDir(0);
-//            playerAction = RUNNING_RIGHT;
-//            isMoving=true;
-//        }
-//        if (isDown()) {
-//            ySpeed += getMovementSpeed();
-//            setFacingDir(3);
-//            playerAction = RUNNING_DOWN;
-//            isMoving=true;
-//        }
-//        if (isUp()) {
-//            ySpeed -= getMovementSpeed();
-//            setFacingDir(2);
-//            playerAction = RUNNING_UP;
-//            isMoving=true;
-//        }
-//        if (!isMoving) {
-//            playerAction = IDLE;
-//
-//        }
-//        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
-//    }
     public void placeMine() {
         if (landMineCount > 0) {
             landMineCount--;
             landMine.add(new LandMine(getxPos()+5, getyPos()+15, 10, 10));
         }
     }
-    public void shoot() {
-        canShoot = true;
+    public void shootFrostShot() {
+        canShootFrostShot = true;
     }
-
-    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-
+    public void shootVolley() {
+        canShootVolley = true;
+    }
+    public void shootEnchantedArrow() {
+        canShootEnchantedArrow = true;
+    }
+    public void renderMines(Graphics g, int xLvlOffset, int yLvlOffset) {
         if (landMine !=null) {
             for (LandMine mine : landMine) {
                 mine.render(g,xLvlOffset,yLvlOffset);
             }
         }
+    }
+    public void renderFrostShot(Graphics g, int xLvlOffset, int yLvlOffset) {
+        if (frostShots.size()  >0) {
+            Iterator<FrostShot> iterator = frostShots.iterator();
+            while (iterator.hasNext()) {
+                FrostShot frostShot = iterator.next();
+                frostShot.render(g,xLvlOffset,yLvlOffset);
+            }
+        }
+    }
 
-                        //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
+    public void renderVolley(Graphics g, int xLvlOffset, int yLvlOffset) {
+        if (frostShots.size()  >0) {
+            Iterator<FrostShot> iterator = frostShots.iterator();
+            while (iterator.hasNext()) {
+                FrostShot frostShot = iterator.next();
+                frostShot.render(g,xLvlOffset,yLvlOffset);
+            }
+        }
+    }
 
+
+    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
+
+
+        if (volleyShot!=null) {
+            volleyShot.render(g, xLvlOffset, yLvlOffset);
+        }
+        if (enchantedArrow!=null) {
+            enchantedArrow.render(g,xLvlOffset,yLvlOffset);
+        }
+
+
+
+        //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
         g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE- yLvlOffset,null);
 
 
-        if (bullets.size()  >0) {
-            Iterator<Bullet> iterator = bullets.iterator();
-            while (iterator.hasNext()) {
-                Bullet bullet = iterator.next();
-                bullet.render(g,xLvlOffset,yLvlOffset);
-                }
-        }
+
 
 
 
@@ -271,11 +326,18 @@ public class Player2 extends Player{
         return landMine;
     }
 
-    public ArrayList<Bullet> getBullets() {
-        return bullets;
+    public ArrayList<FrostShot> getBullets() {
+        return frostShots;
     }
 
     public int getLandMineCount() {
         return landMineCount;
+    }
+
+    public Volley getVolleyShot() {
+        return volleyShot;
+    }
+    public void removeVolleyShot() {
+        volleyShot = null;
     }
 }
