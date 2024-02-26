@@ -12,6 +12,10 @@ public class Constants {
         public static final String OGRE_ATTACK_UP = "ATTACK_UP";
         public static final String OGRE_ATTACK_LEFT = "ATTACK_LEFT";
         public static final String OGRE_ATTACK_RIGHT = "ATTACK_RIGHT";
+        public static final String OGRE_SMASH_DOWN = "OGRE-ATTACK_DOWN";
+        public static final String OGRE_SMASH_UP = "OGRE-ATTACK_UP";
+        public static final String OGRE_SMASH_LEFT = "OGRE-ATTACK_LEFT";
+        public static final String OGRE_SMASH_RIGHT = "OGRE-ATTACK_RIGHT";
         public static final String HUMAN_ATTACK_DOWN = "HUMAN-ATTACK_DOWN";
         public static final String HUMAN_ATTACK_UP = "HUMAN_ATTACK_UP";
         public static final String HUMAN_ATTACK_LEFT = "HUMAN_ATTACK_LEFT";
@@ -58,6 +62,19 @@ public class Constants {
                 case HUMAN_ATTACK_DOWN -> {
                     return new int[]{8,0,0};//COL,ROW,ANIMATION LENGTH
                 }
+                case OGRE_SMASH_DOWN -> {
+                    return new int[]{13,0,3};//COL,ROW,ANIMATION LENGTH
+                }
+                case OGRE_SMASH_UP -> {
+                    return new int[]{13,4,3};//COL,ROW,ANIMATION LENGTH
+                }
+                case OGRE_SMASH_LEFT -> {
+                    return new int[]{13,6,3};//COL,ROW,ANIMATION LENGTH
+                }
+                case OGRE_SMASH_RIGHT -> {
+                    return new int[]{13,2,3};//COL,ROW,ANIMATION LENGTH
+                }
+
 
 
                 default -> {

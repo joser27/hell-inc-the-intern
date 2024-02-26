@@ -20,12 +20,21 @@ public class Player1 extends Player{
     float prevMS = getMovementSpeed();
     boolean godMode = false;
     private BufferedImage[][] img;
+    //Normal attack
     private Rectangle2D.Float attackHitBox;
     private boolean attackingMelee  = false;
     private int attackingCD = 20;
     private int attackingTimer;
     private int attackingDuration;
     private boolean canAttack = true;
+
+    //Smash attack
+    private Rectangle2D.Float attackSmashHitBox;
+    private boolean attackingSmash  = false;
+    private int attackingSmashCD = 20;
+    private int attackingSmashTimer;
+    private int attackingSmashDuration;
+    private boolean canSmashAttack = true;
 
     public Player1(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
@@ -47,6 +56,7 @@ public class Player1 extends Player{
         }
 
         attackHitBox = new Rectangle2D.Float(getxPos(),getyPos(),30,30);
+        attackSmashHitBox = new Rectangle2D.Float(getxPos(),getyPos(),60,60);
     }
     public void respawn() {
         setXHitBox(13*GameController.TILE_SIZE);
@@ -61,7 +71,12 @@ public class Player1 extends Player{
             canAttack = false;
             attackingMelee = true;
         }
-
+    }
+    public void smashAttack() {
+        if (canSmashAttack) {
+            canSmashAttack = false;
+            attackingSmash = true;
+        }
     }
     public void updatePos() {
 
@@ -100,7 +115,64 @@ public class Player1 extends Player{
     }
     public void update() {
         updateAnimationTick();
+
+        aniTickSmash++;
+        if (aniTickSmash >= aniSpeedSmash) {
+            aniTickSmash = 0;
+            aniIndexSmash++;
+            animationCol = action[0];
+            animationRow = action[1];
+            animationFrames = action[2];
+            if (aniIndexSmash >= animationFrames) {
+                aniIndexSmash = actionOffset;
+            }
+        }
         updatePos();
+        attackingUpdate();
+        boostUpdate();
+        attackSmashUpdate();
+
+    }
+    private void attackSmashUpdate() {
+        attackingSmashTimer++;
+        if (attackingSmashTimer > attackingSmashCD) {
+            attackingSmashTimer=0;
+            canSmashAttack = true;
+        }
+        if (attackingSmash) {
+            attackingSmashDuration++;
+            if (attackingSmashDuration>200) {
+                attackingSmashDuration=0;
+                attackingSmashTimer=0;
+                attackingSmash=false;
+            }
+        }
+
+        switch(getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
+            case 0 -> {
+                attackSmashHitBox.x = getxPos()+10;
+                attackSmashHitBox.y = getyPos()-6;
+                if (attackingSmash)playerAction = OGRE_SMASH_RIGHT;
+
+            }
+            case 1 -> {
+                attackSmashHitBox.x = getxPos()-18;
+                attackSmashHitBox.y = getyPos()-6;
+                if (attackingSmash)playerAction = OGRE_SMASH_LEFT;
+            }
+            case 2 -> {
+                attackSmashHitBox.x = getxPos()-6;
+                attackSmashHitBox.y = getyPos()-15;
+                if (attackingSmash)playerAction = OGRE_SMASH_UP;
+            }
+            case 3 -> {
+                attackSmashHitBox.x = getxPos()-6;
+                attackSmashHitBox.y = getyPos()+4;
+                if (attackingSmash)playerAction = OGRE_SMASH_DOWN;
+            }
+        }
+    }
+    private void attackingUpdate() {
         attackingTimer++;
         if (attackingTimer > attackingCD) {
             attackingTimer=0;
@@ -115,31 +187,31 @@ public class Player1 extends Player{
             }
         }
 
-         switch(getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
-             case 0 -> {
-                 attackHitBox.x = getxPos()+10;
-                 attackHitBox.y = getyPos()-6;
-                 if (attackingMelee)playerAction = OGRE_ATTACK_RIGHT;
+        switch(getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
+            case 0 -> {
+                attackHitBox.x = getxPos()+10;
+                attackHitBox.y = getyPos()-6;
+                if (attackingMelee)playerAction = OGRE_ATTACK_RIGHT;
 
-             }
-             case 1 -> {
-                 attackHitBox.x = getxPos()-18;
-                 attackHitBox.y = getyPos()-6;
-                 if (attackingMelee)playerAction = OGRE_ATTACK_LEFT;
-             }
-             case 2 -> {
-                 attackHitBox.x = getxPos()-6;
-                 attackHitBox.y = getyPos()-15;
-                 if (attackingMelee)playerAction = OGRE_ATTACK_UP;
-             }
-             case 3 -> {
-                 attackHitBox.x = getxPos()-6;
-                 attackHitBox.y = getyPos()+4;
-                 if (attackingMelee)playerAction = OGRE_ATTACK_DOWN;
-             }
-         }
-
-
+            }
+            case 1 -> {
+                attackHitBox.x = getxPos()-18;
+                attackHitBox.y = getyPos()-6;
+                if (attackingMelee)playerAction = OGRE_ATTACK_LEFT;
+            }
+            case 2 -> {
+                attackHitBox.x = getxPos()-6;
+                attackHitBox.y = getyPos()-15;
+                if (attackingMelee)playerAction = OGRE_ATTACK_UP;
+            }
+            case 3 -> {
+                attackHitBox.x = getxPos()-6;
+                attackHitBox.y = getyPos()+4;
+                if (attackingMelee)playerAction = OGRE_ATTACK_DOWN;
+            }
+        }
+    }
+    public void boostUpdate() {
         if (speedBoostOn && speedBoostUsages>0) {
             godMode = true;
             speedBoostLimit++;
@@ -178,8 +250,16 @@ public class Player1 extends Player{
 
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
 
-            g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y, 30, 30);
+        g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y-yLvlOffset, 30, 30);
+        g.drawRect((int) attackSmashHitBox.x - xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, 60, 60);
+        if (attackingSmash) {
+            g.drawImage(img[aniIndexSmash + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
+        } else {
             g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
+
+        }
+
+
             //Hitbox
             // g.setColor(Color.YELLOW);
             // g.drawRect(getxPos() - xLvlOffset, getyPos(), (int) getHitBox().width, (int) getHitBox().height);
@@ -209,4 +289,6 @@ public class Player1 extends Player{
     public int getSpeedBoostUsages() {
         return speedBoostUsages;
     }
+
+
 }
