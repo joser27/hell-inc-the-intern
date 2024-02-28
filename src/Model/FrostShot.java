@@ -14,8 +14,8 @@ public class FrostShot extends Ability {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     Image img;
-    public FrostShot(int scale, int xPos, int yPos) {
-        super(scale,xPos,yPos);
+    public FrostShot(Player player,int scale, int xPos, int yPos) {
+        super(player,scale,xPos,yPos);
 
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
         img = LoadSave.GetSpriteAtlas(LoadSave.ARROW_PROJECTILE).getScaledInstance(20,20,Image.SCALE_DEFAULT);

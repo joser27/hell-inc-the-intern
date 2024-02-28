@@ -4,9 +4,11 @@ import java.awt.*;
 
 public abstract class Ability {
     int scale;
+    Player player;
 
-    public Ability(int scale, int xPos, int yPos) {
+    public Ability(Player player, int scale, int xPos, int yPos) {
         this.scale = scale;
+        this.player = player;
     }
 
     public abstract void update();

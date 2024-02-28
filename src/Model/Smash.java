@@ -10,8 +10,8 @@ public class Smash extends Ability {
     public int attackingSmashTimer;
     public int attackingSmashDuration;
     public boolean canSmashAttack = true;
-    public Smash(int scale,int xPos, int yPos) {
-        super(scale,xPos,yPos);
+    public Smash(Player player, int scale,int xPos, int yPos) {
+        super(player,scale,xPos,yPos);
         attackSmashHitBox = new Rectangle2D.Float(xPos,yPos,scale,scale);
 
     }

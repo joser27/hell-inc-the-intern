@@ -104,7 +104,7 @@ public class Player2 extends Player{
                 frostShotDelayShootTick = 0;
 
                 // 0 = right, 1 = left, 2 = up, 3 = down
-                FrostShot frostShot = new FrostShot(GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                FrostShot frostShot = new FrostShot(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
                 switch (getFacingDir()) {
                     case 0:
                         frostShot.setHorizontal(true);
@@ -210,7 +210,7 @@ public class Player2 extends Player{
             if (enchantedArrowDelayShootTick > 150) {
                 canShootEnchantedArrow = false;
                 enchantedArrowDelayShootTick = 0;
-                enchantedArrow = new EnchantedArrow(GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                enchantedArrow = new EnchantedArrow(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
                 switch (getFacingDir()) {
                     case 0:
                         enchantedArrow.setHorizontal(true);

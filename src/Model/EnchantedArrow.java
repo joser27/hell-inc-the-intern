@@ -13,8 +13,8 @@ public class EnchantedArrow extends Ability{
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
 
-    public EnchantedArrow(int scale, int xPos, int yPos) {
-        super(scale,xPos,yPos);
+    public EnchantedArrow(Player player,int scale, int xPos, int yPos) {
+        super(player,scale,xPos,yPos);
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
 
     }

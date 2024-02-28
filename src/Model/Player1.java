@@ -21,14 +21,9 @@ public class Player1 extends Player {
     boolean godMode = false;
     private BufferedImage[][] img;
     //Normal attack
-    private Rectangle2D.Float attackHitBox;
-    private boolean attackingMelee  = false;
-    private int attackingCD = 20;
-    private int attackingTimer;
-    private int attackingDuration;
-    private boolean canAttack = true;
+    private MeleeAttack meleeAttack;
     //Smash ability
-    Smash smash;
+    private Smash smash;
 
 
     public Player1(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
@@ -50,8 +45,9 @@ public class Player1 extends Player {
             }
         }
 
-        attackHitBox = new Rectangle2D.Float(getxPos(),getyPos(),30,30);
-        smash = new Smash(GameController.SCALE,getxPos(),getyPos());
+
+        meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos());
+        smash = new Smash(this,GameController.SCALE,getxPos(),getyPos());
 
     }
     public void respawn() {
@@ -63,9 +59,9 @@ public class Player1 extends Player {
         speedBoostOn = true;
     }
     public void attack() {
-        if (canAttack) {
-            canAttack = false;
-            attackingMelee = true;
+        if (meleeAttack.canAttack) {
+            meleeAttack.canAttack = false;
+            meleeAttack.attackingMelee = true;
         }
     }
     public void smashAttack() {
@@ -124,7 +120,8 @@ public class Player1 extends Player {
             }
         }
         updatePos();
-        attackingUpdate();
+//        attackingUpdate();
+        meleeAttack.update();
         boostUpdate();
         attackSmashUpdate();
 
@@ -168,45 +165,7 @@ public class Player1 extends Player {
             }
         }
     }
-    private void attackingUpdate() {
-        attackingTimer++;
-        if (attackingTimer > attackingCD) {
-            attackingTimer=0;
-            canAttack = true;
-        }
-        if (attackingMelee) {
-            attackingDuration++;
-            if (attackingDuration>150) {
-                attackingDuration=0;
-                attackingTimer=0;
-                attackingMelee=false;
-            }
-        }
 
-        switch(getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
-            case 0 -> {
-                attackHitBox.x = getxPos()+10;
-                attackHitBox.y = getyPos()-6;
-                if (attackingMelee)playerAction = OGRE_ATTACK_RIGHT;
-
-            }
-            case 1 -> {
-                attackHitBox.x = getxPos()-18;
-                attackHitBox.y = getyPos()-6;
-                if (attackingMelee)playerAction = OGRE_ATTACK_LEFT;
-            }
-            case 2 -> {
-                attackHitBox.x = getxPos()-6;
-                attackHitBox.y = getyPos()-15;
-                if (attackingMelee)playerAction = OGRE_ATTACK_UP;
-            }
-            case 3 -> {
-                attackHitBox.x = getxPos()-6;
-                attackHitBox.y = getyPos()+4;
-                if (attackingMelee)playerAction = OGRE_ATTACK_DOWN;
-            }
-        }
-    }
     public void boostUpdate() {
         if (speedBoostOn && speedBoostUsages>0) {
             godMode = true;
@@ -267,15 +226,15 @@ public class Player1 extends Player {
     }
 
     public Rectangle2D.Float getAttackHitBox() {
-        return attackHitBox;
+        return meleeAttack.attackHitBox;
     }
 
     public void setAttackHitBox(Rectangle2D.Float attackHitBox) {
-        this.attackHitBox = attackHitBox;
+        meleeAttack.attackHitBox = attackHitBox;
     }
 
     public boolean isAttackingMelee() {
-        return attackingMelee;
+        return meleeAttack.attackingMelee;
     }
 
     public void setGodMode(boolean godMode) {
@@ -285,6 +244,7 @@ public class Player1 extends Player {
     public int getSpeedBoostUsages() {
         return speedBoostUsages;
     }
+
 
 
 }
