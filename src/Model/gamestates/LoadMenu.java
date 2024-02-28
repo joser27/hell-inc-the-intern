@@ -15,7 +15,8 @@ public class LoadMenu extends State implements Statemethods {
     private int x , y;
     private int startPlacementX = GameController.GAME_WIDTH/2, startPlacementY = GameController.GAME_HEIGHT/2;
     private int startButtonWidth = 900, startButtonHeight = 840;
-
+    Font fontStart;
+    Font fontMenu;
 
 
     public LoadMenu(Game game) {
@@ -24,6 +25,8 @@ public class LoadMenu extends State implements Statemethods {
         scaledImg = startButtonImg.getScaledInstance(startButtonWidth / GameController.SCALE,startButtonHeight/ GameController.SCALE,Image.SCALE_DEFAULT);
         startPlacementX = (GameController.GAME_WIDTH/2)-scaledImg.getWidth(null);
         startPlacementY = (GameController.GAME_HEIGHT/2);
+        fontStart = LoadSave.GetFont(LoadSave.FONT_DEFAULT,60);
+        fontMenu = LoadSave.GetFont(LoadSave.FONT_DEFAULT,30);
     }
 
     @Override
@@ -42,12 +45,22 @@ public class LoadMenu extends State implements Statemethods {
     public void render(Graphics g) {
         // Draw the image at a specified position
 
-        g.drawImage(scaledImg, startPlacementX, startPlacementY, null);
 
+        g.setFont(fontStart);
+        g.setColor(new Color(51, 0, 111));
+        int screenWidth = GameController.GAME_WIDTH;
+        FontMetrics fontMetrics = g.getFontMetrics(fontStart);
+        int textStartWidth = fontMetrics.stringWidth("START");
+        int startStartX = (screenWidth - textStartWidth) / 2;
+        g.drawString("START", startStartX, 600);
 
         // Draw the black text
-        g.setColor(Color.BLACK);
-        g.drawString("MENU", GameController.GAME_WIDTH / 2, 300);
+        g.setFont(fontMenu);
+        g.setColor(Color.WHITE);
+        FontMetrics fontMetricsMenu = g.getFontMetrics(fontMenu);
+        int textMenuWidth = fontMetricsMenu.stringWidth("MENU");
+        int startMenuX = (screenWidth - textMenuWidth) / 2;
+        g.drawString("MENU", startMenuX, 250);
 
 //        g.setColor(Color.BLACK);
 //        g.drawRect(GameController.GAME_WIDTH/2 - 200,200,200,200);
