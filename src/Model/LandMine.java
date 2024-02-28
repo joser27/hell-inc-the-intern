@@ -52,7 +52,7 @@ public class LandMine {
         landMineHitBox.y = (getLandMineHitBox().y/GameController.SCALE) * GameController.SCALE;
     }
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-        g.drawRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);
+//        g.drawRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);
 
         if (exploded) {
             g.drawImage(img[aniIndex][17], landMineHitBox.x-8 - xLvlOffset, landMineHitBox.y- yLvlOffset, null);
