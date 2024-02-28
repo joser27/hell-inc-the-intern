@@ -4,7 +4,7 @@ import Model.utilz.LoadSave;
 
 import java.awt.*;
 
-public class FrostShot {
+public class FrostShot extends Ability {
     private Rectangle bullet;
     private boolean vertical;
     private boolean horizontal;
@@ -14,13 +14,14 @@ public class FrostShot {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     Image img;
-    public FrostShot(int xPos, int yPos) {
+    public FrostShot(int scale, int xPos, int yPos) {
+        super(scale,xPos,yPos);
 
-        bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
         img = LoadSave.GetSpriteAtlas(LoadSave.ARROW_PROJECTILE).getScaledInstance(20,20,Image.SCALE_DEFAULT);
     }
 
+    @Override
     public void update() {
         if (horizontal) {
             bullet.x += bulletSpeed;
@@ -33,6 +34,7 @@ public class FrostShot {
             bulletDecayed = true;
         }
     }
+    @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         Graphics2D g2d = (Graphics2D) g.create();
 

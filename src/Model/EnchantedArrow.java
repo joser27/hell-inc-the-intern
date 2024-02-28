@@ -3,7 +3,7 @@ package Model;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class EnchantedArrow {
+public class EnchantedArrow extends Ability{
     private Rectangle bullet;
     private boolean vertical;
     private boolean horizontal;
@@ -13,11 +13,13 @@ public class EnchantedArrow {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
 
-    public EnchantedArrow(int xPos, int yPos) {
+    public EnchantedArrow(int scale, int xPos, int yPos) {
+        super(scale,xPos,yPos);
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
 
     }
 
+    @Override
     public void update() {
 
         if (horizontal) {
@@ -33,10 +35,12 @@ public class EnchantedArrow {
         }
     }
 
+    @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         g.setColor(Color.CYAN);
         g.fillRect(bullet.x - xLvlOffset, bullet.y- yLvlOffset, bulletSize,bulletSize);
     }
+
 
     public Rectangle getBullet() {
         return bullet;

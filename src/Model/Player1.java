@@ -12,7 +12,7 @@ import static Model.utilz.Constants.PlayerConstants.*;
 /*
  * The Tagger
  */
-public class Player1 extends Player{
+public class Player1 extends Player {
 
     private int speedBoostLimit = 0;
     private int speedBoostUsages = 10;
@@ -27,14 +27,9 @@ public class Player1 extends Player{
     private int attackingTimer;
     private int attackingDuration;
     private boolean canAttack = true;
+    //Smash ability
+    Smash smash;
 
-    //Smash attack
-    private Rectangle2D.Float attackSmashHitBox;
-    private boolean attackingSmash  = false;
-    private int attackingSmashCD = 20;
-    private int attackingSmashTimer;
-    private int attackingSmashDuration;
-    private boolean canSmashAttack = true;
 
     public Player1(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
@@ -56,7 +51,8 @@ public class Player1 extends Player{
         }
 
         attackHitBox = new Rectangle2D.Float(getxPos(),getyPos(),30,30);
-        attackSmashHitBox = new Rectangle2D.Float(getxPos(),getyPos(),60,60);
+        smash = new Smash(GameController.SCALE,getxPos(),getyPos());
+
     }
     public void respawn() {
         setXHitBox(13*GameController.TILE_SIZE);
@@ -73,9 +69,9 @@ public class Player1 extends Player{
         }
     }
     public void smashAttack() {
-        if (canSmashAttack) {
-            canSmashAttack = false;
-            attackingSmash = true;
+        if (smash.canSmashAttack) {
+            smash.canSmashAttack = false;
+            smash.attackingSmash = true;
         }
     }
     public void updatePos() {
@@ -134,41 +130,41 @@ public class Player1 extends Player{
 
     }
     private void attackSmashUpdate() {
-        attackingSmashTimer++;
-        if (attackingSmashTimer > attackingSmashCD) {
-            attackingSmashTimer=0;
-            canSmashAttack = true;
+        smash.attackingSmashTimer++;
+        if (smash.attackingSmashTimer > smash.attackingSmashCD) {
+            smash.attackingSmashTimer=0;
+            smash.canSmashAttack = true;
         }
-        if (attackingSmash) {
-            attackingSmashDuration++;
-            if (attackingSmashDuration>200) {
-                attackingSmashDuration=0;
-                attackingSmashTimer=0;
-                attackingSmash=false;
+        if (smash.attackingSmash) {
+            smash.attackingSmashDuration++;
+            if (smash.attackingSmashDuration>200) {
+                smash.attackingSmashDuration=0;
+                smash.attackingSmashTimer=0;
+                smash.attackingSmash=false;
             }
         }
 
         switch(getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
             case 0 -> {
-                attackSmashHitBox.x = getxPos()+10;
-                attackSmashHitBox.y = getyPos()-6;
-                if (attackingSmash)playerAction = OGRE_SMASH_RIGHT;
+                smash.attackSmashHitBox.x = getxPos()+10;
+                smash.attackSmashHitBox.y = getyPos()-6;
+                if (smash.attackingSmash)playerAction = OGRE_SMASH_RIGHT;
 
             }
             case 1 -> {
-                attackSmashHitBox.x = getxPos()-18;
-                attackSmashHitBox.y = getyPos()-6;
-                if (attackingSmash)playerAction = OGRE_SMASH_LEFT;
+                smash.attackSmashHitBox.x = getxPos()-18;
+                smash.attackSmashHitBox.y = getyPos()-6;
+                if (smash.attackingSmash)playerAction = OGRE_SMASH_LEFT;
             }
             case 2 -> {
-                attackSmashHitBox.x = getxPos()-6;
-                attackSmashHitBox.y = getyPos()-15;
-                if (attackingSmash)playerAction = OGRE_SMASH_UP;
+                smash.attackSmashHitBox.x = getxPos()-6;
+                smash.attackSmashHitBox.y = getyPos()-15;
+                if (smash.attackingSmash)playerAction = OGRE_SMASH_UP;
             }
             case 3 -> {
-                attackSmashHitBox.x = getxPos()-6;
-                attackSmashHitBox.y = getyPos()+4;
-                if (attackingSmash)playerAction = OGRE_SMASH_DOWN;
+                smash.attackSmashHitBox.x = getxPos()-6;
+                smash.attackSmashHitBox.y = getyPos()+4;
+                if (smash.attackingSmash)playerAction = OGRE_SMASH_DOWN;
             }
         }
     }
@@ -252,7 +248,7 @@ public class Player1 extends Player{
 
 //        g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y-yLvlOffset, 30, 30);
 //        g.drawRect((int) attackSmashHitBox.x - xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, 60, 60);
-        if (attackingSmash) {
+        if (smash.attackingSmash) {
             g.drawImage(img[aniIndexSmash + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
         } else {
             g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
