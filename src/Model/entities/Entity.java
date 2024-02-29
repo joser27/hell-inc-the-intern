@@ -1,4 +1,6 @@
-package Model;
+package Model.entities;
+
+import Model.Game;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -11,6 +13,7 @@ public abstract class Entity {
     private int yPos, xPos;
     private int width, height;
     private float movementSpeed;
+    private final float baseMovementSpeed;
     private Rectangle2D.Float hitBox;
     private Game game;
     private int health = 100;
@@ -23,7 +26,7 @@ public abstract class Entity {
     protected int aniTickSmash, aniIndexSmash, aniSpeedSmash = 110;
     protected int actionOffset;
     protected int animationCol, animationRow, animationFrames;
-    protected String playerAction = RUNNING_DOWN;
+    public String playerAction = RUNNING_DOWN;
     protected String lastPlayerAction = "";
     protected boolean isMoving = false;
 
@@ -34,6 +37,7 @@ public abstract class Entity {
         this.height = height;
         this.movementSpeed = movementSpeed;
         this.game = game;
+        baseMovementSpeed = movementSpeed;
         initHitBox();
     }
 
@@ -111,7 +115,9 @@ public abstract class Entity {
         this.movementSpeed = movementSpeed;
     }
 
-
+    public float getBaseMovementSpeed() {
+        return baseMovementSpeed;
+    }
 
     public int getyPos() {
         return (int) hitBox.y;
@@ -190,7 +196,7 @@ public abstract class Entity {
         this.height = height;
     }
 
-    public int getFacingDir() {
+    public int getFacingDir() {//0 = right, 1 = left, 2 = up, 3 = down
         return facingDir;
     }
 

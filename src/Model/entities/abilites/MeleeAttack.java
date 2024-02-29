@@ -1,4 +1,7 @@
-package Model;
+package Model.entities.abilites;
+
+import Model.entities.Player;
+import Model.entities.abilites.Ability;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -6,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 import static Model.utilz.Constants.PlayerConstants.*;
 import static Model.utilz.Constants.PlayerConstants.OGRE_ATTACK_DOWN;
 
-public class MeleeAttack extends Ability{
+public class MeleeAttack extends Ability {
     public Rectangle2D.Float attackHitBox ;
     public boolean attackingMelee  = false;
     public int attackingCD = 20;
@@ -66,5 +69,12 @@ public class MeleeAttack extends Ability{
     @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
 
+    }
+
+    public void attack() {
+        if (canAttack) {
+            canAttack = false;
+            attackingMelee = true;
+        }
     }
 }

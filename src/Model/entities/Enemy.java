@@ -1,12 +1,11 @@
-package Model;
+package Model.entities;
 
-import Controller.GameController;
+import Model.Game;
+import Model.entities.Entity;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 
-public class Enemy extends Entity{
+public class Enemy extends Entity {
 
     private Game game;
     private int gameFreezeFrames = 30;

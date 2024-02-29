@@ -1,6 +1,9 @@
 package Model;
 
 import Controller.GameController;
+import Model.entities.*;
+import Model.entities.abilites.FrostShot;
+import Model.entities.abilites.LandMine;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -96,6 +99,12 @@ public class Game {
 //    }
 
     public void update() {
+
+        if (player1.getSmash().getAppliedDamage()>1) {
+            if (player1.getSmash().getAttackSmashHitBox().intersects(player2.getHitBox())) {
+                player2.decrementHealth(-(player1.getSmash().getAppliedDamage()));
+            }
+        }
 
         if (player2.getVolleyShot()!=null) {
             player2.getVolleyShot().update();

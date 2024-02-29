@@ -192,7 +192,7 @@ public class Playing extends State implements Statemethods{
             getGame().getPlayer1().attack();
         }
         if (keyCode == KeyEvent.VK_NUMPAD3) {
-            getGame().getPlayer1().smashAttack();
+            getGame().getPlayer1().smashAttack(true);
         }
 
         //Pause menu
@@ -217,6 +217,9 @@ public class Playing extends State implements Statemethods{
         }
         else if (keyCode == KeyEvent.VK_D) {
             getGame().getPlayer2().setRight(false);
+        }
+        if (keyCode == KeyEvent.VK_NUMPAD3) {
+            getGame().getPlayer1().smashAttack(false);
         }
 
         //Player 2

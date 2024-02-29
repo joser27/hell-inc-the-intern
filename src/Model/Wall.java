@@ -1,10 +1,10 @@
 package Model;
 
 import Controller.GameController;
+import Model.entities.Entity;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class Wall extends Entity {
 

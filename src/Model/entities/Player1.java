@@ -1,6 +1,9 @@
-package Model;
+package Model.entities;
 
 import Controller.GameController;
+import Model.Game;
+import Model.entities.abilites.MeleeAttack;
+import Model.entities.abilites.Smash;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -59,16 +62,11 @@ public class Player1 extends Player {
         speedBoostOn = true;
     }
     public void attack() {
-        if (meleeAttack.canAttack) {
-            meleeAttack.canAttack = false;
-            meleeAttack.attackingMelee = true;
-        }
+        meleeAttack.attack();
     }
-    public void smashAttack() {
-        if (smash.canSmashAttack) {
-            smash.canSmashAttack = false;
-            smash.attackingSmash = true;
-        }
+    public void smashAttack(boolean isHolding) {
+        smash.smashAttack(isHolding);
+
     }
     public void updatePos() {
 
@@ -108,63 +106,15 @@ public class Player1 extends Player {
     public void update() {
         updateAnimationTick();
 
-        aniTickSmash++;
-        if (aniTickSmash >= aniSpeedSmash) {
-            aniTickSmash = 0;
-            aniIndexSmash++;
-            animationCol = action[0];
-            animationRow = action[1];
-            animationFrames = action[2];
-            if (aniIndexSmash >= animationFrames) {
-                aniIndexSmash = actionOffset;
-            }
-        }
+
         updatePos();
 //        attackingUpdate();
         meleeAttack.update();
+        smash.update();
         boostUpdate();
-        attackSmashUpdate();
 
     }
-    private void attackSmashUpdate() {
-        smash.attackingSmashTimer++;
-        if (smash.attackingSmashTimer > smash.attackingSmashCD) {
-            smash.attackingSmashTimer=0;
-            smash.canSmashAttack = true;
-        }
-        if (smash.attackingSmash) {
-            smash.attackingSmashDuration++;
-            if (smash.attackingSmashDuration>200) {
-                smash.attackingSmashDuration=0;
-                smash.attackingSmashTimer=0;
-                smash.attackingSmash=false;
-            }
-        }
 
-        switch(getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
-            case 0 -> {
-                smash.attackSmashHitBox.x = getxPos()+10;
-                smash.attackSmashHitBox.y = getyPos()-6;
-                if (smash.attackingSmash)playerAction = OGRE_SMASH_RIGHT;
-
-            }
-            case 1 -> {
-                smash.attackSmashHitBox.x = getxPos()-18;
-                smash.attackSmashHitBox.y = getyPos()-6;
-                if (smash.attackingSmash)playerAction = OGRE_SMASH_LEFT;
-            }
-            case 2 -> {
-                smash.attackSmashHitBox.x = getxPos()-6;
-                smash.attackSmashHitBox.y = getyPos()-15;
-                if (smash.attackingSmash)playerAction = OGRE_SMASH_UP;
-            }
-            case 3 -> {
-                smash.attackSmashHitBox.x = getxPos()-6;
-                smash.attackSmashHitBox.y = getyPos()+4;
-                if (smash.attackingSmash)playerAction = OGRE_SMASH_DOWN;
-            }
-        }
-    }
 
     public void boostUpdate() {
         if (speedBoostOn && speedBoostUsages>0) {
@@ -181,44 +131,28 @@ public class Player1 extends Player {
             }
         }
     }
-//    @Override
-//    public void updatePos() {
-//        int xSpeed = 0;
-//        int ySpeed = 0;
-//        if (isLeft()) {
-//            xSpeed -= getMovementSpeed();
-//        }
-//        if (isRight()) {
-//            xSpeed += getMovementSpeed();
-//        }
-//        if (isDown()) {
-//            ySpeed += getMovementSpeed();
-//
-//        }
-//        if (isUp()) {
-//            ySpeed -= getMovementSpeed();
-//        }
-//        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
-//    }
-
-
 
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-
+        meleeAttack.render(g,xLvlOffset,yLvlOffset);
+        smash.render(g,xLvlOffset,yLvlOffset);
 //        g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y-yLvlOffset, 30, 30);
 //        g.drawRect((int) attackSmashHitBox.x - xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, 60, 60);
-        if (smash.attackingSmash) {
-            g.drawImage(img[aniIndexSmash + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
-        } else {
-            g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
+        g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
 
-        }
+//        if (smash.attackingSmash) {
+//            g.drawImage(img[aniIndexSmash + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
+//        } else {
+//        }
 
 
             //Hitbox
             // g.setColor(Color.YELLOW);
             // g.drawRect(getxPos() - xLvlOffset, getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
+    }
+
+    public Smash getSmash() {
+        return smash;
     }
 
     public boolean isGodMode() {

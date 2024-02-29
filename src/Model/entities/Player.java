@@ -1,8 +1,8 @@
-package Model;
+package Model.entities;
 
-import java.awt.*;
-
-import static Model.utilz.Constants.PlayerConstants.*;
+import Model.Game;
+import Model.LevelLoader;
+import Model.entities.Entity;
 
 
 public abstract class Player extends Entity {

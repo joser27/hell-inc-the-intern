@@ -1,4 +1,4 @@
-package Model;
+package Model.entities.abilites;
 
 import Controller.GameController;
 import Model.utilz.LoadSave;

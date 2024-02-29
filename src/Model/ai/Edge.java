@@ -1,4 +1,4 @@
-package Model;
+package Model.ai;
 
 public class Edge {
     private Node source;

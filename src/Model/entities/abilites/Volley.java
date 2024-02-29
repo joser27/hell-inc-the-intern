@@ -1,32 +1,37 @@
-package Model;
+package Model.entities.abilites;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-public class EnchantedArrow extends Ability{
-    private Rectangle bullet;
+public class Volley {
+    private ArrayList<Rectangle> bullet;
     private boolean vertical;
     private boolean horizontal;
     private int bulletSpeed = 6;
-    private int bulletSize = 60;
+    private int bulletSize = 10;
     private int bulletDistance = 75;
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
 
-    public EnchantedArrow(Player player,int scale, int xPos, int yPos) {
-        super(player,scale,xPos,yPos);
-        bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
+    public Volley(int xPos, int yPos) {
+        bullet = new ArrayList<>();
+        bullet.add(new Rectangle(xPos-35,yPos-35,bulletSize,bulletSize));
+        bullet.add(new Rectangle(xPos,yPos,bulletSize,bulletSize));
+        bullet.add(new Rectangle(xPos+35,yPos+35,bulletSize,bulletSize));
 
     }
 
-    @Override
     public void update() {
 
         if (horizontal) {
-            bullet.x += bulletSpeed;
+            for (Rectangle bullets : bullet) {
+                bullets.x += bulletSpeed;
+            }
 
         } else if (vertical) {
-            bullet.y += bulletSpeed;
+            for (Rectangle bullets : bullet) {
+                bullets.y += bulletSpeed;
+            }
         }
 
         bulletUpTime++;
@@ -35,19 +40,13 @@ public class EnchantedArrow extends Ability{
         }
     }
 
-    @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         g.setColor(Color.CYAN);
-        g.fillRect(bullet.x - xLvlOffset, bullet.y- yLvlOffset, bulletSize,bulletSize);
-    }
+        for (Rectangle bullets : bullet) {
+            g.fillRect(bullets.x - xLvlOffset, bullets.y- yLvlOffset, bulletSize,bulletSize);
+        }
 
 
-    public Rectangle getBullet() {
-        return bullet;
-    }
-
-    public void setBullet(Rectangle bullet) {
-        this.bullet = bullet;
     }
 
     public boolean isVertical() {
@@ -74,35 +73,15 @@ public class EnchantedArrow extends Ability{
         this.bulletSpeed = bulletSpeed;
     }
 
-    public int getBulletSize() {
-        return bulletSize;
-    }
-
-    public void setBulletSize(int bulletSize) {
-        this.bulletSize = bulletSize;
-    }
-
-    public int getBulletDistance() {
-        return bulletDistance;
-    }
-
-    public void setBulletDistance(int bulletDistance) {
-        this.bulletDistance = bulletDistance;
-    }
-
-    public int getBulletUpTime() {
-        return bulletUpTime;
-    }
-
-    public void setBulletUpTime(int bulletUpTime) {
-        this.bulletUpTime = bulletUpTime;
-    }
-
     public boolean isBulletDecayed() {
         return bulletDecayed;
     }
 
     public void setBulletDecayed(boolean bulletDecayed) {
         this.bulletDecayed = bulletDecayed;
+    }
+
+    public ArrayList<Rectangle> getBullet() {
+        return bullet;
     }
 }

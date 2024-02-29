@@ -1,6 +1,11 @@
-package Model;
+package Model.entities;
 
 import Controller.GameController;
+import Model.*;
+import Model.entities.abilites.EnchantedArrow;
+import Model.entities.abilites.FrostShot;
+import Model.entities.abilites.LandMine;
+import Model.entities.abilites.Volley;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -13,7 +18,7 @@ import static Model.utilz.Constants.PlayerConstants.*;
 /*
  * The Runner
  */
-public class Player2 extends Player{
+public class Player2 extends Player {
 
     private int landMineCount = 10;
     private ArrayList<LandMine> landMine;

@@ -1,4 +1,4 @@
-package Model;
+package Model.ai;
 
 import java.awt.*;
 import java.util.ArrayList;

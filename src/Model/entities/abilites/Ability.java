@@ -1,4 +1,6 @@
-package Model;
+package Model.entities.abilites;
+
+import Model.entities.Player;
 
 import java.awt.*;
 

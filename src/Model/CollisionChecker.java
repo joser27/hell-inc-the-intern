@@ -1,6 +1,7 @@
 package Model;
 
-import java.awt.*;
+import Model.entities.Entity;
+
 import java.awt.geom.Rectangle2D;
 
 public class CollisionChecker {
