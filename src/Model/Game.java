@@ -100,9 +100,10 @@ public class Game {
 
     public void update() {
 
-        if (player1.getSmash().getAppliedDamage()>1) {
+        // Smash
+        if (player1.getSmash().isJustFinishedCharging()) {
             if (player1.getSmash().getAttackSmashHitBox().intersects(player2.getHitBox())) {
-                player2.decrementHealth(-(player1.getSmash().getAppliedDamage()));
+                player2.decrementHealth((int) -(player1.getSmash().getAppliedDamage()));
             }
         }
 
@@ -166,11 +167,6 @@ public class Game {
     }
 
     private void entitiesUpdates() {
-//        lvlMovingTick++;
-//        if (lvlMovingTick>10) {
-//            lvlMovingTick=0;
-//            xLvlOffset++;
-//        }
         player1.update();
         player2.update();
 
@@ -232,32 +228,15 @@ public class Game {
                     if (LevelLoader.world[i][j] == 4) {
                         g.drawImage(levelLoader.getRock2Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
                     }
-//                    if (LevelLoader.world[i][j] == 5) {
-//                        g.setColor(Color.PINK);
-//                        g.fillRect(GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, GameController.TILE_SIZE, GameController.TILE_SIZE);
-//                    }
                 }
             }
         }
-
-
 
         player2.render(g, xLvlOffset, yLvlOffset);
 
         if (player1.getxPos() - xLvlOffset < GameController.GAME_WIDTH / 2 ) {
             player1.render(g,xLvlOffset, yLvlOffset);
         }
-
-
-
-
-
-
-
-
-
-
-
 
         for (int i = 0; i < walls.length; i++) {
             if (walls[i].getHitBox().x -xLvlOffset< GameController.GAME_WIDTH/2) {
@@ -320,14 +299,7 @@ public class Game {
             }
         }
 
-//        if (player2.getLandMine().size()>0) {
-//            ArrayList<LandMine> landMines = player2.getLandMine();
-//            for (LandMine landMine : landMines) {
-//                if (landMine.getLandMineHitBox().getX() -xLvlOffset > GameController.GAME_WIDTH/2) {
-//                    landMine.render(g, xLvlOffset, yLvlOffset);
-//                }
-//            }
-//        }
+
         player1.render(g, xLvlOffset,yLvlOffset);
         if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2 && player2.getxPos() - xLvlOffset < GameController.GAME_WIDTH) {
             player2.render(g, xLvlOffset, yLvlOffset);
@@ -344,45 +316,6 @@ public class Game {
                 getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
 
     }
-
-
-
-//    public void render(Graphics g, int xLvlOffset) {
-//        Iterator<Medkit> iterator = activeMedkits.iterator();
-//        while (iterator.hasNext()) {
-//            Medkit medkit = iterator.next();
-//            if (medkit.isActive()) {
-//                medkit.render(g);
-//            }
-//        }
-//        levelLoader.render(g,xLvlOffset);
-//        entitiesRender(g,xLvlOffset);
-//        timerRender(g);
-//        g.setColor(Color.WHITE);
-//        Font font = new Font("Arial", Font.BOLD, 15);
-//        g.setFont(font);
-//        g.drawString("Player1 coords: " + getPlayer1().getxPos()/GameController.TILE_SIZE + " " + getPlayer1().getyPos()/GameController.TILE_SIZE + ", Boosts: " + getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
-//        g.drawString("Player2 coords: " + getPlayer2().getxPos()/48 + " " + getPlayer2().getyPos()/48 + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
-//    }
-//    private void entitiesRender(Graphics g, int xLvlOffset) {
-//        player2.render(g,xLvlOffset);
-//        player1.render(g,xLvlOffset);
-//
-//        for (int i = 0; i < walls.length; i++) {
-//            walls[i].render(g,xLvlOffset,yLvlOffset);
-//        }
-//        for (int i = 0; i < enemy.length; i++) {
-//            enemy[i].render(g);
-//        }
-//    }
-//    private void timerRender(Graphics g) {
-//        g.setColor(Color.WHITE);
-//        g.fillRect(575,10,150,50);
-//        g.setColor(Color.RED);
-//        Font font = new Font("Arial", Font.BOLD, 20);
-//        g.setFont(font);
-//        g.drawString("Time: " + time, 575, 40);
-//    }
 
 
 

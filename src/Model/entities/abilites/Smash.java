@@ -25,6 +25,7 @@ public class Smash extends Ability {
     private int chargingTime;
     private boolean justFinishedCharging = false;
     private int justFinishedChargingTick;
+    int appliedDamageTick;
 
     public Smash(Player player, int scale, int xPos, int yPos) {
         super(player,scale,xPos,yPos);
@@ -72,8 +73,23 @@ public class Smash extends Ability {
     @Override
     public void update() {
         if (chargingAttack) {
+            player.setMovementSpeed(player.getBaseMovementSpeed()/3);
             chargeAttackTick++;
-            appliedDamage = chargeAttackTick;
+            if (chargeAttackTick > 20) {
+                appliedDamageTick++;
+                if (appliedDamage < 50) {
+                    appliedDamage = (int) Math.pow(1.3, appliedDamageTick);
+                }
+                chargeAttackTick = 0;
+                System.out.println(appliedDamage);
+            }
+
+
+        } else if (appliedDamage>1) {
+            appliedDamageTick=0;
+            appliedDamage=0;
+            justFinishedCharging = true;
+            player.setMovementSpeed(player.getBaseMovementSpeed());
         }
 
         if (justFinishedCharging) {
@@ -85,35 +101,23 @@ public class Smash extends Ability {
                 justFinishedChargingTick=0;
                 justFinishedCharging=false;
             }
-            System.out.println("Just finished charging!");
+//            System.out.println("Just finished charging");
         }
-//        if (chargingAttack) {
-//            chargingTime++;
-//            player.setMovementSpeed(player.getBaseMovementSpeed() / 3);
-//            if (chargingTime>100) {
-//
-//                chargeAttackTick++;
-//            }
-//            //Apply the dmg according to the tick
-//        }
-//        else {
-//            if (chargeAttackTick>1) {
-//                appliedDamage = chargeAttackTick;
-//                chargeAttackTick = 0;
-//
-//                System.out.println("Damage applied: " + appliedDamage);
-//            } else {
-//                appliedDamage=0;
-//            }
-//            player.setMovementSpeed(player.getBaseMovementSpeed());
-//        }
+
         attackSmashUpdate();
     }
 
     @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         if (chargingAttack) {
-            g.setColor(new Color(200,100,100,60));
+            // Hover count
+            g.setColor(new Color(230,60,100,255));
+            g.drawString(Integer.toString(appliedDamage), (int) ((int) player.getHitBox().x+player.getHitBox().width) - xLvlOffset, (int) player.getHitBox().y-10 - yLvlOffset);
+
+            g.setColor(new Color(200,100,100,50));
+
+
+
             g.fillRect((int) attackSmashHitBox.x-xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, (int) attackSmashHitBox.width, (int) attackSmashHitBox.height);
             switch (player.getFacingDir()) {
                 case 0:
@@ -164,5 +168,9 @@ public class Smash extends Ability {
 
     public Rectangle2D.Float getAttackSmashHitBox() {
         return attackSmashHitBox;
+    }
+
+    public boolean isJustFinishedCharging() {
+        return justFinishedCharging;
     }
 }
