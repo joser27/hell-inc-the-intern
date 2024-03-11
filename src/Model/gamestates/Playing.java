@@ -38,10 +38,11 @@ public class Playing extends State implements Statemethods{
     private int p2downBorder = (int) (0.25 * GameController.GAME_WIDTH);
     private int p2lvlTilesHeight = LevelLoader.world.length;
 
+    private PlayingUI ui;
 
     public Playing(Game game) {
         super(game);
-
+        ui = new PlayingUI(game);
 
     }
 
@@ -114,6 +115,9 @@ public class Playing extends State implements Statemethods{
         g2d.setStroke(new BasicStroke(10));
         g2d.drawLine(GameController.GAME_WIDTH / 2, 0, GameController.GAME_WIDTH / 2, GameController.GAME_HEIGHT);
         g2d.setStroke(new BasicStroke(1));
+
+
+        ui.render(g);
     }
 
     @Override

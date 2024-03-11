@@ -9,8 +9,10 @@ import java.io.InputStream;
 
 public class LoadSave {
 
+    // Fonts
     public static final String FONT_DEFAULT = "res\\Daydream.ttf";
     public static final String FONT_MINECRAFT = "res\\Minecraft.ttf";
+
     public static final String START_BUTTON = "startButton.png";
     public static final String PLAYER1_ATLAS = "Character-Base.png";
     public static final String PLAYER2_ATLAS = "Orc-Peon-Cyan.png";
@@ -26,6 +28,23 @@ public class LoadSave {
     public static final String ARROW_PROJECTILE = "arrowProjectile.png";
     public static final String UI_SQUARES = "gui_free.png";
     public static final String UI_ICONS = "UiIconsPack_Transparent_Icons.png";
+
+    // Player 1 Abilities
+    public static final String Death_Surge = "Death_Surge.png";
+    public static final String Decimating_Smash = "Decimating_Smash.png";
+    public static final String Glory_in_Death = "Glory_in_Death.png";
+    public static final String Roar_of_the_Slayer = "Roar_of_the_Slayer.png";
+    public static final String Soul_Furnace = "Soul_Furnace.png";
+    public static final String Unstoppable_Onslaught = "Unstoppable_Onslaught.png";
+
+    // Player 2 Abilities
+    public static final String Enchanted_Crystal_Arrow = "Enchanted_Crystal_Arrow.png";
+    public static final String Frost_Shot = "Frost_Shot.png";
+    public static final String Volley = "Volley.png";
+    public static final String Ranger_Focus = "Ranger_Focus.png";
+
+
+
     public static BufferedImage GetSpriteAtlas(String fileName) {
         BufferedImage image = null;
         String imagePathWalk = "/" + fileName;
@@ -43,6 +62,25 @@ public class LoadSave {
             }
         }
         return image;
+    }
+
+    public static Image GetImage(String fileName) {
+        Image img = null;
+        String imagePathWalk = "/" + fileName;
+        InputStream is = LoadSave.class.getResourceAsStream(imagePathWalk);
+        try {
+            img = ImageIO.read(is);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading image", e);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return img;
     }
 
     public static Font GetFont(String fileName, int size) {
