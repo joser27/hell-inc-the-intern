@@ -15,8 +15,8 @@ public class RangedAttack extends Ability {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     Image img;
-    public RangedAttack(Player player, int scale, int xPos, int yPos) {
-        super(player,scale,xPos,yPos);
+    public RangedAttack(Player player, int scale, int xPos, int yPos, int cd) {
+        super(player,scale,xPos,yPos, cd);
 
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
         img = LoadSave.GetSpriteAtlas(LoadSave.ARROW_PROJECTILE).getScaledInstance(20,20,Image.SCALE_DEFAULT);
@@ -69,6 +69,10 @@ public class RangedAttack extends Ability {
         g2d.dispose();
     }
 
+    @Override
+    public void renderUI(Graphics g) {
+
+    }
 
 
     public Rectangle getBulletHitBox() {

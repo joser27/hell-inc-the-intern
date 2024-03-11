@@ -49,8 +49,8 @@ public class Player1 extends Player {
         }
 
 
-        meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos());
-        smash = new Smash(this,GameController.SCALE,getxPos(),getyPos());
+        meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos(), 250);
+        smash = new Smash(this,GameController.SCALE,getxPos(),getyPos(), 600);
 
     }
     public void respawn() {

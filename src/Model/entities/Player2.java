@@ -57,7 +57,8 @@ public class Player2 extends Player {
             }
         }
         rangedAttacks = new ArrayList<>();
-        rangerFocus = new RangerFocus(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y);
+        rangerFocus = new RangerFocus(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,500);
+        enchantedArrow = new EnchantedArrow(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,1000);
     }
 
     public void updatePos() {
@@ -104,7 +105,7 @@ public class Player2 extends Player {
                 AutoAttackTick = 0;
 
                 // 0 = right, 1 = left, 2 = up, 3 = down
-                RangedAttack frostShot = new RangedAttack(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                RangedAttack frostShot = new RangedAttack(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2,100);
                 switch (getFacingDir()) {
                     case 0:
                         frostShot.setHorizontal(true);
@@ -195,7 +196,7 @@ public class Player2 extends Player {
             if (enchantedArrowDelayShootTick > 150) {
                 canShootEnchantedArrow = false;
                 enchantedArrowDelayShootTick = 0;
-                enchantedArrow = new EnchantedArrow(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                enchantedArrow = new EnchantedArrow(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2, 1000);
                 switch (getFacingDir()) {
                     case 0:
                         enchantedArrow.setHorizontal(true);
@@ -229,6 +230,7 @@ public class Player2 extends Player {
         updatePos();
         updateAutoAttack();
         rangerFocus.update();
+        enchantedArrow.update();
         //updateVolley();
         //updateEnchantedArrow();
     }
@@ -239,15 +241,17 @@ public class Player2 extends Player {
     }
 
     public void rangerFocus() {
-        rangerFocus.rangerFocus = true;
-        rangerFocus.rangerFocusUsed = true;
+//        rangerFocus.rangerFocus = true;
+        rangerFocus.abilityUsed = true;
+
     }
     public void shootVolley() {
         canShootVolley = true;
     }
     public void shootEnchantedArrow() {
-        canShootEnchantedArrow = true;
+        enchantedArrow.abilityUsed = true;
     }
+
     public void renderFrostShot(Graphics g, int xLvlOffset, int yLvlOffset) {
         if (rangedAttacks.size()  >0) {
             Iterator<RangedAttack> iterator = rangedAttacks.iterator();
@@ -269,7 +273,8 @@ public class Player2 extends Player {
     }
 
     public void renderUI(Graphics g) {
-        rangerFocus.render(g);
+        rangerFocus.renderUI(g);
+        enchantedArrow.renderUI(g);
     }
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
         if (volleyShot!=null) {

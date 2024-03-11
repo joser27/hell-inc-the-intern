@@ -1,5 +1,6 @@
 package Model.entities.abilites;
 
+import Controller.GameController;
 import Model.entities.Player;
 import Model.entities.abilites.Ability;
 
@@ -15,15 +16,15 @@ public class EnchantedArrow extends Ability {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
 
-    public EnchantedArrow(Player player, int scale, int xPos, int yPos) {
-        super(player,scale,xPos,yPos);
+    public EnchantedArrow(Player player, int scale, int xPos, int yPos, int cd) {
+        super(player,scale,xPos,yPos, cd);
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);
 
     }
 
     @Override
     public void update() {
-
+        updateUI();
         if (horizontal) {
             bullet.x += bulletSpeed;
 
@@ -41,6 +42,16 @@ public class EnchantedArrow extends Ability {
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         g.setColor(Color.CYAN);
         g.fillRect(bullet.x - xLvlOffset, bullet.y- yLvlOffset, bulletSize,bulletSize);
+    }
+
+    @Override
+    public void renderUI(Graphics g) {
+        g.drawString(Integer.toString(abilityCoolDownTick),160,800);
+        if (abilityUsed) {
+            g.setColor(new Color(255, 255, 255, 150));
+
+            g.fillRect(90 * GameController.SCALE, GameController.GAME_HEIGHT - 50 * GameController.SCALE, 64, ticker);
+        }
     }
 
 

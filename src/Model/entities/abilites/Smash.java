@@ -27,8 +27,8 @@ public class Smash extends Ability {
     private int justFinishedChargingTick;
     int appliedDamageTick;
 
-    public Smash(Player player, int scale, int xPos, int yPos) {
-        super(player,scale,xPos,yPos);
+    public Smash(Player player, int scale, int xPos, int yPos, int cd) {
+        super(player,scale,xPos,yPos, cd);
         attackSmashHitBox = new Rectangle2D.Float(xPos,yPos,20*scale,20*scale);
 
     }
@@ -150,6 +150,11 @@ public class Smash extends Ability {
                     break;
             }
         }
+    }
+
+    @Override
+    public void renderUI(Graphics g) {
+
     }
 
     public void smashAttack(boolean isHolding) {

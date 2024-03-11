@@ -17,8 +17,8 @@ public class MeleeAttack extends Ability {
     public int attackingDuration;
     public boolean canAttack = true;
 
-    public MeleeAttack(Player player, int scale, int xPos, int yPos) {
-        super(player, scale, xPos, yPos);
+    public MeleeAttack(Player player, int scale, int xPos, int yPos, int cd) {
+        super(player, scale, xPos, yPos, cd);
         attackHitBox = new Rectangle2D.Float(xPos,yPos,scale,scale);
     }
 
@@ -68,6 +68,11 @@ public class MeleeAttack extends Ability {
     }
     @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
+
+    }
+
+    @Override
+    public void renderUI(Graphics g) {
 
     }
 
