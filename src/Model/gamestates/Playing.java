@@ -176,10 +176,10 @@ public class Playing extends State implements Statemethods{
 
         //Player 2 ability
         if (keyCode == KeyEvent.VK_F) {
-            getGame().getPlayer2().placeMine();
+            getGame().getPlayer2().autoAttack();
         }
         if (keyCode == KeyEvent.VK_G) {
-            getGame().getPlayer2().shootFrostShot();
+            getGame().getPlayer2().rangerFocus();
         }
         if (keyCode == KeyEvent.VK_H) {
             getGame().getPlayer2().shootVolley();

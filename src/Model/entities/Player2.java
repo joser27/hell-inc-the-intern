@@ -2,16 +2,14 @@ package Model.entities;
 
 import Controller.GameController;
 import Model.*;
-import Model.entities.abilites.EnchantedArrow;
-import Model.entities.abilites.FrostShot;
-import Model.entities.abilites.LandMine;
-import Model.entities.abilites.Volley;
+import Model.entities.abilites.*;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import static Model.utilz.Constants.PlayerConstants.*;
 
@@ -20,19 +18,20 @@ import static Model.utilz.Constants.PlayerConstants.*;
  */
 public class Player2 extends Player {
 
-    private int landMineCount = 10;
-    private ArrayList<LandMine> landMine;
+
     private ArrayList<FrostShot> frostShots;
     private Volley volleyShot;
     private EnchantedArrow enchantedArrow;
-    private boolean canShootFrostShot = false;
-    private int frostShotDelayShootTick;
+    private boolean canAutoAttack = false;
+    private int AutoAttackTick;
     private boolean canShootVolley = false;
     private int volleyDelayShootTick;
     private boolean canShootEnchantedArrow = false;
     private int enchantedArrowDelayShootTick;
     private BufferedImage[][] img;
-
+    private int baseAttackSpeed = 50;
+    private int attackSpeed = baseAttackSpeed;
+    RangerFocus rangerFocus;
 //    private String playerAction = RUNNING_DOWN;
 //    private int aniTick, aniIndex, aniSpeed = 15;
 //    private int actionOffset;
@@ -58,8 +57,8 @@ public class Player2 extends Player {
                 img[i][j] = bufferedImage;
             }
         }
-        landMine = new ArrayList<>();
         frostShots = new ArrayList<>();
+        rangerFocus = new RangerFocus(this,GameController.SCALE, (int) this.getHitBox().x, (int) this.getHitBox().y);
 
     }
 
@@ -98,15 +97,24 @@ public class Player2 extends Player {
         }
         game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
     }
-    public void updateFrostShot() {
-
-        if (canShootFrostShot) {
+    public void updateAutoAttack() {
+        rangerFocus.update();
+        if (canAutoAttack) {
             setShootDir();
-
-            frostShotDelayShootTick++;
-            if (frostShotDelayShootTick > 50) {
-                canShootFrostShot = false;
-                frostShotDelayShootTick = 0;
+            AutoAttackTick++;
+            if (rangerFocus.rangerFocus) {
+                attackSpeed = 20;
+                rangerFocus.rangerFocusTick++;
+                if (rangerFocus.rangerFocusTick>100) {
+                    rangerFocus.rangerFocusTick=0;
+                    rangerFocus.rangerFocus = false;
+                }
+            } else {
+                attackSpeed = baseAttackSpeed;
+            }
+            if (AutoAttackTick > attackSpeed) {
+                canAutoAttack = false;
+                AutoAttackTick = 0;
 
                 // 0 = right, 1 = left, 2 = up, 3 = down
                 FrostShot frostShot = new FrostShot(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
@@ -132,23 +140,7 @@ public class Player2 extends Player {
             }
         }
     }
-    public void updateLandMine() {
-        if (landMine.size()>0) {
 
-            Iterator<LandMine> iterator = landMine.iterator();
-
-            while (iterator.hasNext()) {
-                LandMine landMine = iterator.next();
-                landMine.update();
-
-                if (landMine.getLandMineTimer()>landMine.getLandMineDecayTime()) {
-                    landMine.explode();
-                    if (landMine.getLandMineTimer()>landMine.getLandMineDetonateTime())
-                        iterator.remove();
-                }
-            }
-        }
-    }
     public void updateAndRemoveFrostShot() {
         if (frostShots != null) {
             Iterator<FrostShot> iterator = frostShots.iterator();
@@ -247,35 +239,25 @@ public class Player2 extends Player {
 
         updateAnimationTick();
         updatePos();
-        updateFrostShot();
+        updateAutoAttack();
         updateAndRemoveFrostShot();
-        updateLandMine();
         updateVolley();
         updateEnchantedArrow();
     }
 
-
-    public void placeMine() {
-        if (landMineCount > 0) {
-            landMineCount--;
-            landMine.add(new LandMine(getxPos()+5, getyPos()+15, 10, 10));
-        }
+    public void autoAttack() {
+        canAutoAttack = true;
     }
-    public void shootFrostShot() {
-        canShootFrostShot = true;
+
+    public void rangerFocus() {
+        rangerFocus.rangerFocus = true;
+        rangerFocus.rangerFocusUsed = true;
     }
     public void shootVolley() {
         canShootVolley = true;
     }
     public void shootEnchantedArrow() {
         canShootEnchantedArrow = true;
-    }
-    public void renderMines(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (landMine !=null) {
-            for (LandMine mine : landMine) {
-                mine.render(g,xLvlOffset,yLvlOffset);
-            }
-        }
     }
     public void renderFrostShot(Graphics g, int xLvlOffset, int yLvlOffset) {
         if (frostShots.size()  >0) {
@@ -299,26 +281,16 @@ public class Player2 extends Player {
 
 
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-
-
         if (volleyShot!=null) {
             volleyShot.render(g, xLvlOffset, yLvlOffset);
         }
         if (enchantedArrow!=null) {
             enchantedArrow.render(g,xLvlOffset,yLvlOffset);
         }
-
-
-
         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
         g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE- yLvlOffset,null);
-
-
-
-
-
-
-//        g.setColor(Color.BLACK);
+        g.setColor(Color.BLACK);
+        g.drawString(Integer.toString(rangerFocus.rangerFocusCoolDownTick),160,800);
 //        //System.err.println(playerX + "|" + playerY);
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
@@ -327,16 +299,8 @@ public class Player2 extends Player {
 //        g.drawRect(getxPos()-xLvlOffset,getyPos()- yLvlOffset, (int) getHitBox().width, (int) getHitBox().height);
     }
 
-    public ArrayList<LandMine> getLandMine() {
-        return landMine;
-    }
-
     public ArrayList<FrostShot> getBullets() {
         return frostShots;
-    }
-
-    public int getLandMineCount() {
-        return landMineCount;
     }
 
     public Volley getVolleyShot() {
@@ -345,4 +309,5 @@ public class Player2 extends Player {
     public void removeVolleyShot() {
         volleyShot = null;
     }
+
 }

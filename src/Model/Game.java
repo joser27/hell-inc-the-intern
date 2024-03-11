@@ -163,7 +163,6 @@ public class Game {
         }
         entitiesUpdates();
         bulletsUpdates();
-        landMineUpdates();
     }
 
     private void entitiesUpdates() {
@@ -196,16 +195,7 @@ public class Game {
             }
         }
     }
-    public void landMineUpdates() {
-        ArrayList<LandMine> landMine = getPlayer2().getLandMine();
-        for (LandMine mine : landMine) {
-            if (!getPlayer1().isGodMode()) {
-                if (mine.getLandMineHitBox().intersects(getPlayer1().getHitBox())) {
-                    getPlayer1().respawn();
-                }
-            }
-        }
-    }
+
 
     public void renderLeftScreen(Graphics g, int xLvlOffset, int yLvlOffset) {//Player 2 is left
         int screenWidth = GameController.GAME_WIDTH;
@@ -213,7 +203,7 @@ public class Game {
         int tileSize = GameController.TILE_SIZE;
         g.setColor(new Color( 79,131,52,255));
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
-        player2.renderMines(g,xLvlOffset,yLvlOffset);
+
         player2.renderFrostShot(g,xLvlOffset,yLvlOffset);
 
         for (int i = 0; i < LevelLoader.world.length; i++) {
@@ -245,7 +235,7 @@ public class Game {
         }
 
         g.setColor(Color.WHITE);
-        g.drawString("Player2 coords: " + getPlayer2().getxPos() / GameController.TILE_SIZE + " " + getPlayer2().getyPos()/GameController.TILE_SIZE + ", Mines: " + getPlayer2().getLandMineCount() + "; HP: " + getPlayer2().getHealth(), 80, 150);
+        g.drawString("Player2 coords: " + getPlayer2().getxPos() / GameController.TILE_SIZE + " " + getPlayer2().getyPos()/GameController.TILE_SIZE+ "; HP: " + getPlayer2().getHealth(), 80, 150);
 
     }
 
@@ -265,15 +255,7 @@ public class Game {
                 }
             }
         }
-        //Mines rendering
-        if (player2.getLandMine().size()>0) {
-            ArrayList<LandMine> landMines = player2.getLandMine();
-            for (LandMine landMine : landMines) {
-                if (landMine.getLandMineHitBox().getX() -xLvlOffset > GameController.GAME_WIDTH/2) {
-                    landMine.render(g, xLvlOffset, yLvlOffset);
-                }
-            }
-        }
+
 
 
         for (int i = 0; i < LevelLoader.world.length; i++) {

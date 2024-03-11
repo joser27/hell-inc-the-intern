@@ -31,7 +31,7 @@ public class LoadSave {
 
     // Player 1 Abilities
     public static final String Death_Surge = "Death_Surge.png";
-    public static final String Decimating_Smash = "Decimating_Smash.png";
+    public static final String Decimating_Smash = "Decimating_Smash1.png";
     public static final String Glory_in_Death = "Glory_in_Death.png";
     public static final String Roar_of_the_Slayer = "Roar_of_the_Slayer.png";
     public static final String Soul_Furnace = "Soul_Furnace.png";
