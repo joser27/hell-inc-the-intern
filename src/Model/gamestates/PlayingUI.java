@@ -54,7 +54,7 @@ public class PlayingUI extends State implements Statemethods {
     @Override
     public void render(Graphics g) {
         //Player 1 (Right screen)
-        g.setColor(new Color(100,200,100,200));
+        g.setColor(new Color(255,255,255,100));
         g.fillRect(GameController.GAME_WIDTH/2,(GameController.GAME_HEIGHT/2) + GameController.GAME_HEIGHT/4,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT/6);
 
         g.drawImage(player1_P,GameController.GAME_WIDTH/2 + 10*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
@@ -65,7 +65,8 @@ public class PlayingUI extends State implements Statemethods {
 
 
         //Player 2 (Left screen)
-        g.setColor(new Color(200,100,100,200));
+//        g.setColor(new Color(200,100,100,255));
+        g.setColor(new Color(255,255,255,100));
         g.fillRect(0,(GameController.GAME_HEIGHT/2) + GameController.GAME_HEIGHT/4,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT/6);
 
         g.drawImage(player2_P,10*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);

@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 import static Model.utilz.Constants.PlayerConstants.*;
 
@@ -19,7 +18,7 @@ import static Model.utilz.Constants.PlayerConstants.*;
 public class Player2 extends Player {
 
 
-    private ArrayList<FrostShot> frostShots;
+    private ArrayList<RangedAttack> rangedAttacks;
     private Volley volleyShot;
     private EnchantedArrow enchantedArrow;
     private boolean canAutoAttack = false;
@@ -57,13 +56,11 @@ public class Player2 extends Player {
                 img[i][j] = bufferedImage;
             }
         }
-        frostShots = new ArrayList<>();
-        rangerFocus = new RangerFocus(this,GameController.SCALE, (int) this.getHitBox().x, (int) this.getHitBox().y);
-
+        rangedAttacks = new ArrayList<>();
+        rangerFocus = new RangerFocus(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y);
     }
 
     public void updatePos() {
-
         float xSpeed = 0;
         float ySpeed = 0;
         isMoving=false;
@@ -98,26 +95,16 @@ public class Player2 extends Player {
         game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
     }
     public void updateAutoAttack() {
-        rangerFocus.update();
+
         if (canAutoAttack) {
             setShootDir();
             AutoAttackTick++;
-            if (rangerFocus.rangerFocus) {
-                attackSpeed = 20;
-                rangerFocus.rangerFocusTick++;
-                if (rangerFocus.rangerFocusTick>100) {
-                    rangerFocus.rangerFocusTick=0;
-                    rangerFocus.rangerFocus = false;
-                }
-            } else {
-                attackSpeed = baseAttackSpeed;
-            }
             if (AutoAttackTick > attackSpeed) {
                 canAutoAttack = false;
                 AutoAttackTick = 0;
 
                 // 0 = right, 1 = left, 2 = up, 3 = down
-                FrostShot frostShot = new FrostShot(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
+                RangedAttack frostShot = new RangedAttack(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
                 switch (getFacingDir()) {
                     case 0:
                         frostShot.setHorizontal(true);
@@ -136,17 +123,18 @@ public class Player2 extends Player {
                         frostShot.setBulletSpeed(frostShot.getBulletSpeed());
                         break;
                 }
-                frostShots.add(frostShot);
+                rangedAttacks.add(frostShot);
             }
         }
+        updateAndRemoveAutoAttacks();
     }
 
-    public void updateAndRemoveFrostShot() {
-        if (frostShots != null) {
-            Iterator<FrostShot> iterator = frostShots.iterator();
+    public void updateAndRemoveAutoAttacks() {
+        if (rangedAttacks != null) {
+            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
 
             while (iterator.hasNext()) {
-                FrostShot frostShot = iterator.next();
+                RangedAttack frostShot = iterator.next();
                 frostShot.update();
 
                 if (frostShot.isBulletDecayed()) {
@@ -240,12 +228,13 @@ public class Player2 extends Player {
         updateAnimationTick();
         updatePos();
         updateAutoAttack();
-        updateAndRemoveFrostShot();
-        updateVolley();
-        updateEnchantedArrow();
+        rangerFocus.update();
+        //updateVolley();
+        //updateEnchantedArrow();
     }
 
     public void autoAttack() {
+
         canAutoAttack = true;
     }
 
@@ -260,26 +249,28 @@ public class Player2 extends Player {
         canShootEnchantedArrow = true;
     }
     public void renderFrostShot(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (frostShots.size()  >0) {
-            Iterator<FrostShot> iterator = frostShots.iterator();
+        if (rangedAttacks.size()  >0) {
+            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
             while (iterator.hasNext()) {
-                FrostShot frostShot = iterator.next();
+                RangedAttack frostShot = iterator.next();
                 frostShot.render(g,xLvlOffset,yLvlOffset);
             }
         }
     }
 
     public void renderVolley(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (frostShots.size()  >0) {
-            Iterator<FrostShot> iterator = frostShots.iterator();
+        if (rangedAttacks.size()  >0) {
+            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
             while (iterator.hasNext()) {
-                FrostShot frostShot = iterator.next();
+                RangedAttack frostShot = iterator.next();
                 frostShot.render(g,xLvlOffset,yLvlOffset);
             }
         }
     }
 
-
+    public void renderUI(Graphics g) {
+        rangerFocus.render(g);
+    }
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
         if (volleyShot!=null) {
             volleyShot.render(g, xLvlOffset, yLvlOffset);
@@ -290,7 +281,8 @@ public class Player2 extends Player {
         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
         g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE- yLvlOffset,null);
         g.setColor(Color.BLACK);
-        g.drawString(Integer.toString(rangerFocus.rangerFocusCoolDownTick),160,800);
+
+        //g.drawString(Integer.toString(rangerFocus.rangerFocusCoolDownTick),160,800);
 //        //System.err.println(playerX + "|" + playerY);
 //
 //        g.fillRect((playerY*48),(playerX*48),48,48);
@@ -299,8 +291,8 @@ public class Player2 extends Player {
 //        g.drawRect(getxPos()-xLvlOffset,getyPos()- yLvlOffset, (int) getHitBox().width, (int) getHitBox().height);
     }
 
-    public ArrayList<FrostShot> getBullets() {
-        return frostShots;
+    public ArrayList<RangedAttack> getBullets() {
+        return rangedAttacks;
     }
 
     public Volley getVolleyShot() {

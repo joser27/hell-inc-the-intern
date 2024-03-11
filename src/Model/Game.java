@@ -2,8 +2,7 @@ package Model;
 
 import Controller.GameController;
 import Model.entities.*;
-import Model.entities.abilites.FrostShot;
-import Model.entities.abilites.LandMine;
+import Model.entities.abilites.RangedAttack;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -178,8 +177,8 @@ public class Game {
         }
     }
     private void bulletsUpdates() {
-        ArrayList<FrostShot> frostShots = player2.getBullets();
-        for (FrostShot frostShot : frostShots) {
+        ArrayList<RangedAttack> frostShots = player2.getBullets();
+        for (RangedAttack frostShot : frostShots) {
             for (Wall wall : walls) {
                 if (frostShot.getBulletHitBox().intersects(wall.getHitBox())) {
                     frostShot.setBulletDecayed(true);
@@ -248,8 +247,8 @@ public class Game {
 
         //Bullets rending when offscreen
         if (player2.getBullets().size()>0) {
-            ArrayList<FrostShot> frostShots = player2.getBullets();
-            for (FrostShot frostShot : frostShots) {
+            ArrayList<RangedAttack> frostShots = player2.getBullets();
+            for (RangedAttack frostShot : frostShots) {
                 if (frostShot.getBulletHitBox().getX()-xLvlOffset > GameController.GAME_WIDTH / 2) {
                     frostShot.render(g,xLvlOffset,yLvlOffset);
                 }

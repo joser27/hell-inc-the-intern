@@ -1,12 +1,11 @@
 package Model.entities.abilites;
 
 import Model.entities.Player;
-import Model.entities.abilites.Ability;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
 
-public class FrostShot extends Ability {
+public class RangedAttack extends Ability {
     private Rectangle bullet;
     private boolean vertical;
     private boolean horizontal;
@@ -16,7 +15,7 @@ public class FrostShot extends Ability {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     Image img;
-    public FrostShot(Player player, int scale, int xPos, int yPos) {
+    public RangedAttack(Player player, int scale, int xPos, int yPos) {
         super(player,scale,xPos,yPos);
 
         bullet = new Rectangle(xPos,yPos,bulletSize,bulletSize);

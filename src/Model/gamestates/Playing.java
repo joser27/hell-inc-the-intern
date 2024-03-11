@@ -99,6 +99,7 @@ public class Playing extends State implements Statemethods{
 
     @Override
     public void render(Graphics g) {
+
 //        getGame().render(g,xLvlOffset);
 //
         g.setColor(Color.BLACK);
@@ -116,8 +117,9 @@ public class Playing extends State implements Statemethods{
         g2d.drawLine(GameController.GAME_WIDTH / 2, 0, GameController.GAME_WIDTH / 2, GameController.GAME_HEIGHT);
         g2d.setStroke(new BasicStroke(1));
 
-
         ui.render(g);
+        getGame().getPlayer2().renderUI(g);
+
     }
 
     @Override
