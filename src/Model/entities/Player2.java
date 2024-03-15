@@ -272,9 +272,9 @@ public class Player2 extends Player {
         }
     }
 
-    public void renderUI(Graphics g) {
-        rangerFocus.renderUI(g);
-        enchantedArrow.renderUI(g);
+    public void renderUI(Graphics g, int xLvlOffset, int yLvlOffset) {
+        rangerFocus.renderUI(g, xLvlOffset, yLvlOffset);
+        enchantedArrow.renderUI(g, xLvlOffset, yLvlOffset);
     }
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
         if (volleyShot!=null) {

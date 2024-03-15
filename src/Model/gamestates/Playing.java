@@ -118,7 +118,8 @@ public class Playing extends State implements Statemethods{
         g2d.setStroke(new BasicStroke(1));
 
         ui.render(g);
-        getGame().getPlayer2().renderUI(g);
+        getGame().getPlayer2().renderUI(g, p2xLvlOffset, p2yLvlOffset);
+        getGame().getPlayer1().renderUI(g, p1xLvlOffset, p1yLvlOffset);
 
     }
 
@@ -191,14 +192,23 @@ public class Playing extends State implements Statemethods{
         }
 
         //Player 1 ability
-        if (keyCode == KeyEvent.VK_NUMPAD1) {
-            getGame().getPlayer1().speedBoost();
-        }
-        if (keyCode == KeyEvent.VK_NUMPAD2) {
+        if (keyCode == KeyEvent.VK_NUMPAD0) {
+            //Basic attack
             getGame().getPlayer1().attack();
         }
-        if (keyCode == KeyEvent.VK_NUMPAD3) {
+        if (keyCode == KeyEvent.VK_NUMPAD1) {
+            //Smash attack
             getGame().getPlayer1().smashAttack(true);
+        }
+        if (keyCode == KeyEvent.VK_NUMPAD2) {
+            //implement shield
+            getGame().getPlayer1().useShield();
+        }
+        if (keyCode == KeyEvent.VK_NUMPAD3) {
+            //Slow
+        }
+        if (keyCode == KeyEvent.VK_NUMPAD6) {
+            //Ultimate
         }
 
         //Pause menu

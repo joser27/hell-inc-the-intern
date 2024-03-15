@@ -3,6 +3,7 @@ package Model.entities;
 import Controller.GameController;
 import Model.Game;
 import Model.entities.abilites.MeleeAttack;
+import Model.entities.abilites.Shield;
 import Model.entities.abilites.Smash;
 import Model.utilz.LoadSave;
 
@@ -27,7 +28,7 @@ public class Player1 extends Player {
     private MeleeAttack meleeAttack;
     //Smash ability
     private Smash smash;
-
+    private Shield shield;
 
     public Player1(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
@@ -51,12 +52,16 @@ public class Player1 extends Player {
 
         meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos(), 250);
         smash = new Smash(this,GameController.SCALE,getxPos(),getyPos(), 600);
+        shield = new Shield(this,GameController.SCALE,getxPos(),getyPos(), 600);
 
     }
     public void respawn() {
         setXHitBox(13*GameController.TILE_SIZE);
         setYHitBox(8*GameController.TILE_SIZE);
         setHealth(100);
+    }
+    public void useShield() {
+        shield.useShield(this);
     }
     public void speedBoost() {
         speedBoostOn = true;
@@ -111,6 +116,9 @@ public class Player1 extends Player {
 //        attackingUpdate();
         meleeAttack.update();
         smash.update();
+        if (shield.abilityUsed) {
+            shield.update();
+        }
         boostUpdate();
 
     }
@@ -135,6 +143,7 @@ public class Player1 extends Player {
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
         meleeAttack.render(g,xLvlOffset,yLvlOffset);
         smash.render(g,xLvlOffset,yLvlOffset);
+
 //        g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y-yLvlOffset, 30, 30);
 //        g.drawRect((int) attackSmashHitBox.x - xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, 60, 60);
         g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
@@ -150,7 +159,11 @@ public class Player1 extends Player {
             // g.drawRect(getxPos() - xLvlOffset, getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
     }
+    public void renderUI(Graphics g, int xLvlOffset, int yLvlOffset) {
 
+            shield.renderUI(g, xLvlOffset, yLvlOffset);
+
+    }
     public Smash getSmash() {
         return smash;
     }
