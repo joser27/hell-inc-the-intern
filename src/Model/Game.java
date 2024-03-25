@@ -106,13 +106,13 @@ public class Game {
             }
         }
 
-        if (player2.getVolleyShot()!=null) {
-            player2.getVolleyShot().update();
-
-            if (player2.getVolleyShot().isBulletDecayed()) {
-                player2.removeVolleyShot();
-            }
-        }
+//        if (player2.getVolleyShot()!=null) {
+//            player2.getVolleyShot().update();
+//
+//            if (player2.getVolleyShot().isBulletDecayed()) {
+//                player2.removeVolleyShot();
+//            }
+//        }
 
 
         if (getPlayer2().getxPos() / GameController.TILE_SIZE== 2 && getPlayer2().getyPos()/GameController.TILE_SIZE == 2) {
@@ -202,6 +202,7 @@ public class Game {
         int tileSize = GameController.TILE_SIZE;
         g.setColor(new Color( 79,131,52,255));
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
+
 
         player2.renderFrostShot(g,xLvlOffset,yLvlOffset);
 

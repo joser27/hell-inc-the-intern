@@ -35,15 +35,12 @@ public class PlayingUI extends State implements Statemethods {
         player1_E = LoadSave.GetSpriteAtlas(LoadSave.Roar_of_the_Slayer);
         player1_R = LoadSave.GetSpriteAtlas(LoadSave.Unstoppable_Onslaught);
 
+        //Player 2
         player2_P = LoadSave.GetSpriteAtlas(LoadSave.Frost_Shot);
         player2_Q = LoadSave.GetSpriteAtlas(LoadSave.Ranger_Focus);
         player2_W = LoadSave.GetSpriteAtlas(LoadSave.Volley);
-        player2_E = LoadSave.GetSpriteAtlas(LoadSave.Roar_of_the_Slayer);
+        player2_E = LoadSave.GetSpriteAtlas(LoadSave.Hawkshot);
         player2_R = LoadSave.GetSpriteAtlas(LoadSave.Enchanted_Crystal_Arrow);
-
-
-
-
     }
 
     @Override

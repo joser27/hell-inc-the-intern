@@ -42,6 +42,7 @@ public class LoadSave {
     public static final String Frost_Shot = "Frost_Shot.png";
     public static final String Volley = "Volley.png";
     public static final String Ranger_Focus = "Ranger_Focus.png";
+    public static final String Hawkshot = "Hawkshot.png";
 
 
 

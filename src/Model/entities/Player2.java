@@ -19,12 +19,13 @@ public class Player2 extends Player {
 
 
     private ArrayList<RangedAttack> rangedAttacks;
-    private Volley volleyShot;
+    Volley volleyShot;
+    Hawkshot hawkshot;
     private EnchantedArrow enchantedArrow;
     private boolean canAutoAttack = false;
     private int AutoAttackTick;
-    private boolean canShootVolley = false;
-    private int volleyDelayShootTick;
+    public boolean canShootVolley = false;
+    public int volleyDelayShootTick;
     private boolean canShootEnchantedArrow = false;
     private int enchantedArrowDelayShootTick;
     private BufferedImage[][] img;
@@ -57,8 +58,12 @@ public class Player2 extends Player {
             }
         }
         rangedAttacks = new ArrayList<>();
-        rangerFocus = new RangerFocus(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,500);
-        enchantedArrow = new EnchantedArrow(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,1000);
+        rangerFocus = new RangerFocus(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,700);
+        enchantedArrow = new EnchantedArrow(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,3600);
+        volleyShot = new Volley(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,500);
+        hawkshot = new Hawkshot(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,1200);//5sec
+
+
     }
 
     public void updatePos() {
@@ -105,7 +110,7 @@ public class Player2 extends Player {
                 AutoAttackTick = 0;
 
                 // 0 = right, 1 = left, 2 = up, 3 = down
-                RangedAttack frostShot = new RangedAttack(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2,100);
+                RangedAttack frostShot = new RangedAttack(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2,120);
                 switch (getFacingDir()) {
                     case 0:
                         frostShot.setHorizontal(true);
@@ -160,35 +165,35 @@ public class Player2 extends Player {
                 break;
         }
     }
-    public void updateVolley() {
-        if (canShootVolley) {
-            setShootDir();
-            volleyDelayShootTick++;
-            if (volleyDelayShootTick > 150) {
-                canShootVolley = false;
-                volleyDelayShootTick = 0;
-                volleyShot = new Volley(getxPos() + getWidth() / 2, getyPos() + getHeight() / 2);
-                switch (getFacingDir()) {
-                    case 0:
-                        volleyShot.setHorizontal(true);
-                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
-                        break;
-                    case 1:
-                        volleyShot.setHorizontal(true);
-                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
-                        break;
-                    case 2:
-                        volleyShot.setVertical(true);
-                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
-                        break;
-                    case 3:
-                        volleyShot.setVertical(true);
-                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
-                        break;
-                }
-            }
-        }
-    }
+//    public void updateVolley() {
+//        if (canShootVolley) {
+//            setShootDir();
+//            volleyDelayShootTick++;
+//            if (volleyDelayShootTick > 150) {
+//                canShootVolley = false;
+//                volleyDelayShootTick = 0;
+//                volleyShot = new Volley(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2,240);
+//                switch (getFacingDir()) {
+//                    case 0:
+//                        volleyShot.setHorizontal(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
+//                        break;
+//                    case 1:
+//                        volleyShot.setHorizontal(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
+//                        break;
+//                    case 2:
+//                        volleyShot.setVertical(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
+//                        break;
+//                    case 3:
+//                        volleyShot.setVertical(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
+//                        break;
+//                }
+//            }
+//        }
+//    }
     public void updateEnchantedArrow() {
         if (canShootEnchantedArrow) {
             setShootDir();
@@ -231,6 +236,10 @@ public class Player2 extends Player {
         updateAutoAttack();
         rangerFocus.update();
         enchantedArrow.update();
+        volleyShot.update();
+        hawkshot.update();
+
+//        volleyShot.update();
         //updateVolley();
         //updateEnchantedArrow();
     }
@@ -246,7 +255,12 @@ public class Player2 extends Player {
 
     }
     public void shootVolley() {
+        volleyShot.abilityUsed=true;
         canShootVolley = true;
+    }
+    public void shootHawkshot() {
+        hawkshot.abilityUsed=true;
+
     }
     public void shootEnchantedArrow() {
         enchantedArrow.abilityUsed = true;
@@ -272,17 +286,19 @@ public class Player2 extends Player {
         }
     }
 
-    public void renderUI(Graphics g, int xLvlOffset, int yLvlOffset) {
-        rangerFocus.renderUI(g, xLvlOffset, yLvlOffset);
-        enchantedArrow.renderUI(g, xLvlOffset, yLvlOffset);
+    public void renderUI(Graphics g) {
+        rangerFocus.renderUI(g);
+        enchantedArrow.renderUI(g);
+        volleyShot.renderUI(g);
+        hawkshot.renderUI(g);
     }
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-        if (volleyShot!=null) {
-            volleyShot.render(g, xLvlOffset, yLvlOffset);
-        }
-        if (enchantedArrow!=null) {
-            enchantedArrow.render(g,xLvlOffset,yLvlOffset);
-        }
+//        if (volleyShot!=null) {
+//            volleyShot.render(g, xLvlOffset, yLvlOffset);
+//        }
+//        if (enchantedArrow!=null) {
+//            enchantedArrow.render(g,xLvlOffset,yLvlOffset);
+//        }
         //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
         g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE- yLvlOffset,null);
         g.setColor(Color.BLACK);

@@ -103,7 +103,6 @@ public class Smash extends Ability {
             }
 //            System.out.println("Just finished charging");
         }
-
         attackSmashUpdate();
     }
 

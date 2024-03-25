@@ -1,9 +1,12 @@
 package Model.entities.abilites;
 
+import Controller.GameController;
+import Model.entities.Player;
+
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Volley {
+public class Volley extends Ability {
     private ArrayList<Rectangle> bullet;
     private boolean vertical;
     private boolean horizontal;
@@ -13,7 +16,8 @@ public class Volley {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
 
-    public Volley(int xPos, int yPos) {
+    public Volley(Player player, int scale, int xPos, int yPos, int cd) {
+        super(player, scale, xPos, yPos, cd);
         bullet = new ArrayList<>();
         bullet.add(new Rectangle(xPos-35,yPos-35,bulletSize,bulletSize));
         bullet.add(new Rectangle(xPos,yPos,bulletSize,bulletSize));
@@ -22,7 +26,7 @@ public class Volley {
     }
 
     public void update() {
-
+        updateUI();
         if (horizontal) {
             for (Rectangle bullets : bullet) {
                 bullets.x += bulletSpeed;
@@ -40,6 +44,36 @@ public class Volley {
         }
     }
 
+//    private void updateDir() {
+//        if (player.get) {
+//            setShootDir();
+//            volleyDelayShootTick++;
+//            if (volleyDelayShootTick > 150) {
+//                canShootVolley = false;
+//                volleyDelayShootTick = 0;
+//                volleyShot = new Volley(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2,240);
+//                switch (getFacingDir()) {
+//                    case 0:
+//                        volleyShot.setHorizontal(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
+//                        break;
+//                    case 1:
+//                        volleyShot.setHorizontal(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
+//                        break;
+//                    case 2:
+//                        volleyShot.setVertical(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed() * -1);
+//                        break;
+//                    case 3:
+//                        volleyShot.setVertical(true);
+//                        volleyShot.setBulletSpeed(volleyShot.getBulletSpeed());
+//                        break;
+//                }
+//            }
+//        }
+//    }
+
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         g.setColor(Color.CYAN);
         for (Rectangle bullets : bullet) {
@@ -47,6 +81,15 @@ public class Volley {
         }
 
 
+    }
+
+    @Override
+    public void renderUI(Graphics g) {
+        if (abilityUsed) {
+            g.setColor(new Color(255, 255, 255, 150));
+
+            g.fillRect(50 * GameController.SCALE, GameController.GAME_HEIGHT - 50 * GameController.SCALE, 64, ticker);
+        }
     }
 
     public boolean isVertical() {
