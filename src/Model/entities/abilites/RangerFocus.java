@@ -23,7 +23,7 @@ public class RangerFocus extends Ability{
     }
 
     @Override
-    public void renderUI(Graphics g, int xLvlOffset, int yLvlOffset) {
+    public void renderUI(Graphics g) {
         g.drawString(Integer.toString(abilityCoolDownTick),160,800);
         if (abilityUsed) {
             g.setColor(new Color(255, 255, 255, 150));

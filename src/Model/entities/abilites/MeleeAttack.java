@@ -72,7 +72,7 @@ public class MeleeAttack extends Ability {
     }
 
     @Override
-    public void renderUI(Graphics g, int xLvlOffset, int yLvlOffset) {
+    public void renderUI(Graphics g) {
 
     }
 

@@ -159,10 +159,8 @@ public class Player1 extends Player {
             // g.drawRect(getxPos() - xLvlOffset, getyPos(), (int) getHitBox().width, (int) getHitBox().height);
 
     }
-    public void renderUI(Graphics g, int xLvlOffset, int yLvlOffset) {
-
-            shield.renderUI(g, xLvlOffset, yLvlOffset);
-
+    public void renderUI(Graphics g) {
+            shield.renderUI(g);
     }
     public Smash getSmash() {
         return smash;

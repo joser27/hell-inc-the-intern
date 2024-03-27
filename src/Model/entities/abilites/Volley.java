@@ -87,7 +87,6 @@ public class Volley extends Ability {
     public void renderUI(Graphics g) {
         if (abilityUsed) {
             g.setColor(new Color(255, 255, 255, 150));
-
             g.fillRect(50 * GameController.SCALE, GameController.GAME_HEIGHT - 50 * GameController.SCALE, 64, ticker);
         }
     }

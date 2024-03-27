@@ -1,5 +1,6 @@
 package Model.entities.abilites;
 
+import Controller.GameController;
 import Model.entities.Player;
 import Model.entities.Player1;
 
@@ -39,10 +40,10 @@ public class Shield extends Ability {
     }
 
     @Override
-    public void renderUI(Graphics g, int xLvlOffset, int yLvlOffset) {
-
-            g.setColor(new Color(155,150,200,100));
-            g.fillRect((int) player.getHitBox().x - xLvlOffset, (int) player.getHitBox().y - yLvlOffset, (int) ((int) player.getHitBox().width*1.5), (int) ((int) player.getHitBox().height*1.5));
-
+    public void renderUI(Graphics g) {
+        if (abilityUsed) {
+            g.setColor(new Color(255, 255, 255, 150));
+            g.fillRect(150 * GameController.SCALE, GameController.GAME_HEIGHT - 50 * GameController.SCALE, 64, ticker);
+        }
     }
 }

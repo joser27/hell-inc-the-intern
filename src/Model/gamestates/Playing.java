@@ -118,8 +118,8 @@ public class Playing extends State implements Statemethods{
         g2d.setStroke(new BasicStroke(1));
 
         ui.render(g);
-        getGame().getPlayer2().renderUI(g, p2xLvlOffset, p2yLvlOffset);
-        getGame().getPlayer1().renderUI(g, p1xLvlOffset, p1yLvlOffset);
+        getGame().getPlayer2().renderUI(g);
+        getGame().getPlayer1().renderUI(g);
 
     }
 

@@ -65,5 +65,5 @@ public abstract class Ability {
 //    }
 
     public abstract void render(Graphics g, int xLvlOffset, int yLvlOffset);
-    public abstract void renderUI(Graphics g, int xLvlOffset, int yLvlOffset);
+    public abstract void renderUI(Graphics g);
 }
