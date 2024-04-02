@@ -14,6 +14,9 @@ public abstract class Ability {
     public int cdLimiter;
     public int cd;
     int temp;
+    int abilityUptime;
+    int abilityUptimeTicker;
+    boolean abilityActive;
 
     public Ability(Player player, int scale, int xPos, int yPos, int cd) {
         this.scale = scale;
@@ -30,6 +33,7 @@ public abstract class Ability {
 
     public abstract void update();
     public void updateUI() {//1sec=120ups
+
         if (abilityUsed) {
             abilityCoolDownTick--;
             cdTicker++;
@@ -39,6 +43,7 @@ public abstract class Ability {
             }
             if (abilityCoolDownTick<=0) {
                 abilityUsed=false;
+
                 abilityCoolDownTick=cd;
                 ticker=64;
             }

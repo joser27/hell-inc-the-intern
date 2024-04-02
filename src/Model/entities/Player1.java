@@ -50,7 +50,7 @@ public class Player1 extends Player {
         }
 
 
-        meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos(), 250);
+        meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos(), 600);
         smash = new Smash(this,GameController.SCALE,getxPos(),getyPos(), 600);
         shield = new Shield(this,GameController.SCALE,getxPos(),getyPos(), 600);
 
@@ -67,7 +67,8 @@ public class Player1 extends Player {
         speedBoostOn = true;
     }
     public void attack() {
-        meleeAttack.attack();
+        meleeAttack.abilityUsed=true;//FOR UI
+
     }
     public void smashAttack(boolean isHolding) {
         smash.smashAttack(isHolding);
@@ -161,6 +162,7 @@ public class Player1 extends Player {
     }
     public void renderUI(Graphics g) {
             shield.renderUI(g);
+            meleeAttack.renderUI(g);
     }
     public Smash getSmash() {
         return smash;
@@ -179,7 +181,7 @@ public class Player1 extends Player {
     }
 
     public boolean isAttackingMelee() {
-        return meleeAttack.attackingMelee;
+        return meleeAttack.abilityUsed;
     }
 
     public void setGodMode(boolean godMode) {

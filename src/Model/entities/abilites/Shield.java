@@ -36,7 +36,6 @@ public class Shield extends Ability {
 
     @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-
     }
 
     @Override
