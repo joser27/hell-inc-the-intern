@@ -8,6 +8,7 @@ public abstract class Ability {
     int scale;
     Player player;
     public boolean abilityUsed = false;
+    public boolean canUseAbility=true;
     public int abilityCoolDownTick;
     public int ticker = 64;
     int cdTicker;
@@ -17,6 +18,7 @@ public abstract class Ability {
     int abilityUptime;
     int abilityUptimeTicker;
     boolean abilityActive;
+    boolean justFinishedAbility;
 
     public Ability(Player player, int scale, int xPos, int yPos, int cd) {
         this.scale = scale;
@@ -33,8 +35,8 @@ public abstract class Ability {
 
     public abstract void update();
     public void updateUI() {//1sec=120ups
-
         if (abilityUsed) {
+            canUseAbility=false;
             abilityCoolDownTick--;
             cdTicker++;
             if (cdTicker>cdLimiter) {
@@ -42,14 +44,17 @@ public abstract class Ability {
                 cdTicker = 0;
             }
             if (abilityCoolDownTick<=0) {
+                System.out.println("Can use ability now");
+                justFinishedAbility=true;
+                canUseAbility=true;
                 abilityUsed=false;
-
                 abilityCoolDownTick=cd;
                 ticker=64;
             }
         }
+    }
 
-
+    public void getFacingDir() {
 
     }
 //    public void updateUI() {

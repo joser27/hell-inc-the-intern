@@ -25,6 +25,7 @@ public class EnchantedArrow extends Ability {
     @Override
     public void update() {
         updateUI();
+
         if (horizontal) {
             bullet.x += bulletSpeed;
 

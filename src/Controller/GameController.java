@@ -78,14 +78,7 @@ public class GameController {
             case MENU -> menuState.render(g);
             case GAMEOVER -> {
                 playingState.render(g);
-                StringBuilder winner = new StringBuilder("");
-                if (game.getPlayerWinner() == 1) {
-                    winner.append("CHASER");
-                } else {
-                    winner.append("RUNNER");
-                }
-
-                gameOverState.setPlayerWinner(String.valueOf(winner));
+                gameOverState.setPlayerWinner(game.getPlayerWinner());
                 gameOverState.render(g);
             }
             case PLAYING -> {

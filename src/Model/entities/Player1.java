@@ -2,9 +2,7 @@ package Model.entities;
 
 import Controller.GameController;
 import Model.Game;
-import Model.entities.abilites.MeleeAttack;
-import Model.entities.abilites.Shield;
-import Model.entities.abilites.Smash;
+import Model.entities.abilites.*;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -29,6 +27,7 @@ public class Player1 extends Player {
     //Smash ability
     private Smash smash;
     private Shield shield;
+    private Roar roar;
 
     public Player1(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
@@ -52,7 +51,8 @@ public class Player1 extends Player {
 
         meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos(), 600);
         smash = new Smash(this,GameController.SCALE,getxPos(),getyPos(), 600);
-        shield = new Shield(this,GameController.SCALE,getxPos(),getyPos(), 600);
+        shield = new Shield(this,GameController.SCALE,getxPos(),getyPos(), 960);//4secs
+        roar = new Roar(this,GameController.SCALE,getxPos(),getyPos(), 120);
 
     }
     public void respawn() {
@@ -61,7 +61,8 @@ public class Player1 extends Player {
         setHealth(100);
     }
     public void useShield() {
-        shield.useShield(this);
+        shield.useShield();
+
     }
     public void speedBoost() {
         speedBoostOn = true;
@@ -117,13 +118,14 @@ public class Player1 extends Player {
 //        attackingUpdate();
         meleeAttack.update();
         smash.update();
-        if (shield.abilityUsed) {
-            shield.update();
-        }
+        shield.update();
+        roar.update();
         boostUpdate();
 
     }
-
+    public void useRoar() {
+        roar.useRoar();
+    }
 
     public void boostUpdate() {
         if (speedBoostOn && speedBoostUsages>0) {
@@ -144,7 +146,8 @@ public class Player1 extends Player {
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
         meleeAttack.render(g,xLvlOffset,yLvlOffset);
         smash.render(g,xLvlOffset,yLvlOffset);
-
+        shield.render(g,xLvlOffset,yLvlOffset);
+        roar.render(g,xLvlOffset,yLvlOffset);
 //        g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y-yLvlOffset, 30, 30);
 //        g.drawRect((int) attackSmashHitBox.x - xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, 60, 60);
         g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
@@ -163,6 +166,8 @@ public class Player1 extends Player {
     public void renderUI(Graphics g) {
             shield.renderUI(g);
             meleeAttack.renderUI(g);
+            smash.renderUI(g);
+        roar.renderUI(g);
     }
     public Smash getSmash() {
         return smash;

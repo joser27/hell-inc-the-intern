@@ -209,6 +209,7 @@ public class Playing extends State implements Statemethods{
         }
         if (keyCode == KeyEvent.VK_NUMPAD3) {
             //Slow
+            getGame().getPlayer1().useRoar();
         }
         if (keyCode == KeyEvent.VK_NUMPAD6) {
             //Ultimate
@@ -237,7 +238,9 @@ public class Playing extends State implements Statemethods{
         else if (keyCode == KeyEvent.VK_D) {
             getGame().getPlayer2().setRight(false);
         }
-        if (keyCode == KeyEvent.VK_NUMPAD3) {
+
+        //Player 1 ability
+        if (keyCode == KeyEvent.VK_NUMPAD1) {
             getGame().getPlayer1().smashAttack(false);
         }
 

@@ -1,5 +1,6 @@
 package Model.entities.abilites;
 
+import Controller.GameController;
 import Model.entities.Player;
 import Model.entities.abilites.Ability;
 
@@ -33,6 +34,7 @@ public class Smash extends Ability {
 
     }
     private void attackSmashUpdate() {
+
         attackingSmashTimer++;
         if (attackingSmashTimer > attackingSmashCD) {
             attackingSmashTimer=0;
@@ -72,6 +74,7 @@ public class Smash extends Ability {
     }
     @Override
     public void update() {
+        updateUI();
         if (chargingAttack) {
             player.setMovementSpeed(player.getBaseMovementSpeed()/3);
             chargeAttackTick++;
@@ -153,17 +156,24 @@ public class Smash extends Ability {
 
     @Override
     public void renderUI(Graphics g) {
+        g.drawString(Integer.toString(abilityCoolDownTick),160,800);
+        if (abilityUsed) {
+            g.setColor(new Color(255, 255, 255, 150));
 
+            g.fillRect(GameController.GAME_WIDTH/2 + 30*GameController.SCALE, GameController.GAME_HEIGHT - 50 * GameController.SCALE, 64, ticker);
+        }
     }
 
     public void smashAttack(boolean isHolding) {
         chargingAttack = isHolding;
         chargingTime = 0;
         if (!isHolding) {
-            justFinishedCharging=true;
+            justFinishedCharging = true;
+            abilityUsed=true;
         } else {
-            justFinishedCharging=false;
+            justFinishedCharging = false;
         }
+
     }
 
     public int getAppliedDamage() {

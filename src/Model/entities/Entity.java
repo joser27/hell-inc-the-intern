@@ -214,7 +214,7 @@ public abstract class Entity {
         this.health += health;
     }
     public void decrementHealth(int health) {
-        this.health += health;
+        this.health -= health;
     }
 
     public BufferedImage getBufferedImage() {

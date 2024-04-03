@@ -98,11 +98,18 @@ public class Game {
 //    }
 
     public void update() {
-
+        if (player1.getHealth() <=0) {
+            gameOver=true;
+            playerWinner=2;
+        }
+        if (player2.getHealth() <=0) {
+            gameOver=true;
+            playerWinner=1;
+        }
         // Smash
         if (player1.getSmash().isJustFinishedCharging()) {
             if (player1.getSmash().getAttackSmashHitBox().intersects(player2.getHitBox())) {
-                player2.decrementHealth((int) -(player1.getSmash().getAppliedDamage()));
+                player2.decrementHealth((int) (player1.getSmash().getAppliedDamage()));
             }
         }
 
@@ -150,10 +157,8 @@ public class Game {
                 player1AttackLimiter++;
                 if (player1AttackLimiter > 5) {
                     if (getPlayer1().getAttackHitBox().intersects(getPlayer2().getHitBox())) {
-                        player2.decrementHealth(-1);
-                        if (player2.getHealth() <= 0) {
-                            gameOver = true;
-                        }
+                        player2.decrementHealth(1);
+
                     }
                     player1AttackLimiter=0;
                 }
@@ -185,12 +190,9 @@ public class Game {
                 }
             }
             if (frostShot.getBulletHitBox().intersects(getPlayer1().getHitBox())) {
-                getPlayer1().decrementHealth(-20);
+                getPlayer1().decrementHealth(20);
 
                 frostShot.setBulletDecayed(true);
-            }
-            if (getPlayer1().getHealth()<=0) {
-                player1.respawn();
             }
         }
     }
