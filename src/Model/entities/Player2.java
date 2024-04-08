@@ -293,6 +293,12 @@ public class Player2 extends Player {
         hawkshot.renderUI(g);
     }
     public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
+        g.setColor(new Color(178, 26, 26));
+        g.drawRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset,50,15);
+        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),15);
+        g.setColor(new Color(255, 0, 0));
+        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),10);
+
 //        if (volleyShot!=null) {
 //            volleyShot.render(g, xLvlOffset, yLvlOffset);
 //        }

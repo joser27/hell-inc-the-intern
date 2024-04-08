@@ -168,6 +168,7 @@ public class Smash extends Ability {
         chargingAttack = isHolding;
         chargingTime = 0;
         if (!isHolding) {
+            player.setMovementSpeed(player.getBaseMovementSpeed());
             justFinishedCharging = true;
             abilityUsed=true;
         } else {

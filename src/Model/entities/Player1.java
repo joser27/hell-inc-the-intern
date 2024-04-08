@@ -49,7 +49,7 @@ public class Player1 extends Player {
         }
 
 
-        meleeAttack = new MeleeAttack(this,GameController.SCALE*12, getxPos(),getyPos(), 600);
+        meleeAttack = new MeleeAttack(this,GameController.SCALE*12, getxPos(),getyPos(), 120);
         smash = new Smash(this,GameController.SCALE,getxPos(),getyPos(), 600);
         shield = new Shield(this,GameController.SCALE,getxPos(),getyPos(), 960);//4secs
         roar = new Roar(this,GameController.SCALE,getxPos(),getyPos(), 120);
@@ -148,6 +148,13 @@ public class Player1 extends Player {
         smash.render(g,xLvlOffset,yLvlOffset);
         shield.render(g,xLvlOffset,yLvlOffset);
         roar.render(g,xLvlOffset,yLvlOffset);
+
+        g.setColor(new Color(178, 26, 26));
+        g.drawRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset,50,15);
+        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),15);
+        g.setColor(new Color(255, 0, 0));
+        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),10);
+
 //        g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y-yLvlOffset, 30, 30);
 //        g.drawRect((int) attackSmashHitBox.x - xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, 60, 60);
         g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
@@ -164,6 +171,7 @@ public class Player1 extends Player {
 
     }
     public void renderUI(Graphics g) {
+
             shield.renderUI(g);
             meleeAttack.renderUI(g);
             smash.renderUI(g);
