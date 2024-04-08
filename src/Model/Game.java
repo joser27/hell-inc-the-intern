@@ -112,6 +112,16 @@ public class Game {
                 player2.decrementHealth((int) (player1.getSmash().getAppliedDamage()));
             }
         }
+        //Volley
+        if (player2.getVolleyShot().abilityUsed) {
+            ArrayList<Rectangle> bullet = player2.getVolleyShot().getBullet();
+            for (Rectangle bullets : bullet) {
+                if (bullets.intersects(player1.getHitBox())) {
+                    player1.decrementHealth(10);
+                }
+            }
+
+        }
 
 //        if (player2.getVolleyShot()!=null) {
 //            player2.getVolleyShot().update();

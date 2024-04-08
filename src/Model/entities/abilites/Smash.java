@@ -114,7 +114,7 @@ public class Smash extends Ability {
         if (chargingAttack) {
             // Hover count
             g.setColor(new Color(230,60,100,255));
-            g.drawString(Integer.toString(appliedDamage), (int) ((int) player.getHitBox().x+player.getHitBox().width) - xLvlOffset, (int) player.getHitBox().y-10 - yLvlOffset);
+            g.drawString(Integer.toString(appliedDamage), (int) ((int) player.getHitBox().x+player.getHitBox().width) - xLvlOffset, (int) player.getHitBox().y-30 - yLvlOffset);
 
             g.setColor(new Color(200,100,100,50));
 
@@ -156,7 +156,8 @@ public class Smash extends Ability {
 
     @Override
     public void renderUI(Graphics g) {
-        g.drawString(Integer.toString(abilityCoolDownTick),160,800);
+        g.setColor(Color.BLACK);
+        g.drawString(Integer.toString(abilityCoolDownTick),160,900);
         if (abilityUsed) {
             g.setColor(new Color(255, 255, 255, 150));
 
@@ -165,14 +166,16 @@ public class Smash extends Ability {
     }
 
     public void smashAttack(boolean isHolding) {
-        chargingAttack = isHolding;
-        chargingTime = 0;
-        if (!isHolding) {
-            player.setMovementSpeed(player.getBaseMovementSpeed());
-            justFinishedCharging = true;
-            abilityUsed=true;
-        } else {
-            justFinishedCharging = false;
+        if (!abilityUsed) {
+            chargingAttack = isHolding;
+            chargingTime = 0;
+            if (!isHolding) {
+                player.setMovementSpeed(player.getBaseMovementSpeed());
+                justFinishedCharging = true;
+                abilityUsed = true;
+            } else {
+                justFinishedCharging = false;
+            }
         }
 
     }

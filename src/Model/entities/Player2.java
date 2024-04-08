@@ -255,8 +255,7 @@ public class Player2 extends Player {
 
     }
     public void shootVolley() {
-        volleyShot.abilityUsed=true;
-        canShootVolley = true;
+        volleyShot.shootVolley();
     }
     public void shootHawkshot() {
         hawkshot.abilityUsed=true;
@@ -298,7 +297,7 @@ public class Player2 extends Player {
         g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),15);
         g.setColor(new Color(255, 0, 0));
         g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),10);
-
+        volleyShot.render(g,xLvlOffset,yLvlOffset);
 //        if (volleyShot!=null) {
 //            volleyShot.render(g, xLvlOffset, yLvlOffset);
 //        }

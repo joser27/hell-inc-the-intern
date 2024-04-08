@@ -5,9 +5,12 @@ import Model.entities.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Volley extends Ability {
     private ArrayList<Rectangle> bullet;
+    private boolean lookingRight;
+    private boolean lookingUp;
     private boolean vertical;
     private boolean horizontal;
     private int bulletSpeed = 6;
@@ -15,32 +18,89 @@ public class Volley extends Ability {
     private int bulletDistance = 75;
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
+    int newDir;
 
     public Volley(Player player, int scale, int xPos, int yPos, int cd) {
         super(player, scale, xPos, yPos, cd);
         bullet = new ArrayList<>();
-        bullet.add(new Rectangle(xPos-35,yPos-35,bulletSize,bulletSize));
-        bullet.add(new Rectangle(xPos,yPos,bulletSize,bulletSize));
-        bullet.add(new Rectangle(xPos+35,yPos+35,bulletSize,bulletSize));
+
 
     }
 
     public void update() {
         updateUI();
-        if (horizontal) {
-            for (Rectangle bullets : bullet) {
-                bullets.x += bulletSpeed;
+        updateVolley();
+    }
+    public void shootVolley() {
+        if (!abilityUsed) {
+            bulletDecayed=false;
+            abilityUsed = true;
+            bullet.add(new Rectangle((int) (player.getHitBox().x - 35), (int) (player.getHitBox().y - 35), bulletSize, bulletSize));
+            bullet.add(new Rectangle((int) player.getHitBox().x, (int) player.getHitBox().y, bulletSize, bulletSize));
+            bullet.add(new Rectangle((int) (player.getHitBox().x + 35), (int) (player.getHitBox().y + 35), bulletSize, bulletSize));
+            newDir = player.getFacingDir();//0 = right, 1 = left, 2 = up, 3 = down
+
+            if (newDir==0) {
+                lookingRight=true;
+            }
+            if (newDir==1) {
+                lookingRight=false;
+            }
+            if (newDir == 2) {
+                lookingUp=true;
+            }
+            if (newDir==3) {
+                lookingUp=false;
             }
 
-        } else if (vertical) {
-            for (Rectangle bullets : bullet) {
-                bullets.y += bulletSpeed;
+            if (newDir == 0 || newDir==1) {
+                horizontal = true;
+                vertical=false;
+            }
+            if (newDir == 2 || newDir == 3) {
+                vertical = true;
+                horizontal=false;
             }
         }
+    }
 
-        bulletUpTime++;
-        if (bulletUpTime >= bulletDistance) {
-            bulletDecayed = true;
+    public void updateVolley() {
+        if (abilityUsed) {
+            //int newDir = player.getFacingDir();//0 = right, 1 = left, 2 = up, 3 = down
+            if (horizontal) {
+                for (Rectangle bullets : bullet) {
+                    if (lookingRight) {
+                        bullets.x += bulletSpeed;
+                    } else {
+                        bullets.x -= bulletSpeed;
+                    }
+                }
+            } else if (vertical) {
+                for (Rectangle bullets : bullet) {
+                    if (lookingUp) {
+                        bullets.y -= bulletSpeed;
+                    } else {
+                        bullets.y += bulletSpeed;
+                    }
+                }
+            }
+
+            if (!bulletDecayed) {
+                bulletUpTime++;
+                System.out.println(bulletUpTime);
+                if (bulletUpTime >= bulletDistance) {
+                    bulletDecayed = true;
+                    bulletUpTime = 0;
+                    Iterator<Rectangle> iterator = bullet.iterator();
+                    while (iterator.hasNext()) {
+                        Rectangle bullets = iterator.next();
+                        iterator.remove();
+                    }
+                }
+            }
+
+
+
         }
     }
 
@@ -75,9 +135,11 @@ public class Volley extends Ability {
 //    }
 
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        g.setColor(Color.CYAN);
-        for (Rectangle bullets : bullet) {
-            g.fillRect(bullets.x - xLvlOffset, bullets.y- yLvlOffset, bulletSize,bulletSize);
+        if (abilityUsed) {
+            g.setColor(Color.CYAN);
+            for (Rectangle bullets : bullet) {
+                g.fillRect(bullets.x - xLvlOffset, bullets.y - yLvlOffset, bulletSize, bulletSize);
+            }
         }
 
 
