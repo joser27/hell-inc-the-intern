@@ -26,19 +26,20 @@ public class MeleeAttack extends Ability {
     @Override
     public void update() {
         attackingUpdate();
+        updateUI();
     }
 
 
     private void attackingUpdate() {
         if (abilityUsed) {
-            abilityActive=true;
-            abilityCoolDownTick--;
-
-            abilityUptimeTicker++;
-            if (abilityUptimeTicker>abilityUptime) {
-                abilityActive=false;
-            }
-            if (abilityActive) {
+//            abilityActive=true;
+//            abilityCoolDownTick--;
+//
+//            abilityUptimeTicker++;
+//            if (abilityUptimeTicker>abilityUptime) {
+//                abilityActive=false;
+//            }
+            if (abilityUsed) {
                 switch (player.getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
                     case 0 -> {
                         attackHitBox.x = player.getxPos() + 10;
@@ -114,7 +115,7 @@ public class MeleeAttack extends Ability {
 //    }
     @Override
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (abilityActive) {
+        if (abilityUsed) {
             switch (player.getFacingDir()) {
                 case 0:
                     player.playerAction = OGRE_ATTACK_RIGHT;

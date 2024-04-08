@@ -49,7 +49,7 @@ public class Player1 extends Player {
         }
 
 
-        meleeAttack = new MeleeAttack(this,GameController.SCALE, getxPos(),getyPos(), 600);
+        meleeAttack = new MeleeAttack(this,GameController.SCALE*12, getxPos(),getyPos(), 600);
         smash = new Smash(this,GameController.SCALE,getxPos(),getyPos(), 600);
         shield = new Shield(this,GameController.SCALE,getxPos(),getyPos(), 960);//4secs
         roar = new Roar(this,GameController.SCALE,getxPos(),getyPos(), 120);
