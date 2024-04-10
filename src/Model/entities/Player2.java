@@ -341,5 +341,8 @@ public class Player2 extends Player {
     public void removeVolleyShot() {
         volleyShot = null;
     }
+    public RangedAttack getRangedAttacks() {
+        return rangedAttacks;
+    }
 
 }

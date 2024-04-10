@@ -29,11 +29,11 @@ public class PlayingUI extends State implements Statemethods {
     public PlayingUI(Game game) {//(GameController.GAME_HEIGHT/2) + GameController.GAME_HEIGHT/4
         super(game);
         // Player 1 Abilities
-        player1_P = LoadSave.GetSpriteAtlas(LoadSave.Death_Surge);
-        player1_Q = LoadSave.GetSpriteAtlas(LoadSave.Decimating_Smash);
-        player1_W = LoadSave.GetSpriteAtlas(LoadSave.Soul_Furnace);
-        player1_E = LoadSave.GetSpriteAtlas(LoadSave.Roar_of_the_Slayer);
-        player1_R = LoadSave.GetSpriteAtlas(LoadSave.Unstoppable_Onslaught);
+        player1_P = LoadSave.GetSpriteAtlas(LoadSave.Death_Surge_PX);
+        player1_Q = LoadSave.GetSpriteAtlas(LoadSave.Decimating_Smash_PX);
+        player1_W = LoadSave.GetSpriteAtlas(LoadSave.Soul_Furnace_PX);
+        player1_E = LoadSave.GetSpriteAtlas(LoadSave.Roar_of_the_Slayer_PX);
+        player1_R = LoadSave.GetSpriteAtlas(LoadSave.Unstoppable_Onslaught_PX);
 
         //Player 2
         player2_P = LoadSave.GetSpriteAtlas(LoadSave.Frost_Shot);

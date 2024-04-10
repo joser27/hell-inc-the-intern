@@ -43,6 +43,13 @@ public class LoadSave {
     public static final String Volley = "Volley.png";
     public static final String Ranger_Focus = "Ranger_Focus.png";
     public static final String Hawkshot = "Hawkshot.png";
+    //PIXEL P1
+    public static final String Death_Surge_PX = "Death_Surge_PX.png";
+    public static final String Decimating_Smash_PX = "Decimating_Smash_PX.png";
+    public static final String Glory_in_Death_PX = "Glory_in_Death_PX.png";
+    public static final String Roar_of_the_Slayer_PX = "Roar_of_the_Slayer_PX.png";
+    public static final String Soul_Furnace_PX = "Soul_Furnace_PX.png";
+    public static final String Unstoppable_Onslaught_PX = "Unstoppable_Onslaught_PX.png";
 
 
 

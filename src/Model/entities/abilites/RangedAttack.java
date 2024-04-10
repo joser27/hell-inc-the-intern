@@ -146,6 +146,9 @@ public class RangedAttack extends Ability {
     }
 
 
+    public Projectile getBullet() {
+        return bullet;
+    }
 //    public Rectangle getBulletHitBox() {
 //        return bullet;
 //    }

@@ -33,7 +33,13 @@ public class Projectile {
         this.releaseDelay = releaseDelay;
         hitBox = new Rectangle((int) xPos, (int) yPos,projectileSize,projectileSize);
     }
-
+    public boolean hitsPlayer(Player player) {
+        if (hitBox.intersects(player.getHitBox())) {
+            System.out.println("HIT PLAYER");
+            return true;
+        }
+        return false;
+    }
     public void setProjectileDirection(int facingDir) {
         switch (facingDir) {
             case 0:
@@ -112,7 +118,8 @@ public class Projectile {
             g2d.rotate(rotationAngle, hitBox.x - xLvlOffset + img.getWidth(null) / 2, hitBox.y - yLvlOffset + img.getHeight(null) / 2);
             g2d.drawImage(img, (hitBox.x - xLvlOffset + adjustmentX), hitBox.y - yLvlOffset + adjustmentY, null);
         }
-
+        g.setColor(Color.BLUE);
+        g.fillRect(hitBox.x-xLvlOffset,hitBox.y-yLvlOffset,hitBox.width,hitBox.height);
             // Dispose of the created Graphics2D object
             g2d.dispose();
             switch (player.getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
