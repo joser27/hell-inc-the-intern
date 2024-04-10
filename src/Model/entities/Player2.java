@@ -18,11 +18,11 @@ import static Model.utilz.Constants.PlayerConstants.*;
 public class Player2 extends Player {
 
 
-    private ArrayList<RangedAttack> rangedAttacks;
+    private RangedAttack rangedAttacks;
     Volley volleyShot;
     Hawkshot hawkshot;
     private EnchantedArrow enchantedArrow;
-    private boolean canAutoAttack = false;
+    private boolean usedRangedAttack = false;
     private int AutoAttackTick;
     public boolean canShootVolley = false;
     public int volleyDelayShootTick;
@@ -32,6 +32,7 @@ public class Player2 extends Player {
     private int baseAttackSpeed = 50;
     private int attackSpeed = baseAttackSpeed;
     RangerFocus rangerFocus;
+    Image arrowImage;
 //    private String playerAction = RUNNING_DOWN;
 //    private int aniTick, aniIndex, aniSpeed = 15;
 //    private int actionOffset;
@@ -42,6 +43,7 @@ public class Player2 extends Player {
 
     public Player2(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
+        //Images
         setBufferedImage(LoadSave.GetSpriteAtlas(LoadSave.PLAYER1_ATLAS));
         img = new BufferedImage[24][8];
         for (int i = 0; i < 24; i++) {
@@ -57,10 +59,14 @@ public class Player2 extends Player {
                 img[i][j] = bufferedImage;
             }
         }
-        rangedAttacks = new ArrayList<>();
+        //Arrow
+        arrowImage = LoadSave.GetSpriteAtlas(LoadSave.ARROW_PROJECTILE).getScaledInstance(20,20, Image.SCALE_DEFAULT);
+
+        //abilities
+        rangedAttacks = new RangedAttack(this, arrowImage, GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,120);
         rangerFocus = new RangerFocus(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,700);
         enchantedArrow = new EnchantedArrow(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,3600);
-        volleyShot = new Volley(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,500);
+        volleyShot = new Volley(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,120);
         hawkshot = new Hawkshot(this,GameController.SCALE,(int)this.getHitBox().x,(int)this.getHitBox().y,1200);//5sec
 
 
@@ -100,71 +106,70 @@ public class Player2 extends Player {
         }
         game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
     }
-    public void updateAutoAttack() {
-
-        if (canAutoAttack) {
-            setShootDir();
-            AutoAttackTick++;
-            if (AutoAttackTick > attackSpeed) {
-                canAutoAttack = false;
-                AutoAttackTick = 0;
-
-                // 0 = right, 1 = left, 2 = up, 3 = down
-                RangedAttack frostShot = new RangedAttack(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2,120);
-                switch (getFacingDir()) {
-                    case 0:
-                        frostShot.setHorizontal(true);
-                        frostShot.setBulletSpeed(frostShot.getBulletSpeed());
-                        break;
-                    case 1:
-                        frostShot.setHorizontal(true);
-                        frostShot.setBulletSpeed(frostShot.getBulletSpeed() * -1);
-                        break;
-                    case 2:
-                        frostShot.setVertical(true);
-                        frostShot.setBulletSpeed(frostShot.getBulletSpeed() * -1);
-                        break;
-                    case 3:
-                        frostShot.setVertical(true);
-                        frostShot.setBulletSpeed(frostShot.getBulletSpeed());
-                        break;
-                }
-                rangedAttacks.add(frostShot);
-            }
-        }
-        updateAndRemoveAutoAttacks();
-    }
-
-    public void updateAndRemoveAutoAttacks() {
-        if (rangedAttacks != null) {
-            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
-
-            while (iterator.hasNext()) {
-                RangedAttack frostShot = iterator.next();
-                frostShot.update();
-
-                if (frostShot.isBulletDecayed()) {
-                    iterator.remove();
-                }
-            }
-        }
-    }
-    private void setShootDir() {
-        switch (getFacingDir()) {
-            case 0:
-                playerAction = HUMAN_ATTACK_RIGHT;
-                break;
-            case 1:
-                playerAction = HUMAN_ATTACK_LEFT;
-                break;
-            case 2:
-                playerAction = HUMAN_ATTACK_UP;
-                break;
-            case 3:
-                playerAction = HUMAN_ATTACK_DOWN;
-                break;
-        }
-    }
+//    public void updateAutoAttack() {
+//        if (canAutoAttack) {
+//            setShootDir();
+//            AutoAttackTick++;
+//            if (AutoAttackTick > attackSpeed) {
+//                canAutoAttack = false;
+//                AutoAttackTick = 0;
+//
+//                // 0 = right, 1 = left, 2 = up, 3 = down
+//                RangedAttack frostShot = new RangedAttack(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2,120);
+//                switch (getFacingDir()) {
+//                    case 0:
+//                        frostShot.setHorizontal(true);
+//                        frostShot.setBulletSpeed(frostShot.getBulletSpeed());
+//                        break;
+//                    case 1:
+//                        frostShot.setHorizontal(true);
+//                        frostShot.setBulletSpeed(frostShot.getBulletSpeed() * -1);
+//                        break;
+//                    case 2:
+//                        frostShot.setVertical(true);
+//                        frostShot.setBulletSpeed(frostShot.getBulletSpeed() * -1);
+//                        break;
+//                    case 3:
+//                        frostShot.setVertical(true);
+//                        frostShot.setBulletSpeed(frostShot.getBulletSpeed());
+//                        break;
+//                }
+//                rangedAttacks.add(frostShot);
+//            }
+//        }
+//        updateAndRemoveAutoAttacks();
+//    }
+//
+//    public void updateAndRemoveAutoAttacks() {
+//        if (rangedAttacks != null) {
+//            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
+//
+//            while (iterator.hasNext()) {
+//                RangedAttack frostShot = iterator.next();
+//                frostShot.update();
+//
+//                if (frostShot.isBulletDecayed()) {
+//                    iterator.remove();
+//                }
+//            }
+//        }
+//    }
+//    private void setShootDir() {
+//        switch (getFacingDir()) {
+//            case 0:
+//                playerAction = HUMAN_ATTACK_RIGHT;
+//                break;
+//            case 1:
+//                playerAction = HUMAN_ATTACK_LEFT;
+//                break;
+//            case 2:
+//                playerAction = HUMAN_ATTACK_UP;
+//                break;
+//            case 3:
+//                playerAction = HUMAN_ATTACK_DOWN;
+//                break;
+//        }
+//    }
 //    public void updateVolley() {
 //        if (canShootVolley) {
 //            setShootDir();
@@ -194,46 +199,47 @@ public class Player2 extends Player {
 //            }
 //        }
 //    }
-    public void updateEnchantedArrow() {
-        if (canShootEnchantedArrow) {
-            setShootDir();
-            enchantedArrowDelayShootTick++;
-            if (enchantedArrowDelayShootTick > 150) {
-                canShootEnchantedArrow = false;
-                enchantedArrowDelayShootTick = 0;
-                enchantedArrow = new EnchantedArrow(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2, 1000);
-                switch (getFacingDir()) {
-                    case 0:
-                        enchantedArrow.setHorizontal(true);
-                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed());
-                        break;
-                    case 1:
-                        enchantedArrow.setHorizontal(true);
-                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed() * -1);
-                        break;
-                    case 2:
-                        enchantedArrow.setVertical(true);
-                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed() * -1);
-                        break;
-                    case 3:
-                        enchantedArrow.setVertical(true);
-                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed());
-                        break;
-                }
-            }
-        }
-        if (enchantedArrow!=null) {
-            enchantedArrow.update();
-            if (enchantedArrow.isBulletDecayed()) {
-                enchantedArrow = null;
-            }
-        }
-    }
+//    public void updateEnchantedArrow() {
+//        if (canShootEnchantedArrow) {
+//            setShootDir();
+//            enchantedArrowDelayShootTick++;
+//            if (enchantedArrowDelayShootTick > 150) {
+//                canShootEnchantedArrow = false;
+//                enchantedArrowDelayShootTick = 0;
+//                enchantedArrow = new EnchantedArrow(this,GameController.SCALE,getxPos() + getWidth() / 2, getyPos() + getHeight() / 2, 1000);
+//                switch (getFacingDir()) {
+//                    case 0:
+//                        enchantedArrow.setHorizontal(true);
+//                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed());
+//                        break;
+//                    case 1:
+//                        enchantedArrow.setHorizontal(true);
+//                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed() * -1);
+//                        break;
+//                    case 2:
+//                        enchantedArrow.setVertical(true);
+//                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed() * -1);
+//                        break;
+//                    case 3:
+//                        enchantedArrow.setVertical(true);
+//                        enchantedArrow.setBulletSpeed(enchantedArrow.getBulletSpeed());
+//                        break;
+//                }
+//            }
+//        }
+//        if (enchantedArrow!=null) {
+//            enchantedArrow.update();
+//            if (enchantedArrow.isBulletDecayed()) {
+//                enchantedArrow = null;
+//            }
+//        }
+//    }
     public void update() {
-
         updateAnimationTick();
         updatePos();
-        updateAutoAttack();
+        //updateAutoAttack();
+
+        rangedAttacks.update();
         rangerFocus.update();
         enchantedArrow.update();
         volleyShot.update();
@@ -245,8 +251,9 @@ public class Player2 extends Player {
     }
 
     public void autoAttack() {
-
-        canAutoAttack = true;
+        if (!rangedAttacks.abilityUsed) {
+            rangedAttacks.shootBullet();
+        }
     }
 
     public void rangerFocus() {
@@ -265,25 +272,25 @@ public class Player2 extends Player {
         enchantedArrow.abilityUsed = true;
     }
 
-    public void renderFrostShot(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (rangedAttacks.size()  >0) {
-            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
-            while (iterator.hasNext()) {
-                RangedAttack frostShot = iterator.next();
-                frostShot.render(g,xLvlOffset,yLvlOffset);
-            }
-        }
-    }
+//    public void renderFrostShot(Graphics g, int xLvlOffset, int yLvlOffset) {
+//        if (rangedAttacks.size()  >0) {
+//            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
+//            while (iterator.hasNext()) {
+//                RangedAttack frostShot = iterator.next();
+//                frostShot.render(g,xLvlOffset,yLvlOffset);
+//            }
+//        }
+//    }
 
-    public void renderVolley(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (rangedAttacks.size()  >0) {
-            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
-            while (iterator.hasNext()) {
-                RangedAttack frostShot = iterator.next();
-                frostShot.render(g,xLvlOffset,yLvlOffset);
-            }
-        }
-    }
+//    public void renderVolley(Graphics g, int xLvlOffset, int yLvlOffset) {
+//        if (rangedAttacks.size()  >0) {
+//            Iterator<RangedAttack> iterator = rangedAttacks.iterator();
+//            while (iterator.hasNext()) {
+//                RangedAttack frostShot = iterator.next();
+//                frostShot.render(g,xLvlOffset,yLvlOffset);
+//            }
+//        }
+//    }
 
     public void renderUI(Graphics g) {
         rangerFocus.renderUI(g);
@@ -298,6 +305,13 @@ public class Player2 extends Player {
         g.setColor(new Color(255, 0, 0));
         g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),10);
         volleyShot.render(g,xLvlOffset,yLvlOffset);
+        rangedAttacks.render(g,xLvlOffset,yLvlOffset);
+//        if (usedRangedAttack) {
+//            System.out.println("YEEEEEEEEET!");
+//            for (RangedAttack rangedAttack : rangedAttacks) {
+//                rangedAttack.render(g,xLvlOffset,yLvlOffset);
+//            }
+//        }
 //        if (volleyShot!=null) {
 //            volleyShot.render(g, xLvlOffset, yLvlOffset);
 //        }
@@ -317,9 +331,9 @@ public class Player2 extends Player {
 //        g.drawRect(getxPos()-xLvlOffset,getyPos()- yLvlOffset, (int) getHitBox().width, (int) getHitBox().height);
     }
 
-    public ArrayList<RangedAttack> getBullets() {
-        return rangedAttacks;
-    }
+//    public ArrayList<RangedAttack> getBullets() {
+//        return rangedAttacks;
+//    }
 
     public Volley getVolleyShot() {
         return volleyShot;

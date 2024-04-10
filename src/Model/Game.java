@@ -2,6 +2,7 @@ package Model;
 
 import Controller.GameController;
 import Model.entities.*;
+import Model.entities.abilites.Projectile;
 import Model.entities.abilites.RangedAttack;
 
 import java.awt.*;
@@ -114,9 +115,9 @@ public class Game {
         }
         //Volley
         if (player2.getVolleyShot().abilityUsed) {
-            ArrayList<Rectangle> bullet = player2.getVolleyShot().getBullet();
-            for (Rectangle bullets : bullet) {
-                if (bullets.intersects(player1.getHitBox())) {
+            ArrayList<Projectile> bullet = player2.getVolleyShot().getBullet();
+            for (Projectile bullets : bullet) {
+                if (bullets.hitBox.intersects(player1.getHitBox())) {
                     player1.decrementHealth(10);
                 }
             }
@@ -137,18 +138,6 @@ public class Game {
         }
 
 
-        Iterator<Medkit> iterator = activeMedkits.iterator();
-        while (iterator.hasNext()) {
-            Medkit medkit = iterator.next();
-            if (medkit.getHitBox().intersects(getPlayer1().getHitBox())) {
-                player1.useMedkit();
-                iterator.remove();
-            }
-            if (medkit.getHitBox().intersects(getPlayer2().getHitBox())) {
-                player2.useMedkit();
-                iterator.remove();
-            }
-        }
         timer++;
         if (time == 599) {
 
@@ -176,7 +165,7 @@ public class Game {
             }
         }
         entitiesUpdates();
-        bulletsUpdates();
+        //bulletsUpdates();
     }
 
     private void entitiesUpdates() {
@@ -191,21 +180,21 @@ public class Game {
             walls[i].update();
         }
     }
-    private void bulletsUpdates() {
-        ArrayList<RangedAttack> frostShots = player2.getBullets();
-        for (RangedAttack frostShot : frostShots) {
-            for (Wall wall : walls) {
-                if (frostShot.getBulletHitBox().intersects(wall.getHitBox())) {
-                    frostShot.setBulletDecayed(true);
-                }
-            }
-            if (frostShot.getBulletHitBox().intersects(getPlayer1().getHitBox())) {
-                getPlayer1().decrementHealth(20);
-
-                frostShot.setBulletDecayed(true);
-            }
-        }
-    }
+//    private void bulletsUpdates() {
+//        ArrayList<RangedAttack> frostShots = player2.getBullets();
+//        for (RangedAttack frostShot : frostShots) {
+//            for (Wall wall : walls) {
+//                if (frostShot.getBulletHitBox().intersects(wall.getHitBox())) {
+//                    frostShot.setBulletDecayed(true);
+//                }
+//            }
+//            if (frostShot.getBulletHitBox().intersects(getPlayer1().getHitBox())) {
+//                getPlayer1().decrementHealth(20);
+//
+//                frostShot.setBulletDecayed(true);
+//            }
+//        }
+//    }
 
 
     public void renderLeftScreen(Graphics g, int xLvlOffset, int yLvlOffset) {//Player 2 is left
@@ -216,7 +205,7 @@ public class Game {
         g.fillRect(0, 0, screenWidth / 2, screenHeight);
 
 
-        player2.renderFrostShot(g,xLvlOffset,yLvlOffset);
+//        player2.renderFrostShot(g,xLvlOffset,yLvlOffset);
 
         for (int i = 0; i < LevelLoader.world.length; i++) {
             for (int j = 0; j < LevelLoader.world[i].length; j++) {
@@ -259,14 +248,14 @@ public class Game {
         g.fillRect(screenWidth / 2, 0, screenWidth / 2, screenHeight);
 
         //Bullets rending when offscreen
-        if (player2.getBullets().size()>0) {
-            ArrayList<RangedAttack> frostShots = player2.getBullets();
-            for (RangedAttack frostShot : frostShots) {
-                if (frostShot.getBulletHitBox().getX()-xLvlOffset > GameController.GAME_WIDTH / 2) {
-                    frostShot.render(g,xLvlOffset,yLvlOffset);
-                }
-            }
-        }
+//        if (player2.getBullets().size()>0) {
+//            ArrayList<RangedAttack> frostShots = player2.getBullets();
+//            for (RangedAttack frostShot : frostShots) {
+//                if (frostShot.getBulletHitBox().getX()-xLvlOffset > GameController.GAME_WIDTH / 2) {
+//                    frostShot.render(g,xLvlOffset,yLvlOffset);
+//                }
+//            }
+//        }
 
 
 

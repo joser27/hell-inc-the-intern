@@ -17,7 +17,7 @@ public class Roar extends Ability {
 
     public void useRoar() {
         if (canUseAbility) {
-            projectile = new Projectile(player);
+            projectile = new Projectile(player, (int) player.getHitBox().x, (int) player.getHitBox().y,null,0);
             abilityUsed=true;
             canUseAbility=false;
         }
@@ -26,9 +26,8 @@ public class Roar extends Ability {
     public void update() {//0 = right, 1 = left, 2 = up, 3 = down
         updateUI();
         if (abilityUsed) {
-            projectile.updateProjectile(player.getFacingDir());
+            projectile.updateProjectile();
         }
-
     }
 
     @Override

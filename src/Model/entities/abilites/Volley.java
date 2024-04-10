@@ -2,13 +2,14 @@ package Model.entities.abilites;
 
 import Controller.GameController;
 import Model.entities.Player;
+import Model.utilz.LoadSave;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Volley extends Ability {
-    private ArrayList<Rectangle> bullet;
+    private ArrayList<Projectile> bullets;
     private boolean lookingRight;
     private boolean lookingUp;
     private boolean vertical;
@@ -19,38 +20,54 @@ public class Volley extends Ability {
     private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     int newDir;
+    Image img;
 
     public Volley(Player player, int scale, int xPos, int yPos, int cd) {
         super(player, scale, xPos, yPos, cd);
-        bullet = new ArrayList<>();
-
+        bullets = new ArrayList<Projectile>();
+        img = LoadSave.GetSpriteAtlas(LoadSave.ARROW_PROJECTILE).getScaledInstance(bulletSize,bulletSize,Image.SCALE_DEFAULT);
 
     }
 
     public void update() {
         updateUI();
-        updateVolley();
+        //updateVolley();
+        if (abilityUsed) {
+            for (Projectile bullet : bullets) {
+                bullet.updateProjectile();
+            }
+        }
     }
     public void shootVolley() {
         if (!abilityUsed) {
             bulletDecayed=false;
             abilityUsed = true;
-            bullet.add(new Rectangle((int) (player.getHitBox().x - 35), (int) (player.getHitBox().y - 35), bulletSize, bulletSize));
-            bullet.add(new Rectangle((int) player.getHitBox().x, (int) player.getHitBox().y, bulletSize, bulletSize));
-            bullet.add(new Rectangle((int) (player.getHitBox().x + 35), (int) (player.getHitBox().y + 35), bulletSize, bulletSize));
+
             newDir = player.getFacingDir();//0 = right, 1 = left, 2 = up, 3 = down
 
             if (newDir==0) {
                 lookingRight=true;
+                bullets.add(new Projectile(player, (int) player.getHitBox().x, (int) player.getHitBox().y,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x+30, (int) player.getHitBox().y+30,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x, (int) player.getHitBox().y+60,img,40));
             }
             if (newDir==1) {
                 lookingRight=false;
+                bullets.add(new Projectile(player, (int) player.getHitBox().x, (int) player.getHitBox().y,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x-30, (int) player.getHitBox().y+30,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x, (int) player.getHitBox().y+60,img,40));
             }
             if (newDir == 2) {
                 lookingUp=true;
+                bullets.add(new Projectile(player, (int) player.getHitBox().x, (int) player.getHitBox().y,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x+30, (int) player.getHitBox().y-30,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x+60, (int) player.getHitBox().y,img,40));
             }
             if (newDir==3) {
                 lookingUp=false;
+                bullets.add(new Projectile(player, (int) player.getHitBox().x, (int) player.getHitBox().y-30,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x+30, (int) player.getHitBox().y,img,40));
+                bullets.add(new Projectile(player, (int) player.getHitBox().x+60, (int) player.getHitBox().y-30,img,40));
             }
 
             if (newDir == 0 || newDir==1) {
@@ -61,48 +78,48 @@ public class Volley extends Ability {
                 vertical = true;
                 horizontal=false;
             }
-        }
+}
     }
 
-    public void updateVolley() {
-        if (abilityUsed) {
-            //int newDir = player.getFacingDir();//0 = right, 1 = left, 2 = up, 3 = down
-            if (horizontal) {
-                for (Rectangle bullets : bullet) {
-                    if (lookingRight) {
-                        bullets.x += bulletSpeed;
-                    } else {
-                        bullets.x -= bulletSpeed;
-                    }
-                }
-            } else if (vertical) {
-                for (Rectangle bullets : bullet) {
-                    if (lookingUp) {
-                        bullets.y -= bulletSpeed;
-                    } else {
-                        bullets.y += bulletSpeed;
-                    }
-                }
-            }
-
-            if (!bulletDecayed) {
-                bulletUpTime++;
-                System.out.println(bulletUpTime);
-                if (bulletUpTime >= bulletDistance) {
-                    bulletDecayed = true;
-                    bulletUpTime = 0;
-                    Iterator<Rectangle> iterator = bullet.iterator();
-                    while (iterator.hasNext()) {
-                        Rectangle bullets = iterator.next();
-                        iterator.remove();
-                    }
-                }
-            }
-
-
-
-        }
-    }
+//    public void updateVolley() {
+//        if (abilityUsed) {
+//            //int newDir = player.getFacingDir();//0 = right, 1 = left, 2 = up, 3 = down
+//            if (horizontal) {
+//                for (Projectile bullets : bullets) {
+//                    if (lookingRight) {
+//                        bullets.hitBox.x += bulletSpeed;
+//                    } else {
+//                        bullets.hitBox.x -= bulletSpeed;
+//                    }
+//                }
+//            } else if (vertical) {
+//                for (Projectile bullets : bullets) {
+//                    if (lookingUp) {
+//                        bullets.hitBox.y -= bulletSpeed;
+//                    } else {
+//                        bullets.hitBox.y += bulletSpeed;
+//                    }
+//                }
+//            }
+//
+//            if (!bulletDecayed) {
+//                bulletUpTime++;
+//                System.out.println(bulletUpTime);
+//                if (bulletUpTime >= bulletDistance) {
+//                    bulletDecayed = true;
+//                    bulletUpTime = 0;
+//                    Iterator<Projectile> iterator = bullets.iterator();
+//                    while (iterator.hasNext()) {
+//                        Projectile bullets = iterator.next();
+//                        iterator.remove();
+//                    }
+//                }
+//            }
+//
+//
+//
+//        }
+//    }
 
 //    private void updateDir() {
 //        if (player.get) {
@@ -136,9 +153,9 @@ public class Volley extends Ability {
 
     public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
         if (abilityUsed) {
-            g.setColor(Color.CYAN);
-            for (Rectangle bullets : bullet) {
-                g.fillRect(bullets.x - xLvlOffset, bullets.y - yLvlOffset, bulletSize, bulletSize);
+
+            for (Projectile bullets : bullets) {
+                bullets.render(g,xLvlOffset,yLvlOffset);
             }
         }
 
@@ -185,7 +202,7 @@ public class Volley extends Ability {
         this.bulletDecayed = bulletDecayed;
     }
 
-    public ArrayList<Rectangle> getBullet() {
-        return bullet;
+    public ArrayList<Projectile> getBullet() {
+        return bullets;
     }
 }
