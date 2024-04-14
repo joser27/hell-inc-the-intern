@@ -122,9 +122,20 @@ public class Game {
                 }
             }
         }
-        if (player2.getRangedAttacks().abilityUsed) {
-            if (player2.getRangedAttacks().getBullet().hitsPlayer(player2)) {
-                System.out.println("P@");
+        //ranged attack
+//        if (player2.getRangedAttacks().abilityUsed) {
+//            if (player2.getRangedAttacks().getBullet().hitsPlayer(player2)) {
+//                System.out.println("P@");
+//            }
+//        }
+//        if (player2.getRangedAttacks().getBullet()!=null) {
+//            if (player2.getRangedAttacks().hitPlayer(player1)) {
+//                player1.decrementHealth(10);
+//            }
+//        }
+        if (player2.getRangedAttacks().getBullet()!=null) {
+            if (player2.getRangedAttacks().getBullet().hitsPlayer(player1)) {
+                player1.decrementHealth(10);
             }
         }
 //        if (player2.getRangedAttacks().abilityUsed) {
