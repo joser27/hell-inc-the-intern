@@ -14,7 +14,8 @@ public class LoadSave {
     public static final String FONT_MINECRAFT = "res\\Minecraft.ttf";
 
     public static final String START_BUTTON = "startButton.png";
-    public static final String PLAYER1_ATLAS = "Character-Base.png";
+//    public static final String PLAYER1_ATLAS = "Character-Base.png";
+    public static final String PLAYER1_ATLAS = "characterSprites/Puny-Characters/Archer-Green.png";
     public static final String PLAYER2_ATLAS = "Orc-Peon-Cyan.png";
     public static final String PISTOL_STATIC_IMG = "GUN_01_[square_frame]_01_V1.00.png";
     public static final String BOMB_EXPLOSION = "Retro Impact Effect Pack 1 A.png";
