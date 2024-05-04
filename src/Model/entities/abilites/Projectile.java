@@ -35,13 +35,15 @@ public class Projectile {
         this.releaseDelay = releaseDelay;
         hitBox = new Rectangle((int) xPos, (int) yPos,projectileSize,projectileSize);
     }
-    public boolean hitsPlayer(Player player) {
+    public void hitsPlayer(Player player) {
         if (hitBox.intersects(player.getHitBox())) {
-            System.out.println("HIT PLAYER");
-            hitSomething=true;
-            return true;
+            if (!hitSomething) {
+                player.decrementHealth(20);
+//                player.setMovementSpeed(player.getMovementSpeed()/2);
+                player.setHasSlowEffect();
+                hitSomething=true;
+            }
         }
-        return false;
     }
     public void setProjectileDirection(int facingDir) {//0 = right, 1 = left, 2 = up, 3 = down
         switch (facingDir) {

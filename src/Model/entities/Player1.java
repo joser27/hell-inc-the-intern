@@ -111,6 +111,19 @@ public class Player1 extends Player {
         game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
     }
     public void update() {
+        if (hasSlowEffect) {
+            if (!hasSetSlowEffect) {
+                setMovementSpeed(getBaseMovementSpeed()/4);
+                hasSetSlowEffect=true;
+            }
+            slowEffectTick++;
+            if (slowEffectTick>=slowEffectCD) {
+                setMovementSpeed(getBaseMovementSpeed());
+                hasSlowEffect=false;
+                hasSetSlowEffect=false;
+                slowEffectTick=0;
+            }
+        }
         updateAnimationTick();
 
 
