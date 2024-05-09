@@ -15,7 +15,7 @@ public class Projectile {
     public boolean horizontal;
     public int projectileSpeed = 6;
     public int projectileSize = 20;
-    public int projectileDistance = 75;
+    public int projectileDistance = 120;
     public int projectileUpTime = 0;
     public boolean projectileIsDecayed = false;
     int releaseDelay;
@@ -26,6 +26,7 @@ public class Projectile {
     int adjustmentX = 0;
     int adjustmentY = 0;
     public boolean hitSomething = false;
+    boolean hasSetDir = false;
     public Projectile(Player player, int xPos, int yPos, Image img, int releaseDelay) {
         this.player = player;
         this.xPos = xPos;
@@ -34,21 +35,23 @@ public class Projectile {
         this.releaseDelay = releaseDelay;
         hitBox = new Rectangle((int) xPos, (int) yPos,projectileSize,projectileSize);
     }
-    public boolean hitsPlayer(Player player) {
+    public void hitsPlayer(Player player) {
         if (hitBox.intersects(player.getHitBox())) {
-            System.out.println("HIT PLAYER");
-            hitSomething=true;
-            return true;
+            if (!hitSomething) {
+                player.decrementHealth(20);
+//                player.setMovementSpeed(player.getMovementSpeed()/2);
+                player.setHasSlowEffect();
+                hitSomething=true;
+            }
         }
-        return false;
     }
-    public void setProjectileDirection(int facingDir) {
+    public void setProjectileDirection(int facingDir) {//0 = right, 1 = left, 2 = up, 3 = down
         switch (facingDir) {
             case 0:
                 horizontal=true;
-
                 break;
             case 1:
+
                 horizontal=true;
                 projectileSpeed = projectileSpeed * -1;
                 rotationAngle = Math.PI; // 180 degrees for left
@@ -70,7 +73,11 @@ public class Projectile {
         releaseDelay--;
 
 
-        if (releaseDelay<0) {
+        if (releaseDelay<=0) {
+            if (!hasSetDir) {
+                setProjectileDirection(player.getFacingDir());
+                hasSetDir=true;
+            }
             if (horizontal) {
                 hitBox.x += projectileSpeed;
             } else if (vertical) {
@@ -84,8 +91,8 @@ public class Projectile {
 
             }
         } else {
-            hitBox.x= (int) player.getHitBox().x;
-            hitBox.y= (int) player.getHitBox().y;
+            hitBox.x = (int) player.getHitBox().x;
+            hitBox.y = (int) player.getHitBox().y;
         }
     }
 

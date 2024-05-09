@@ -29,7 +29,10 @@ public abstract class Entity {
     public String playerAction = RUNNING_DOWN;
     protected String lastPlayerAction = "";
     protected boolean isMoving = false;
-
+    protected boolean hasSetSlowEffect=false;
+    protected boolean hasSlowEffect=false;
+    protected int slowEffectCD = 160;
+    protected int slowEffectTick = 0;
     public Entity(int xPos,  int yPos, int width, int height, float movementSpeed,  Game game) {
         this.xPos = xPos;
         this.yPos = yPos;
@@ -91,11 +94,11 @@ public abstract class Entity {
 
 
 
-        float xSpeed = 0f;
-        float ySpeed = 0f;
+//        float xSpeed = 0f;
+//        float ySpeed = 0f;
 
         // CHECK COLLISION BETWEEN ENTITIES
-        game.getCollisionChecker().handleCollision(this, game.getEntities(), xSpeed, ySpeed);
+        //game.getCollisionChecker().handleCollision(this, game.getEntities(), xSpeed, ySpeed);
 
     }
 
@@ -105,6 +108,9 @@ public abstract class Entity {
     }
     public void render(Graphics g) {
         drawHitBox(g);
+    }
+    public void setHasSlowEffect() {
+        hasSlowEffect=true;
     }
 
     public float getMovementSpeed() {

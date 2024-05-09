@@ -134,9 +134,7 @@ public class Game {
 //            }
 //        }
         if (player2.getRangedAttacks().getBullet()!=null) {
-            if (player2.getRangedAttacks().getBullet().hitsPlayer(player1)) {
-                player1.decrementHealth(10);
-            }
+            player2.getRangedAttacks().getBullet().hitsPlayer(player1);
         }
 //        if (player2.getRangedAttacks().abilityUsed) {
 //            if (player2.getRangedAttacks().getBullet().hitBox.intersects(player2.getHitBox())) {

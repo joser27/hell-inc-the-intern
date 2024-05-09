@@ -10,9 +10,6 @@ public class RangedAttack extends Ability {
     private boolean vertical;
     private boolean horizontal;
     private int bulletSpeed = 6;
-    private int bulletSize = 8;
-    private int bulletDistance = 75;
-    private int bulletUpTime = 0;
     private boolean bulletDecayed = false;
     Image img;
     public RangedAttack(Player player, Image img, int scale, int xPos, int yPos, int cd) {
@@ -26,7 +23,7 @@ public class RangedAttack extends Ability {
     public void shootBullet() {
         abilityUsed=true;
         bullet = new Projectile(player,(int)player.getHitBox().x,(int)player.getHitBox().y,img,60);
-        bullet.setProjectileDirection(player.getFacingDir());
+//        bullet.setProjectileDirection(player.getFacingDir());
     }
 
     @Override
