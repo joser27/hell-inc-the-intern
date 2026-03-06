@@ -5,7 +5,6 @@ import Model.entities.*;
 import Model.entities.abilites.Projectile;
 import Model.entities.abilites.RangedAttack;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -93,10 +92,6 @@ public class Game {
         }
     }
 
-//    public void generateRandomEnemy() {
-//        enemy[0] = new Enemy(200, 250, 30, 30, 0f, this);
-////        enemy[1] = new Enemy(300, 200, 50, 50, 1, this);
-//    }
 
     public void update() {
         if (player1.getHealth() <=0) {
@@ -198,127 +193,10 @@ public class Game {
             walls[i].update();
         }
     }
-//    private void bulletsUpdates() {
-//        ArrayList<RangedAttack> frostShots = player2.getBullets();
-//        for (RangedAttack frostShot : frostShots) {
-//            for (Wall wall : walls) {
-//                if (frostShot.getBulletHitBox().intersects(wall.getHitBox())) {
-//                    frostShot.setBulletDecayed(true);
-//                }
-//            }
-//            if (frostShot.getBulletHitBox().intersects(getPlayer1().getHitBox())) {
-//                getPlayer1().decrementHealth(20);
-//
-//                frostShot.setBulletDecayed(true);
-//            }
-//        }
-//    }
 
 
-    public void renderLeftScreen(Graphics g, int xLvlOffset, int yLvlOffset) {//Player 2 is left
-        int screenWidth = GameController.GAME_WIDTH;
-        int screenHeight = GameController.GAME_HEIGHT;
-        int tileSize = GameController.TILE_SIZE;
-        g.setColor(new Color( 79,131,52,255));
-        g.fillRect(0, 0, screenWidth / 2, screenHeight);
-
-
-//        player2.renderFrostShot(g,xLvlOffset,yLvlOffset);
-
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
-                if ((j*GameController.TILE_SIZE) - xLvlOffset < GameController.GAME_WIDTH/2) {
-                    if (LevelLoader.world[i][j] == 0) {
-                        g.drawImage(levelLoader.getGrassImage(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i - yLvlOffset, null);
-                    }
-                    if (LevelLoader.world[i][j] == 3) {
-                        g.drawImage(levelLoader.getRock1Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
-                    }
-                    if (LevelLoader.world[i][j] == 4) {
-                        g.drawImage(levelLoader.getRock2Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
-                    }
-                }
-            }
-        }
-
-        player2.render(g, xLvlOffset, yLvlOffset);
-
-        if (player1.getxPos() - xLvlOffset < GameController.GAME_WIDTH / 2 ) {
-            player1.render(g,xLvlOffset, yLvlOffset);
-        }
-
-        for (int i = 0; i < walls.length; i++) {
-            if (walls[i].getHitBox().x -xLvlOffset< GameController.GAME_WIDTH/2) {
-                walls[i].render(g, xLvlOffset, yLvlOffset);
-            }
-        }
-
-        g.setColor(Color.WHITE);
-        g.drawString("Player2 coords: " + getPlayer2().getxPos() / GameController.TILE_SIZE + " " + getPlayer2().getyPos()/GameController.TILE_SIZE+ "; HP: " + getPlayer2().getHealth(), 80, 150);
-
-    }
-
-    public void renderRightScreen(Graphics g, int xLvlOffset, int yLvlOffset) {//Player 1 is right
-        int screenWidth = GameController.GAME_WIDTH;
-        int screenHeight = GameController.GAME_HEIGHT;
-        int tileSize = GameController.TILE_SIZE;
-        g.setColor(new Color( 79,131,52,255));
-        g.fillRect(screenWidth / 2, 0, screenWidth / 2, screenHeight);
-
-        //Bullets rending when offscreen
-//        if (player2.getBullets().size()>0) {
-//            ArrayList<RangedAttack> frostShots = player2.getBullets();
-//            for (RangedAttack frostShot : frostShots) {
-//                if (frostShot.getBulletHitBox().getX()-xLvlOffset > GameController.GAME_WIDTH / 2) {
-//                    frostShot.render(g,xLvlOffset,yLvlOffset);
-//                }
-//            }
-//        }
-
-
-
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
-                if ((j*GameController.TILE_SIZE) - xLvlOffset> GameController.GAME_WIDTH/2 && (j*GameController.TILE_SIZE) - xLvlOffset< GameController.GAME_WIDTH) {
-//                    g.setColor(Color.YELLOW);
-//                    g.fillRect(GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i,GameController.TILE_SIZE,GameController.TILE_SIZE);
-                    if (LevelLoader.world[i][j] == 0) {
-//                        g.setColor(Color.YELLOW);
-//                        g.fillRect(GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i,GameController.TILE_SIZE,GameController.TILE_SIZE);
-
-                        g.drawImage(levelLoader.getGrassImage(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
-
-                    }
-                    if (LevelLoader.world[i][j] == 3) {
-                        g.drawImage(levelLoader.getRock1Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
-                    }
-                    if (LevelLoader.world[i][j] == 4) {
-                        g.drawImage(levelLoader.getRock2Image(), GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i- yLvlOffset, null);
-                    }
-                }
-
-            }
-        }
-
-
-        player1.render(g, xLvlOffset,yLvlOffset);
-        if (player2.getxPos() - xLvlOffset > GameController.GAME_WIDTH / 2 && player2.getxPos() - xLvlOffset < GameController.GAME_WIDTH) {
-            player2.render(g, xLvlOffset, yLvlOffset);
-        }
-        for (int i = 0; i < walls.length; i++) {
-            // Check if the wall is in the right half of the screen before rendering
-            if (walls[i].getHitBox().x -xLvlOffset> screenWidth / 2 && walls[i].getHitBox().x -xLvlOffset< screenWidth) {
-                walls[i].render(g, xLvlOffset,yLvlOffset);
-            }
-        }
-        g.setColor(Color.WHITE);
-        g.drawString("Player1 coords: " + getPlayer1().getxPos() / GameController.TILE_SIZE + " " +
-                getPlayer1().getyPos() / GameController.TILE_SIZE + ", Boosts: " +
-                getPlayer1().getSpeedBoostUsages() + "; HP:" + getPlayer1().getHealth(), 80, 100);
-
-    }
-
-
+    public LevelLoader getLevelLoader() { return levelLoader; }
+    public Wall[] getWalls() { return walls; }
 
     public Entity[] getEntities() {
         return entities;

@@ -3,7 +3,7 @@ package Model;
 import Controller.GameController;
 import Model.utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -76,21 +76,6 @@ public class LevelLoader {
     }
 
 
-    public void render(Graphics g, int xLvlOffset) {
-        for (int i = 0; i < LevelLoader.world.length; i++) {
-            for (int j = 0; j < LevelLoader.world[i].length; j++) {
-                if (LevelLoader.world[i][j] == 0) {
-                    g.drawImage(grassTile[1][3], GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
-                }
-                if (LevelLoader.world[i][j] == 3) {
-                    g.drawImage(rockImg, GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
-                }
-                if (LevelLoader.world[i][j] == 4) {
-                    g.drawImage(rockImg2, GameController.TILE_SIZE * j - xLvlOffset, GameController.TILE_SIZE * i, null);
-                }
-            }
-        }
-    }
     public Image getGrassImage() {
         return grassTile[1][3];
     }

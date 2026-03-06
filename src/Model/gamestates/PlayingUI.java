@@ -48,32 +48,19 @@ public class PlayingUI extends State implements Statemethods {
 
     }
 
+    public Image getPlayer1_P() { return player1_P; }
+    public Image getPlayer1_Q() { return player1_Q; }
+    public Image getPlayer1_W() { return player1_W; }
+    public Image getPlayer1_E() { return player1_E; }
+    public Image getPlayer1_R() { return player1_R; }
+    public Image getPlayer2_P() { return player2_P; }
+    public Image getPlayer2_Q() { return player2_Q; }
+    public Image getPlayer2_W() { return player2_W; }
+    public Image getPlayer2_E() { return player2_E; }
+    public Image getPlayer2_R() { return player2_R; }
+
     @Override
-    public void render(Graphics g) {
-        //Player 1 (Right screen)
-        g.setColor(new Color(255,255,255,100));
-        g.fillRect(GameController.GAME_WIDTH/2,(GameController.GAME_HEIGHT/2) + GameController.GAME_HEIGHT/4,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT/6);
-
-        g.drawImage(player1_P,GameController.GAME_WIDTH/2 + 10*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player1_Q,GameController.GAME_WIDTH/2 + 30*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player1_W,GameController.GAME_WIDTH/2 + 50*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player1_E,GameController.GAME_WIDTH/2 + 70*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player1_R,GameController.GAME_WIDTH/2 + 90*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-
-
-        //Player 2 (Left screen)
-//        g.setColor(new Color(200,100,100,255));
-        g.setColor(new Color(255,255,255,100));
-        g.fillRect(0,(GameController.GAME_HEIGHT/2) + GameController.GAME_HEIGHT/4,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT/6);
-
-        g.drawImage(player2_P,10*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player2_Q,30*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player2_W,50*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player2_E,70*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-        g.drawImage(player2_R,90*GameController.SCALE,GameController.GAME_HEIGHT - 50*GameController.SCALE,null);
-
-
-    }
+    public void render(Graphics g) { /* Rendering done by View.PlayingView */ }
 
     @Override
     public void mouseClicked(MouseEvent e) {

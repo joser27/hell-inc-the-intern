@@ -19,17 +19,9 @@ public class GameOver extends State implements Statemethods {
     }
 
     @Override
-    public void render(Graphics g) {
-        Color transparentBlack = new Color(0, 0, 0, 128);
-        g.setColor(transparentBlack);
-        g.fillRect(500, 300, 300, 300);
-        g.setColor(Color.WHITE);
+    public void render(Graphics g) { /* Rendering done by View.GameOverView */ }
 
-        g.drawString("GAME OVER!!", 580, 400);
-        g.drawString("PLAYER " +  playerWinner + " WINS!", 570, 450);
-//        g.drawString("WINS", 620, 500);
-        g.drawString("PRESS ENTER TO PLAY AGAIN", 550, 490);
-    }
+    public int getPlayerWinner() { return playerWinner; }
 
     @Override
     public void mouseClicked(MouseEvent e) {

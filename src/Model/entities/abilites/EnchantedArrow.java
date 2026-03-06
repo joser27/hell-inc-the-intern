@@ -1,10 +1,8 @@
 package Model.entities.abilites;
 
-import Controller.GameController;
 import Model.entities.Player;
-import Model.entities.abilites.Ability;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class EnchantedArrow extends Ability {
     private Rectangle bullet;
@@ -38,23 +36,6 @@ public class EnchantedArrow extends Ability {
             bulletDecayed = true;
         }
     }
-
-    @Override
-    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        g.setColor(Color.CYAN);
-        g.fillRect(bullet.x - xLvlOffset, bullet.y- yLvlOffset, bulletSize,bulletSize);
-    }
-
-    @Override
-    public void renderUI(Graphics g) {
-        g.drawString(Integer.toString(abilityCoolDownTick),160,800);
-        if (abilityUsed) {
-            g.setColor(new Color(255, 255, 255, 150));
-
-            g.fillRect(90 * GameController.SCALE, GameController.GAME_HEIGHT - 50 * GameController.SCALE, 64, ticker);
-        }
-    }
-
 
     public Rectangle getBullet() {
         return bullet;

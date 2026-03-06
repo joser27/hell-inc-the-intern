@@ -5,7 +5,8 @@ import Model.Game;
 import Model.entities.abilites.*;
 import Model.utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
@@ -156,40 +157,13 @@ public class Player1 extends Player {
         }
     }
 
-    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-        meleeAttack.render(g,xLvlOffset,yLvlOffset);
-        smash.render(g,xLvlOffset,yLvlOffset);
-        shield.render(g,xLvlOffset,yLvlOffset);
-        roar.render(g,xLvlOffset,yLvlOffset);
-
-        g.setColor(new Color(178, 26, 26));
-        g.drawRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset,50,15);
-        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),15);
-        g.setColor(new Color(255, 0, 0));
-        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),10);
-
-//        g.drawRect((int) attackHitBox.x - xLvlOffset, (int) attackHitBox.y-yLvlOffset, 30, 30);
-//        g.drawRect((int) attackSmashHitBox.x - xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, 60, 60);
-        g.drawImage(img[aniIndex + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
-
-//        if (smash.attackingSmash) {
-//            g.drawImage(img[aniIndexSmash + animationCol][animationRow], (getxPos() - 9 * GameController.SCALE) - xLvlOffset, getyPos() - 8 * GameController.SCALE- yLvlOffset, null);
-//        } else {
-//        }
-
-
-            //Hitbox
-            // g.setColor(Color.YELLOW);
-            // g.drawRect(getxPos() - xLvlOffset, getyPos(), (int) getHitBox().width, (int) getHitBox().height);
-
+    /** Current sprite for View to draw. Model does not draw. */
+    public BufferedImage getCurrentSprite() {
+        return img[getAniIndex() + getAnimationCol()][getAnimationRow()];
     }
-    public void renderUI(Graphics g) {
-
-            shield.renderUI(g);
-            meleeAttack.renderUI(g);
-            smash.renderUI(g);
-        roar.renderUI(g);
-    }
+    public MeleeAttack getMeleeAttack() { return meleeAttack; }
+    public Shield getShield() { return shield; }
+    public Roar getRoar() { return roar; }
     public Smash getSmash() {
         return smash;
     }

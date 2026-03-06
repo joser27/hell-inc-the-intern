@@ -3,7 +3,7 @@ package Model.entities.abilites;
 import Controller.GameController;
 import Model.utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public class LandMine {
@@ -51,18 +51,9 @@ public class LandMine {
         landMineHitBox.x = (getLandMineHitBox().x/GameController.SCALE) * GameController.SCALE;
         landMineHitBox.y = (getLandMineHitBox().y/GameController.SCALE) * GameController.SCALE;
     }
-    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-//        g.drawRect(landMineHitBox.x, landMineHitBox.y, landMineHitBox.width, landMineHitBox.height);
-
-        if (exploded) {
-            g.drawImage(img[aniIndex][17], landMineHitBox.x-8 - xLvlOffset, landMineHitBox.y- yLvlOffset, null);
-//            g.drawRect(landMineHitBox.x-xLvlOffset, landMineHitBox.y-yLvlOffset, landMineHitBox.width, landMineHitBox.height);
-        } else {
-            g.setColor(Color.BLACK);
-            g.fillOval(landMineHitBox.x - xLvlOffset, landMineHitBox.y+3 - yLvlOffset, landMineHitBox.width, landMineHitBox.height / 2);
-        }
-    }
-
+    public boolean isExploded() { return exploded; }
+    public int getAniIndex() { return aniIndex; }
+    public BufferedImage getCurrentFrameImage() { return exploded ? img[aniIndex][17] : null; }
 
     public int getLandMineDecayTime() {
         return landMineDecayTime;

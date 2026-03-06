@@ -3,9 +3,8 @@ package Model;
 import Controller.GameController;
 import Model.utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Image;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 public class Medkit implements Item {
     private int xPos, yPos;
@@ -26,12 +25,9 @@ public class Medkit implements Item {
 
     }
 
-    @Override
-    public void render(Graphics g) {
-        g.drawImage(img,xPos-5,yPos-12,null);
-
-            g.drawRect((int) hitBox.x, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
-    }
+    public Image getImage() { return img; }
+    public int getxPos() { return xPos; }
+    public int getyPos() { return yPos; }
 
     public Rectangle2D.Float getHitBox() {
         return hitBox;

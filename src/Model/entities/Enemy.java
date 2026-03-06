@@ -1,9 +1,6 @@
 package Model.entities;
 
 import Model.Game;
-import Model.entities.Entity;
-
-import java.awt.*;
 
 public class Enemy extends Entity {
 
@@ -24,17 +21,8 @@ public class Enemy extends Entity {
     }
 
 
-    public void render(Graphics g) {
-        g.setColor(Color.BLUE);
-        g.fillRect(getxPos(),getyPos(), (int) getHitBox().width, (int) getHitBox().height);
-
-        Font font = new Font("Arial", Font.BOLD, 20);
-        g.setFont(font);
-        g.drawString("Bot coords: " + myX/48 + " " + myY/48, 100, 200);
-
-    }
-
-
+    public int getMyX() { return myX; }
+    public int getMyY() { return myY; }
 
     @Override
     public String toString() {

@@ -1,10 +1,7 @@
 package Model.entities.abilites;
 
-import Controller.GameController;
 import Model.entities.Player;
-import Model.entities.abilites.Ability;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 import static Model.utilz.Constants.PlayerConstants.*;
@@ -96,74 +93,33 @@ public class Smash extends Ability {
         }
 
         if (justFinishedCharging) {
-
             chargeAttackTick=0;
-
             justFinishedChargingTick++;
             if (justFinishedChargingTick>100) {
                 justFinishedChargingTick=0;
                 justFinishedCharging=false;
             }
-//            System.out.println("Just finished charging");
         }
         attackSmashUpdate();
-    }
-
-    @Override
-    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
+        // Animation state (was in render, moved to update so View only draws)
         if (chargingAttack) {
-            // Hover count
-            g.setColor(new Color(230,60,100,255));
-            g.drawString(Integer.toString(appliedDamage), (int) ((int) player.getHitBox().x+player.getHitBox().width) - xLvlOffset, (int) player.getHitBox().y-30 - yLvlOffset);
-
-            g.setColor(new Color(200,100,100,50));
-
-
-
-            g.fillRect((int) attackSmashHitBox.x-xLvlOffset, (int) attackSmashHitBox.y-yLvlOffset, (int) attackSmashHitBox.width, (int) attackSmashHitBox.height);
             switch (player.getFacingDir()) {
-                case 0:
-                    player.playerAction = OGRE_SMASH_RIGHT;
-                    break;
-                case 1:
-                    player.playerAction = OGRE_SMASH_LEFT;
-                    break;
-                case 2:
-                    player.playerAction = OGRE_SMASH_UP;
-                    break;
-                case 3:
-                    player.playerAction = OGRE_SMASH_DOWN;
-                    break;
+                case 0 -> player.playerAction = OGRE_SMASH_RIGHT;
+                case 1 -> player.playerAction = OGRE_SMASH_LEFT;
+                case 2 -> player.playerAction = OGRE_SMASH_UP;
+                case 3 -> player.playerAction = OGRE_SMASH_DOWN;
             }
-        }
-        if (justFinishedCharging) {
+        } else if (justFinishedCharging) {
             switch (player.getFacingDir()) {
-                case 0:
-                    player.playerAction = OGRE_END_SMASH_RIGHT;
-                    break;
-                case 1:
-                    player.playerAction = OGRE_END_SMASH_LEFT;
-                    break;
-                case 2:
-                    player.playerAction = OGRE_END_SMASH_UP;
-                    break;
-                case 3:
-                    player.playerAction = OGRE_END_SMASH_DOWN;
-                    break;
+                case 0 -> player.playerAction = OGRE_END_SMASH_RIGHT;
+                case 1 -> player.playerAction = OGRE_END_SMASH_LEFT;
+                case 2 -> player.playerAction = OGRE_END_SMASH_UP;
+                case 3 -> player.playerAction = OGRE_END_SMASH_DOWN;
             }
         }
     }
 
-    @Override
-    public void renderUI(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.drawString(Integer.toString(abilityCoolDownTick),160,900);
-        if (abilityUsed) {
-            g.setColor(new Color(255, 255, 255, 150));
-
-            g.fillRect(GameController.GAME_WIDTH/2 + 30*GameController.SCALE, GameController.GAME_HEIGHT - 50 * GameController.SCALE, 64, ticker);
-        }
-    }
+    public boolean isChargingAttack() { return chargingAttack; }
 
     public void smashAttack(boolean isHolding) {
         if (!abilityUsed) {

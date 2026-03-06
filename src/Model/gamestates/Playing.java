@@ -98,30 +98,13 @@ public class Playing extends State implements Statemethods{
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(java.awt.Graphics g) { /* Rendering done by View.PlayingView */ }
 
-//        getGame().render(g,xLvlOffset);
-//
-        g.setColor(Color.BLACK);
-        g.drawLine(GameController.GAME_WIDTH/2,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
-//        g.setColor(Color.BLACK);
-//        g.fillRect(0,0,GameController.GAME_WIDTH/2,GameController.GAME_HEIGHT);
-
-        getGame().renderLeftScreen(g, p2xLvlOffset, p2yLvlOffset);
-        getGame().renderRightScreen(g, p1xLvlOffset, p1yLvlOffset);
-        g.setColor(Color.GREEN);
-
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.BLACK);
-        g2d.setStroke(new BasicStroke(10));
-        g2d.drawLine(GameController.GAME_WIDTH / 2, 0, GameController.GAME_WIDTH / 2, GameController.GAME_HEIGHT);
-        g2d.setStroke(new BasicStroke(1));
-
-        ui.render(g);
-        getGame().getPlayer2().renderUI(g);
-        getGame().getPlayer1().renderUI(g);
-
-    }
+    public int getP1xLvlOffset() { return p1xLvlOffset; }
+    public int getP1yLvlOffset() { return p1yLvlOffset; }
+    public int getP2xLvlOffset() { return p2xLvlOffset; }
+    public int getP2yLvlOffset() { return p2yLvlOffset; }
+    public PlayingUI getPlayingUI() { return ui; }
 
     @Override
     public void mouseClicked(MouseEvent e) {

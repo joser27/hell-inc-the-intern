@@ -2,7 +2,6 @@ package Model.entities;
 
 import Model.Game;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
@@ -47,10 +46,10 @@ public abstract class Entity {
     public void initHitBox() {
         hitBox = new Rectangle2D.Float(xPos, yPos,width,height);
     }
-    public void drawHitBox(Graphics g) {
-        g.setColor(Color.PINK);
-        g.fillRect((int) hitBox.x, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
-    }
+    /** Exposed for View layer to draw current animation frame. Model does not draw. */
+    public int getAniIndex() { return aniIndex; }
+    public int getAnimationCol() { return animationCol; }
+    public int getAnimationRow() { return animationRow; }
     protected void updateAnimationTick() {
         action = GetSpriteAmountColRow(playerAction);//COL,ROW,ANIMATION LENGTH
         if (playerAction.equals(IDLE)) {
@@ -105,9 +104,6 @@ public abstract class Entity {
     public void updateEntityPos(float xSpeed, float ySpeed) {
         setxPos(xSpeed);
         setyPos(ySpeed);
-    }
-    public void render(Graphics g) {
-        drawHitBox(g);
     }
     public void setHasSlowEffect() {
         hasSlowEffect=true;

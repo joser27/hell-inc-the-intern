@@ -42,31 +42,13 @@ public class LoadMenu extends State implements Statemethods {
     }
 
     @Override
-    public void render(Graphics g) {
-        // Draw the image at a specified position
+    public void render(Graphics g) { /* Rendering done by View.LoadMenuView */ }
 
-
-        g.setFont(fontStart);
-        g.setColor(new Color(51, 0, 111));
-        int screenWidth = GameController.GAME_WIDTH;
-        FontMetrics fontMetrics = g.getFontMetrics(fontStart);
-        int textStartWidth = fontMetrics.stringWidth("START");
-        int startStartX = (screenWidth - textStartWidth) / 2;
-        g.drawString("START", startStartX, 600);
-
-        // Draw the black text
-        g.setFont(fontMenu);
-        g.setColor(Color.WHITE);
-        FontMetrics fontMetricsMenu = g.getFontMetrics(fontMenu);
-        int textMenuWidth = fontMetricsMenu.stringWidth("MENU");
-        int startMenuX = (screenWidth - textMenuWidth) / 2;
-        g.drawString("MENU", startMenuX, 250);
-
-//        g.setColor(Color.BLACK);
-//        g.drawRect(GameController.GAME_WIDTH/2 - 200,200,200,200);
-//
-//        g.drawRect(GameController.GAME_WIDTH/2 - 200,400,200,200);
-    }
+    public Image getScaledStartImage() { return scaledImg; }
+    public Font getFontStart() { return fontStart; }
+    public Font getFontMenu() { return fontMenu; }
+    public int getStartPlacementX() { return startPlacementX; }
+    public int getStartPlacementY() { return startPlacementY; }
 
     @Override
     public void mouseClicked(MouseEvent e) {

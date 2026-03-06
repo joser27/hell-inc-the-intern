@@ -5,7 +5,8 @@ import Model.*;
 import Model.entities.abilites.*;
 import Model.utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -292,57 +293,17 @@ public class Player2 extends Player {
 //        }
 //    }
 
-    public void renderUI(Graphics g) {
-        rangerFocus.renderUI(g);
-        enchantedArrow.renderUI(g);
-        volleyShot.renderUI(g);
-        hawkshot.renderUI(g);
+    /** Current sprite for View to draw. Model does not draw. */
+    public BufferedImage getCurrentSprite() {
+        return img[getAniIndex() + getAnimationCol()][getAnimationRow()];
     }
-    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-        g.setColor(new Color(178, 26, 26));
-        g.drawRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset,50,15);
-        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),15);
-        g.setColor(new Color(255, 0, 0));
-        g.fillRect((int) (getHitBox().x -10)-xLvlOffset, (int) (getHitBox().y - 20)-yLvlOffset, (int) (getHealth()/2),10);
-        volleyShot.render(g,xLvlOffset,yLvlOffset);
-        rangedAttacks.render(g,xLvlOffset,yLvlOffset);
-//        if (usedRangedAttack) {
-//            System.out.println("YEEEEEEEEET!");
-//            for (RangedAttack rangedAttack : rangedAttacks) {
-//                rangedAttack.render(g,xLvlOffset,yLvlOffset);
-//            }
-//        }
-//        if (volleyShot!=null) {
-//            volleyShot.render(g, xLvlOffset, yLvlOffset);
-//        }
-//        if (enchantedArrow!=null) {
-//            enchantedArrow.render(g,xLvlOffset,yLvlOffset);
-//        }
-        //[aniIndex ADD COL]     [ADD ROW] (Of Sprite)
-        g.drawImage(img[aniIndex + animationCol][animationRow],(getxPos()-9*GameController.SCALE) - xLvlOffset, getyPos()-8*GameController.SCALE- yLvlOffset,null);
-        g.setColor(Color.BLACK);
+    public RangedAttack getRangedAttacks() { return rangedAttacks; }
+    public Volley getVolleyShot() { return volleyShot; }
+    public RangerFocus getRangerFocus() { return rangerFocus; }
+    public EnchantedArrow getEnchantedArrow() { return enchantedArrow; }
+    public Hawkshot getHawkshot() { return hawkshot; }
 
-        //g.drawString(Integer.toString(rangerFocus.rangerFocusCoolDownTick),160,800);
-//        //System.err.println(playerX + "|" + playerY);
-//
-//        g.fillRect((playerY*48),(playerX*48),48,48);
-        //Hit box
-//        g.setColor(Color.RED);
-//        g.drawRect(getxPos()-xLvlOffset,getyPos()- yLvlOffset, (int) getHitBox().width, (int) getHitBox().height);
-    }
-
-//    public ArrayList<RangedAttack> getBullets() {
-//        return rangedAttacks;
-//    }
-
-    public Volley getVolleyShot() {
-        return volleyShot;
-    }
     public void removeVolleyShot() {
         volleyShot = null;
     }
-    public RangedAttack getRangedAttacks() {
-        return rangedAttacks;
-    }
-
 }

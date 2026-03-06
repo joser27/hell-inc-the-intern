@@ -4,6 +4,10 @@ import Model.Game;
 import Model.gamestates.*;
 import View.GameFrame;
 import View.GamePanel;
+import View.PlayingView;
+import View.PauseMenuView;
+import View.LoadMenuView;
+import View.GameOverView;
 
 import java.awt.*;
 
@@ -16,6 +20,10 @@ public class GameController {
     private GamePanel gamePanel;
     private GameFrame gameFrame;
     private GameLoop gameLoop;
+    private final PlayingView playingView = new PlayingView();
+    private final PauseMenuView pauseMenuView = new PauseMenuView();
+    private final LoadMenuView loadMenuView = new LoadMenuView();
+    private final GameOverView gameOverView = new GameOverView();
     private static final int originalTileSize = 16; //16x16 tile
     public static final int SCALE = 4;
     public static final int TILE_SIZE = originalTileSize * SCALE; //48x48 tile
@@ -74,21 +82,17 @@ public class GameController {
 
 
     public void render(Graphics g) {
-        switch(Gamestate.state){
-            case MENU -> menuState.render(g);
+        switch (Gamestate.state) {
+            case MENU -> loadMenuView.render(g, menuState);
             case GAMEOVER -> {
-                playingState.render(g);
+                playingView.render(g, game, playingState);
                 gameOverState.setPlayerWinner(game.getPlayerWinner());
-                gameOverState.render(g);
+                gameOverView.render(g, gameOverState);
             }
-            case PLAYING -> {
-                //game.setGameOver(false);
-                playingState.render(g);
-            }
+            case PLAYING -> playingView.render(g, game, playingState);
             case PAUSEMENU -> {
-                //game.setGameOver(false);
-                playingState.render(g);
-                pauseMenu.render(g);
+                playingView.render(g, game, playingState);
+                pauseMenuView.render(g, pauseMenu);
             }
         }
     }

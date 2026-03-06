@@ -2,7 +2,8 @@ package Model.entities.abilites;
 
 import Model.entities.Player;
 
-import java.awt.*;
+import java.awt.Image;
+import java.awt.Rectangle;
 
 import static Model.utilz.Constants.PlayerConstants.*;
 
@@ -88,7 +89,12 @@ public class Projectile {
             projectileUpTime++;
             if (projectileUpTime >= projectileDistance) {
                 projectileIsDecayed = true;
-
+            }
+            switch (player.getFacingDir()) {
+                case 0 -> player.playerAction = HUMAN_ATTACK_RIGHT;
+                case 1 -> player.playerAction = HUMAN_ATTACK_LEFT;
+                case 2 -> player.playerAction = HUMAN_ATTACK_UP;
+                case 3 -> player.playerAction = HUMAN_ATTACK_DOWN;
             }
         } else {
             hitBox.x = (int) player.getHitBox().x;
@@ -96,59 +102,10 @@ public class Projectile {
         }
     }
 
-    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-//        g.setColor(Color.RED);
-//        g.fillRect((int) hitBox.x-xLvlOffset, (int) hitBox.y-yLvlOffset,projectileSize,projectileSize);
-
-        Graphics2D g2d = (Graphics2D) g.create();
-
-        // Set the rotation angle and adjustment based on the bullet's direction
-
-
-
-//        if (horizontal && bulletSpeed > 0) {
-////            System.err.println("Going right");
-//        } else if (horizontal && bulletSpeed < 0) {
-////            System.err.println("Going left");
-//            rotationAngle = Math.PI; // 180 degrees for left
-////            adjustmentX = -30; // Move 20 pixels left when facing left
-//        } else if (vertical && bulletSpeed > 0) {
-////            System.err.println("Going down");
-//            rotationAngle = Math.PI / 2; // 90 degrees for down
-//            adjustmentY = +6;
-//        } else if (vertical && bulletSpeed < 0) {
-////            System.err.println("Going up");
-//            rotationAngle = -Math.PI / 2; // -90 degrees for up
-//            adjustmentY = -6;
-//        }
-
-        if (releaseDelay<=0) {
-            // Apply rotation transformation and adjustment
-            g2d.rotate(rotationAngle, hitBox.x - xLvlOffset + img.getWidth(null) / 2, hitBox.y - yLvlOffset + img.getHeight(null) / 2);
-            g2d.drawImage(img, (hitBox.x - xLvlOffset + adjustmentX), hitBox.y - yLvlOffset + adjustmentY, null);
-        }
-//        g.setColor(Color.BLUE);
-//        g.fillRect(hitBox.x-xLvlOffset,hitBox.y-yLvlOffset,hitBox.width,hitBox.height);
-            // Dispose of the created Graphics2D object
-            g2d.dispose();
-            switch (player.getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
-                case 0:
-                    player.playerAction = HUMAN_ATTACK_RIGHT;
-                    break;
-                case 1:
-                    player.playerAction = HUMAN_ATTACK_LEFT;
-                    break;
-                case 2:
-                    player.playerAction = HUMAN_ATTACK_UP;
-                    break;
-                case 3:
-                    player.playerAction = HUMAN_ATTACK_DOWN;
-                    break;
-            }
-
-
-    }
-
-
-
+    public java.awt.Image getImage() { return img; }
+    public Rectangle getHitBox() { return hitBox; }
+    public double getRotationAngle() { return rotationAngle; }
+    public int getAdjustmentX() { return adjustmentX; }
+    public int getAdjustmentY() { return adjustmentY; }
+    public int getReleaseDelay() { return releaseDelay; }
 }

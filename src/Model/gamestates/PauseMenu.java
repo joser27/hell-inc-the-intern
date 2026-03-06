@@ -43,6 +43,8 @@ public class PauseMenu extends State implements Statemethods {
 
     @Override
     public void update() {
+        posX = getPosX();
+        posY = getPosY();
         if (x > (posX*1.5) && x < posX + img[0][0].getWidth()*1.8) {
             if (y > (posY*4.6) && y < posY + img[0][0].getHeight()*1.8) {
                 x=0;
@@ -80,24 +82,18 @@ public class PauseMenu extends State implements Statemethods {
     }
 
     @Override
-    public void render(Graphics g) {
-        g.setColor(new Color(127, 20, 20,200));
-        posX = (int) (((gameWidth - gameWidth / 2) / 2) + img[0][0].getWidth()/2.5);
-        posY = (int) (((gameHeight - gameHeight / 2) / 2) - img[0][0].getHeight()/2);
-        g.drawImage(img[0][0],posX,posY,null);                               g.drawImage(img[1][0],posX+img[0][0].getWidth(),posY,null);                              g.drawImage(img[2][0],posX+img[0][0].getWidth()*2,posY,null);
-        g.drawImage(img[0][1],posX,posY+img[0][0].getHeight(),null);      g.drawImage(img[1][1],posX+img[0][0].getWidth(),posY+img[0][0].getHeight(),null);     g.drawImage(img[2][1],posX+img[0][0].getWidth()*2,posY+img[0][0].getHeight(),null);
-        g.drawImage(img[0][2],posX,posY+img[0][0].getHeight()*2,null);    g.drawImage(img[1][2],posX+img[0][0].getWidth(),posY+img[0][0].getHeight()*2,null);   g.drawImage(img[2][2],posX+img[0][0].getWidth()*2,posY+img[0][0].getHeight()*2,null);
+    public void render(Graphics g) { /* Rendering done by View.PauseMenuView */ }
 
-        Font font = LoadSave.GetFont(LoadSave.FONT_DEFAULT,26);
-
-        g.setFont(font);
-        g.setColor(resumeColor);
-        g.drawString("Resume", (int) (posX*1.51), (int) (posY*4.8));
-
-        g.setFont(font);
-        g.setColor(exitColor);
-        g.drawString("Exit", (int) (posX*1.56), (int) (posY*5.3));
+    public int getPosX() {
+        return (int) (((gameWidth - gameWidth / 2) / 2) + img[0][0].getWidth()/2.5);
     }
+    public int getPosY() {
+        return (int) (((gameHeight - gameHeight / 2) / 2) - img[0][0].getHeight()/2);
+    }
+    public BufferedImage[][] getPauseImages() { return img; }
+    public Color getResumeColor() { return resumeColor; }
+    public Color getExitColor() { return exitColor; }
+    public Font getPauseFont() { return LoadSave.GetFont(LoadSave.FONT_DEFAULT, 26); }
 
     @Override
     public void mouseClicked(MouseEvent e) {

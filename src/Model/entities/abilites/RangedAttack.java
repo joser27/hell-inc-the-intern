@@ -1,9 +1,8 @@
 package Model.entities.abilites;
 
 import Model.entities.Player;
-import Model.utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Image;
 
 public class RangedAttack extends Ability {
     private Projectile bullet;
@@ -38,22 +37,6 @@ public class RangedAttack extends Ability {
                 bullet = null;
             }
         }
-    }
-
-
-    @Override
-    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        Graphics2D g2d = (Graphics2D) g.create();
-
-        if (abilityUsed && bullet!=null) {
-            bullet.render(g, xLvlOffset, yLvlOffset);
-
-        }
-    }
-
-    @Override
-    public void renderUI(Graphics g) {
-
     }
 
 

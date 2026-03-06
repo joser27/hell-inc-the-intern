@@ -1,9 +1,7 @@
 package Model.entities.abilites;
 
 import Model.entities.Player;
-import Model.entities.abilites.Ability;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 import static Model.utilz.Constants.PlayerConstants.*;
@@ -40,12 +38,11 @@ public class MeleeAttack extends Ability {
 //                abilityActive=false;
 //            }
             if (abilityUsed) {
-                switch (player.getFacingDir()) {//0 = right, 1 = left, 2 = up, 3 = down
+                switch (player.getFacingDir()) {
                     case 0 -> {
                         attackHitBox.x = player.getxPos() + 10;
                         attackHitBox.y = player.getyPos() - 6;
                         player.playerAction = OGRE_ATTACK_RIGHT;
-
                     }
                     case 1 -> {
                         attackHitBox.x = player.getxPos() - 18;
@@ -113,30 +110,7 @@ public class MeleeAttack extends Ability {
 //            }
 //        }
 //    }
-    @Override
-    public void render(Graphics g, int xLvlOffset, int yLvlOffset) {
-        if (abilityUsed) {
-            switch (player.getFacingDir()) {
-                case 0:
-                    player.playerAction = OGRE_ATTACK_RIGHT;
-                    break;
-                case 1:
-                    player.playerAction = OGRE_ATTACK_LEFT;
-                    break;
-                case 2:
-                    player.playerAction = OGRE_ATTACK_UP;
-                    break;
-                case 3:
-                    player.playerAction = OGRE_ATTACK_DOWN;
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void renderUI(Graphics g) {
-
-    }
+    // Animation state: set in update when attacking (View only draws)
 
 //    public void attack() {
 //        if (canAttack) {

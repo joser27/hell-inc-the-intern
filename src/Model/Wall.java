@@ -4,11 +4,13 @@ import Controller.GameController;
 import Model.entities.Entity;
 import Model.utilz.LoadSave;
 
-import java.awt.*;
+import java.awt.Image;
 
 public class Wall extends Entity {
 
-    Image img;
+    private Image img;
+    private static final int DRAW_OFFSET_X = 18;
+    private static final int DRAW_OFFSET_Y = 48;
 
     public Wall(int xPos, int yPos, int width, int height, float movementSpeed, Game game) {
         super(xPos, yPos, width, height, movementSpeed, game);
@@ -23,9 +25,7 @@ public class Wall extends Entity {
 
 
 
-    public void render(Graphics g,int xLvlOffset, int yLvlOffset) {
-        g.drawImage(img,(int) getHitBox().x-18 - xLvlOffset, (int) getHitBox().y-48 - yLvlOffset,null);
-//        g.fillRect((int) getHitBox().x-xLvlOffset, (int) getHitBox().y, (int) getHitBox().width, (int) getHitBox().height);
-    }
-
+    public Image getImage() { return img; }
+    public int getDrawOffsetX() { return DRAW_OFFSET_X; }
+    public int getDrawOffsetY() { return DRAW_OFFSET_Y; }
 }

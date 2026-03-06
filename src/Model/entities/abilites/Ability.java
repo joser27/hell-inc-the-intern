@@ -2,8 +2,6 @@ package Model.entities.abilites;
 
 import Model.entities.Player;
 
-import java.awt.*;
-
 public abstract class Ability {
     int scale;
     Player player;
@@ -74,6 +72,8 @@ public abstract class Ability {
 //        }
 //    }
 
-    public abstract void render(Graphics g, int xLvlOffset, int yLvlOffset);
-    public abstract void renderUI(Graphics g);
+    /** Getters for View layer to draw. Model does not draw. */
+    public int getAbilityCoolDownTick() { return abilityCoolDownTick; }
+    public int getTicker() { return ticker; }
+    public boolean isAbilityUsed() { return abilityUsed; }
 }
