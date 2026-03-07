@@ -30,6 +30,9 @@ public class LoadSave {
     public static final String UI_SQUARES = "gui_free.png";
     public static final String UI_ICONS = "UiIconsPack_Transparent_Icons.png";
 
+    /** NPC encounter frame (first-person door view) — Demonic Contractor design. */
+    public static final String WIDOW_FRAME = "widowFrame.png";
+
     // Player 1 Abilities
     public static final String Death_Surge = "Death_Surge.png";
     public static final String Decimating_Smash = "Decimating_Smash1.png";

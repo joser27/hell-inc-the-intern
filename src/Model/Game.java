@@ -14,6 +14,8 @@ public class Game {
     private boolean gameOver = false;
     private CollisionChecker collisionChecker;
     private boolean wasInWidowTrigger = false;
+    /** When true, overworld is paused and view shows widow encounter frame (ESC to close). */
+    private boolean showWidowFrame = false;
     private int time = 600;
     private int timer = 0;
     private int playerWinner = 1;
@@ -46,9 +48,14 @@ public class Game {
     }
 
     public void update() {
-        entitiesUpdates();
         checkTriggers();
+        if (!showWidowFrame) {
+            entitiesUpdates();
+        }
     }
+
+    public boolean isShowWidowFrame() { return showWidowFrame; }
+    public void setShowWidowFrame(boolean show) { this.showWidowFrame = show; }
 
     /** When the player enters the trigger with npc_id=widow, print once to console. */
     private void checkTriggers() {
@@ -61,7 +68,7 @@ public class Game {
             }
         }
         if (inWidow && !wasInWidowTrigger) {
-            System.out.println("Trigger: npc_id=widow");
+            showWidowFrame = true;  // open first-person encounter view (design: door encounter)
         }
         wasInWidowTrigger = inWidow;
     }

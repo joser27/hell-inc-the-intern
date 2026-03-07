@@ -62,7 +62,13 @@ public class Playing extends State implements Statemethods {
         if (keyCode == KeyEvent.VK_NUMPAD1) getGame().getPlayer1().smashAttack(true);
         if (keyCode == KeyEvent.VK_NUMPAD2) getGame().getPlayer1().useShield();
         if (keyCode == KeyEvent.VK_NUMPAD3) getGame().getPlayer1().useRoar();
-        if (keyCode == KeyEvent.VK_ESCAPE) Gamestate.state = Gamestate.PAUSEMENU;
+        if (keyCode == KeyEvent.VK_ESCAPE) {
+            if (getGame().isShowWidowFrame()) {
+                getGame().setShowWidowFrame(false);
+            } else {
+                Gamestate.state = Gamestate.PAUSEMENU;
+            }
+        }
     }
 
     @Override
