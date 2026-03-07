@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class Playing extends State implements Statemethods {
-    private int xLvlOffset;
+    private int xLvlOffset;  // scaled offset so playerCenter*zoom - xLvlOffset = screen/2
     private int yLvlOffset;
     private PlayingUI ui;
 
@@ -23,25 +23,13 @@ public class Playing extends State implements Statemethods {
         updateCameraCenteredOnPlayer();
     }
 
-    /** Keeps the camera centered on the player. Visible world size = screen size / zoom (zoomed in). */
+    /** Keeps the player at screen center. Java applies last-specified first, so (translate then scale) => (p*zoom - offset). So offset = playerCenter*zoom - screen/2. */
     private void updateCameraCenteredOnPlayer() {
         float zoom = GameController.CAMERA_ZOOM;
-        int playerX = (int) getGame().getPlayer1().getHitBox().getX();
-        int playerY = (int) getGame().getPlayer1().getHitBox().getY();
-        int playerW = (int) getGame().getPlayer1().getHitBox().getWidth();
-        int playerH = (int) getGame().getPlayer1().getHitBox().getHeight();
-
-        int levelWidth = LevelLoader.world[0].length * GameController.TILE_SIZE;
-        int levelHeight = LevelLoader.world.length * GameController.TILE_SIZE;
-        int visibleWorldW = (int) (GameController.GAME_WIDTH / zoom);
-        int visibleWorldH = (int) (GameController.GAME_HEIGHT / zoom);
-        int maxOffsetX = Math.max(0, levelWidth - visibleWorldW);
-        int maxOffsetY = Math.max(0, levelHeight - visibleWorldH);
-
-        xLvlOffset = playerX + playerW / 2 - visibleWorldW / 2;
-        yLvlOffset = playerY + playerH / 2 - visibleWorldH / 2;
-        xLvlOffset = Math.max(0, Math.min(maxOffsetX, xLvlOffset));
-        yLvlOffset = Math.max(0, Math.min(maxOffsetY, yLvlOffset));
+        float playerCenterX = (float) (getGame().getPlayer1().getHitBox().getX() + getGame().getPlayer1().getHitBox().getWidth() * 0.5);
+        float playerCenterY = (float) (getGame().getPlayer1().getHitBox().getY() + getGame().getPlayer1().getHitBox().getHeight() * 0.5);
+        xLvlOffset = Math.round(playerCenterX * zoom - GameController.GAME_WIDTH * 0.5f);
+        yLvlOffset = Math.round(playerCenterY * zoom - GameController.GAME_HEIGHT * 0.5f);
     }
 
     @Override

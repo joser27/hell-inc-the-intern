@@ -109,7 +109,7 @@ public class Player1 extends Player {
             playerAction = IDLE;
 
         }
-        game.getCollisionChecker().handleCollision(this, game.getEntities(),xSpeed,ySpeed);
+        game.getCollisionChecker().handleCollision(this, game.getEntities(), game.getLevelLoader().getWorld(), GameController.TILE_SIZE, xSpeed, ySpeed);
     }
     public void update() {
         if (hasSlowEffect) {

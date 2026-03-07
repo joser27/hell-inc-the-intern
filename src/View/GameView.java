@@ -3,7 +3,6 @@ package View;
 import Controller.GameController;
 import Model.Game;
 import Model.LevelLoader;
-import Model.Wall;
 import Model.entities.Player1;
 
 import java.awt.*;
@@ -24,43 +23,34 @@ public class GameView {
         int screenHeight = GameController.GAME_HEIGHT;
         float zoom = GameController.CAMERA_ZOOM;
         LevelLoader levelLoader = game.getLevelLoader();
-        int[][] world = LevelLoader.world;
 
         g.setColor(new Color(79, 131, 52, 255));
         g.fillRect(0, 0, screenWidth, screenHeight);
 
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.scale(zoom, zoom);
+        // Java: last-specified first-applied, so (translate then scale) => world (x,y) -> (x*zoom - xLvlOffset, y*zoom - yLvlOffset). Offset from Playing = playerCenter*zoom - screen/2.
         g2d.translate(-xLvlOffset, -yLvlOffset);
-        int visibleW = (int) Math.ceil(screenWidth / zoom) + GameController.TILE_SIZE;
-        int visibleH = (int) Math.ceil(screenHeight / zoom) + GameController.TILE_SIZE;
-
-        for (int i = 0; i < world.length; i++) {
-            for (int j = 0; j < world[i].length; j++) {
-                int drawX = GameController.TILE_SIZE * j;
-                int drawY = GameController.TILE_SIZE * i;
-                if (drawX + GameController.TILE_SIZE < xLvlOffset || drawX > xLvlOffset + visibleW) continue;
-                if (drawY + GameController.TILE_SIZE < yLvlOffset || drawY > yLvlOffset + visibleH) continue;
-                if (world[i][j] == 0)
-                    g2d.drawImage(levelLoader.getGrassImage(), drawX, drawY, null);
-                if (world[i][j] == 3)
-                    g2d.drawImage(levelLoader.getRock1Image(), drawX, drawY, null);
-                if (world[i][j] == 4)
-                    g2d.drawImage(levelLoader.getRock2Image(), drawX, drawY, null);
+        g2d.scale(zoom, zoom);
+        // Draw all tiles; no culling so the map stays visible when the camera moves (clip handles off-screen)
+        for (String layerName : levelLoader.getDrawLayerNames()) {
+            int[][] gids = levelLoader.getLayerGids(layerName);
+            if (gids == null) continue;
+            for (int i = 0; i < gids.length; i++) {
+                for (int j = 0; j < gids[i].length; j++) {
+                    int gid = gids[i][j];
+                    if ((gid & 0x1FFFFFFF) == 0) continue;
+                    int drawX = GameController.TILE_SIZE * j;
+                    int drawY = GameController.TILE_SIZE * i;
+                    Image tile = levelLoader.getTileImage(gid);
+                    if (tile != null)
+                        g2d.drawImage(tile, drawX, drawY, null);
+                }
             }
         }
 
         Player1 p = game.getPlayer1();
         List<Drawable> drawables = new ArrayList<>();
-        for (Wall w : game.getWalls()) {
-            int wx = (int) w.getHitBox().x - w.getDrawOffsetX();
-            int wy = (int) w.getHitBox().y - w.getDrawOffsetY();
-            if (wx + w.getImage().getWidth(null) < xLvlOffset || wx > xLvlOffset + visibleW) continue;
-            if (wy + w.getImage().getHeight(null) < yLvlOffset || wy > yLvlOffset + visibleH) continue;
-            int sortY = (int) (w.getHitBox().y + w.getHitBox().height);
-            Image wallImg = w.getImage();
-            drawables.add(new Drawable(sortY, () -> g2d.drawImage(wallImg, wx, wy, null)));
-        }
+        // Walls/trees not drawn — Tiled solid layer provides visuals; Wall entities still used for collision
         int playerSortY = (int) (p.getHitBox().y + p.getHitBox().height);
         drawables.add(new Drawable(playerSortY, () -> {
             drawHealthBar(g2d, p.getHitBox(), p.getHealth());

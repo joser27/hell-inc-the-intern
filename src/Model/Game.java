@@ -13,6 +13,7 @@ public class Game {
     private Entity[] entities;
     private boolean gameOver = false;
     private CollisionChecker collisionChecker;
+    private boolean wasInWidowTrigger = false;
     private int time = 600;
     private int timer = 0;
     private int playerWinner = 1;
@@ -28,9 +29,9 @@ public class Game {
     public Game() {
         levelLoader = new LevelLoader();
         world = levelLoader.getWorld();
-        player1 = new Player1(13 * GameController.TILE_SIZE, 7 * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, .16f * GameController.SCALE, this);
+        player1 = new Player1(50 * GameController.TILE_SIZE, 40 * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, .16f * GameController.SCALE, this);
         players = new Player[]{player1};
-        addWalls();
+        walls = new Wall[0];  // Level collision from Tiled solid layer (tile map), not Wall entities
         enemy = new Enemy[0];
 
         int sizeOfEntities = enemy.length + walls.length + players.length;
@@ -44,33 +45,25 @@ public class Game {
         collisionChecker = new CollisionChecker();
     }
 
-    public void addWalls() {
-        int count = 0;
-
-        for (int i = 0; i < world.length; i++) {
-            for (int j = 0; j < world[i].length; j++) {
-                if (LevelLoader.world[i][j] == 1) {
-                    count++;
-                }
-            }
-        }
-        walls = new Wall[count];
-
-        // Populate walls array based on LevelLoader.world
-        int wallIndex = 0;
-        for (int i = 0; i < world.length; i++) {
-            for (int j = 0; j < world[i].length; j++) {
-                if (LevelLoader.world[i][j] == 1) {
-                    walls[wallIndex] = new Wall(j * GameController.TILE_SIZE, i * GameController.TILE_SIZE, GameController.TILE_SIZE, GameController.TILE_SIZE, 0, this);
-                    wallIndex++;
-                }
-            }
-        }
-    }
-
-
     public void update() {
         entitiesUpdates();
+        checkTriggers();
+    }
+
+    /** When the player enters the trigger with npc_id=widow, print once to console. */
+    private void checkTriggers() {
+        var hitBox = player1.getHitBox();
+        boolean inWidow = false;
+        for (Trigger t : levelLoader.getTriggers()) {
+            if (t.intersects(hitBox) && "widow".equals(t.getNpcId())) {
+                inWidow = true;
+                break;
+            }
+        }
+        if (inWidow && !wasInWidowTrigger) {
+            System.out.println("Trigger: npc_id=widow");
+        }
+        wasInWidowTrigger = inWidow;
     }
 
     private void entitiesUpdates() {

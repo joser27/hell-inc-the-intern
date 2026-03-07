@@ -1,0 +1,334 @@
+DEMONIC CONTRACTOR
+Game Design Document
+v1.0  |  Java + MVC  |  2D Top-Down
+
+
+1. Game Overview
+Demonic Contractor is a 2D top-down social strategy game where the player takes the role of a demon sent to a small gothic town to collect souls. Progress happens not through combat but through conversation. The player must identify each NPC's deepest desire and make them an offer they cannot refuse.
+
+The game uses a dual-view system: a top-down overworld for exploration and strategy, and a first-person encounter view for dialogue — powered by the Claude AI API which plays each NPC and evaluates whether the player's pitch is convincing enough.
+
+
+2. Core Game Loop
+The Loop
+Explore the town top-down, observe NPCs, and gather clues about their lives
+Approach a house and knock — view switches to first-person encounter mode
+Engage the NPC in conversation, identify their hidden desire, and pitch a deal
+The AI evaluates whether the player's dialogue matches the NPC's vulnerability
+If successful, the deal is struck and the town begins to change around it
+Collect enough souls before the Church Investigator exposes you
+
+Win / Lose
+WIN: Reach your soul quota before the deadline set by your demonic boss
+LOSE: The Church Investigator gathers enough evidence to banish you
+
+
+3. Dual-View System
+Overworld — Top-Down
+A Pokemon-style top-down map of a small gothic town. The player walks freely, observes NPC routines, and plans their approach before knocking on any door.
+
+Element
+Description
+Town layout
+2-3 streets, a church, a tavern, a market square, and residential homes
+NPC routines
+NPCs visibly move around town — market, church, neighbors, home
+Visual clues
+Dim lights = home, cross on door = devout, wilting garden = lonely/neglected
+Time of day
+Day/night cycle — some NPCs only approachable at certain times
+Investigator
+Visible on map — player can see and avoid him as he patrols
+Ripple effects
+Completed deals visually change the town — nicer house, nervous neighbor, etc.
+
+
+Door Encounter — First-Person
+When the player knocks on a door, the screen cuts to a first-person illustrated view. The NPC's face is visible through a door crack or window with their home partially visible behind them.
+
+Element
+Description
+NPC portrait
+Illustrated expressive face that reacts to the conversation in real time
+Home background
+Visual clues behind NPC — religious icons, messy room, family photos
+Dialogue input
+Player types freely — sent directly to the Claude API
+Mood indicator
+NPC expression shifts subtly as suspicion or warmth changes
+Hellish vignette
+Screen edges glow red as the NPC gets closer to accepting a deal
+Exit
+Player can back away at any time — NPC closes door, returns to overworld
+
+
+Transitions
+Knock on door -> brief animation -> hard cut to first-person encounter
+Back away or door slammed -> fade out -> overworld resumes
+Deal accepted -> flash effect -> NPC overworld sprite gains a subtle dark icon
+
+
+4. NPC System
+NPC States
+State
+Description
+Effect on Investigator
+Neutral
+Has not been approached
+No effect
+Suspicious
+Rejected deal, felt something was off
+May report if interviewed
+Bound
+Active deal, currently satisfied
+Will not report, may cover for player
+Regretting
+Deal did not deliver as hoped
+High chance of confessing
+Fulfilled
+Deal worked out perfectly
+Loyal, may actively mislead investigator
+
+
+NPC Archetypes
+NPC
+Visual Clue
+Vulnerability
+Difficulty
+The Widow
+Black dress, sad eyes, old photo behind her
+Loneliness
+Easy
+The Ambitious Clerk
+Stiff collar, nervous energy, papers everywhere
+Desire for status
+Medium
+The Jealous Neighbor
+Keeps glancing sideways at the house next door
+Envy
+Medium
+The Drunk
+Bloodshot eyes, slumped posture at the tavern
+Escapism
+Easy / Low value
+The Devout Farmer
+Cross necklace, squints at you immediately
+Hidden doubt
+Hard / High value
+The Grieving Father
+Hollow eyes, child's toy visible in background
+Desperation
+Medium
+
+
+Ripple Effects
+Wealth deal: NPC's house improves visually — envious neighbors become easier targets
+Revenge deal: Target neighbor becomes paranoid and harder to approach
+Love deal: Attracts town attention — jealous NPC grows more vulnerable
+Knowledge deal: Destabilizes relationships — opens new angles with multiple NPCs
+
+
+5. AI Conversation System
+How It Works
+Each door encounter is powered by the Claude API. The player's typed dialogue is sent with a system prompt that defines the NPC's personality, hidden desire, current emotional state, and running suspicion/warmth levels. The API returns a structured JSON response every turn.
+
+JSON Response Format
+{ "reply": "...", "suspicion": 2, "warmth": 4, "dealAccepted": false, "slamDoor": false }
+
+Field
+Type
+Description
+reply
+String
+What the NPC says out loud in the encounter
+suspicion
+Int 0-10
+How suspicious the NPC is becoming of the player
+warmth
+Int 0-10
+How receptive the NPC is to the player's pitch
+dealAccepted
+Boolean
+Whether the NPC accepted the deal on this turn
+slamDoor
+Boolean
+Whether the NPC immediately ends the conversation
+
+
+System Prompt Contents Per NPC
+Name, age, occupation, and personality type
+Their hidden desire — what they want most in the world
+Current emotional state and life circumstances
+Religious and moral values — affects how easily they are swayed
+Running suspicion and warmth values updated each turn
+Instruction to respond only in valid JSON with no preamble or markdown
+
+
+6. The Church Investigator
+Suspicion Meter
+A town-wide suspicion meter fills based on player actions. As it crosses thresholds the Investigator escalates his behavior.
+
+Suspicion Level
+Investigator Behavior
+0-25%
+Dormant — not yet spawned, town is calm
+25-50%
+Spawns and begins casual patrol around town
+50-75%
+Actively interviews NPCs near houses the player has visited
+75-100%
+Hunting mode — moves faster, wider interview radius, near end state
+
+
+What Raises Suspicion
+Successfully completing a deal with any NPC
+A Regretting NPC being interviewed by the Investigator
+A Suspicious NPC tattling after being approached
+Time passing naturally — suspicion creeps up even with no action
+
+What Lowers Suspicion
+Fulfilled NPCs actively misleading the Investigator during interviews
+Using a Silence ability on a Regretting NPC before they are interviewed
+Offering a deal to the Investigator himself — extremely high risk, very high reward
+
+
+7. Deal Types
+Deal
+What NPC Receives
+Soul Value
+Town Ripple
+Wealth
+Money, property, or prosperity
+Low
+Envy in nearby neighbors
+Love
+Romantic attention or return of lost loved one
+Medium
+Rumors spread through town
+Revenge
+Harm or humiliation to a named enemy
+Medium
+Target NPC becomes paranoid
+Fame
+Recognition and admiration from the town
+Medium
+Draws more town scrutiny
+Health
+Recovery from illness or injury
+Low
+Gratitude, easy re-approach
+Knowledge
+A hidden truth or secret revealed
+High
+Destabilizes relationships
+Power
+Influence and control over others
+High
+Multiple NPCs react
+Resurrection
+Return of a deceased loved one
+Very High
+Immediate suspicion spike
+
+
+
+8. Tile Map — Tiled Layer Structure
+Order
+Layer Name
+Contents
+1
+ground
+Base terrain — grass, dirt, cobblestone roads, water
+2
+ground_detail
+Puddles, cracks, leaves, patches — visual variety on top of ground
+3
+below_player
+Interior floors, welcome mats, rugs, doorsteps
+4
+solid
+Walls, fences, trees, buildings — all collidable tiles
+5
+props
+Signs on walls, barrels, crates, torches, flower boxes — non-collidable
+6
+above_player
+Tree canopies, roof overhangs, hanging signs — renders over player
+7
+triggers
+Object layer — door rectangles, NPC spawns, regions, patrol paths
+
+
+Triggers layer is an Object Layer in Tiled (not a tile layer). Each rectangle placed on this layer has custom properties read by the Java engine at load time:
+
+Trigger Type
+Required Properties
+Door
+type: door | npc_id: widow
+NPC Spawn
+type: npc_spawn | npc_id: drunk
+Region boundary
+type: region | region_id: church_district
+Patrol path
+type: investigator_patrol | patrol_id: route_1
+
+
+
+9. MVC Architecture
+Model
+World state — all NPC states, suspicion meter, soul count, time of day
+NPC data — personality profiles, hidden desires, current state, conversation history
+Deal system — active deals, ripple effect queue, soul value tracking
+Investigator logic — patrol state, interview targets, suspicion thresholds
+AI service — sends prompts to Claude API, parses JSON, updates NPC state
+
+View
+Overworld renderer — tile map, NPC sprites, player, day/night lighting overlay
+Encounter renderer — NPC portrait, dialogue box, mood visuals, hellish vignette effect
+UI overlay — soul counter, suspicion meter, time of day, deal history log
+Transition handler — manages cut and fade between overworld and encounter view
+
+Controller
+Player input — movement in overworld, free text input in encounter view
+Trigger handler — detects door/spawn/region overlaps and fires events
+Encounter controller — manages conversation turns, calls AI service, applies response to model
+Game loop — tick-based updates for NPC routines, investigator patrol, suspicion changes
+
+
+10. Tech Stack
+Component
+Technology
+Language
+Java
+Architecture
+MVC with custom game engine
+Map Editor
+Tiled (TMX format, Object Layers for triggers)
+AI / NPC Dialogue
+Anthropic Claude API — claude-sonnet-4-20250514
+Tile Size
+32x32 pixels
+View Modes
+Top-down overworld + First-person door encounter
+Art Style
+Pixel art overworld, illustrated portraits for encounters
+
+
+
+11. MVP Scope
+In Scope
+One small town map with 6-8 unique NPCs
+Dual-view system — top-down overworld and first-person encounter
+AI-powered NPC dialogue via Claude API with structured JSON responses
+3 deal types: Wealth, Love, Revenge
+Church Investigator with patrol and basic interview behavior
+Town-wide suspicion meter with escalation thresholds
+Win and lose condition
+
+Future Scope
+Full ripple effect chain reactions between NPCs
+Complete deal roster — all 8 deal types
+Player ability upgrades purchased with soul energy
+Rival demon NPC competing for the same souls
+Multiple districts or a second town map
+Animated NPC portraits and reaction sequences
