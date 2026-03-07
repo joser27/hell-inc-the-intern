@@ -35,6 +35,8 @@ public class GameController {
     private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     public static final int GAME_WIDTH = (int) screenSize.getWidth();
     public static final int GAME_HEIGHT = (int) screenSize.getHeight();
+    /** Zoom > 1 = zoomed in (smaller visible world). 2 = see half the width/height. */
+    public static final float CAMERA_ZOOM = 2.0f;
 //    public static final int GAME_WIDTH = (int) 1280;
 //    public static final int GAME_HEIGHT = (int) 1024;
 
@@ -69,16 +71,11 @@ public class GameController {
             case PAUSEMENU -> pauseMenu.update();
             case PLAYING -> {
                 playingState.update();
-                gameOverUpdate();
             }
         }
     }
 
-    private void gameOverUpdate() {
-        if (getGame().isGameOver()) {
-            Gamestate.state = Gamestate.GAMEOVER;
-        }
-    }
+
 
 
     public void render(Graphics g) {

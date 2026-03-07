@@ -19,28 +19,13 @@ public class PlayingUI extends State implements Statemethods {
     Image player1_E;
     Image player1_R;
 
-    // Player 2 Abilities
-    Image player2_P;
-    Image player2_Q;
-    Image player2_W;
-    Image player2_E;
-    Image player2_R;
-
-    public PlayingUI(Game game) {//(GameController.GAME_HEIGHT/2) + GameController.GAME_HEIGHT/4
+    public PlayingUI(Game game) {
         super(game);
-        // Player 1 Abilities
         player1_P = LoadSave.GetSpriteAtlas(LoadSave.Death_Surge_PX);
         player1_Q = LoadSave.GetSpriteAtlas(LoadSave.Decimating_Smash_PX);
         player1_W = LoadSave.GetSpriteAtlas(LoadSave.Soul_Furnace_PX);
         player1_E = LoadSave.GetSpriteAtlas(LoadSave.Roar_of_the_Slayer_PX);
         player1_R = LoadSave.GetSpriteAtlas(LoadSave.Unstoppable_Onslaught_PX);
-
-        //Player 2
-        player2_P = LoadSave.GetSpriteAtlas(LoadSave.Frost_Shot);
-        player2_Q = LoadSave.GetSpriteAtlas(LoadSave.Ranger_Focus);
-        player2_W = LoadSave.GetSpriteAtlas(LoadSave.Volley);
-        player2_E = LoadSave.GetSpriteAtlas(LoadSave.Hawkshot);
-        player2_R = LoadSave.GetSpriteAtlas(LoadSave.Enchanted_Crystal_Arrow);
     }
 
     @Override
@@ -53,11 +38,6 @@ public class PlayingUI extends State implements Statemethods {
     public Image getPlayer1_W() { return player1_W; }
     public Image getPlayer1_E() { return player1_E; }
     public Image getPlayer1_R() { return player1_R; }
-    public Image getPlayer2_P() { return player2_P; }
-    public Image getPlayer2_Q() { return player2_Q; }
-    public Image getPlayer2_W() { return player2_W; }
-    public Image getPlayer2_E() { return player2_E; }
-    public Image getPlayer2_R() { return player2_R; }
 
     @Override
     public void render(Graphics g) { /* Rendering done by View.PlayingView */ }
