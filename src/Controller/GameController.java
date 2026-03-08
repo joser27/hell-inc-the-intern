@@ -12,6 +12,7 @@ import View.GameOverView;
 import java.awt.*;
 
 public class GameController {
+    private static final GraphicsEnvironment GE = GraphicsEnvironment.getLocalGraphicsEnvironment();
     private LoadMenu menuState;
     private Playing playingState;
     private GameOver gameOverState;
@@ -32,9 +33,10 @@ public class GameController {
 //    public static final int GAME_WIDTH = TILES_IN_WIDTH * TILE_SIZE;
 //    public static final int GAME_HEIGHT = TILES_IN_HEIGHT * TILE_SIZE;
 
-    private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    public static final int GAME_WIDTH = (int) screenSize.getWidth();
-    public static final int GAME_HEIGHT = (int) screenSize.getHeight();
+    /** Usable screen bounds (excludes Windows taskbar / menu bar) so the game is not clipped. */
+    private static final Rectangle USABLE_SCREEN = GE.getMaximumWindowBounds();
+    public static final int GAME_WIDTH = USABLE_SCREEN.width;
+    public static final int GAME_HEIGHT = USABLE_SCREEN.height;
     /** Zoom > 1 = zoomed in (smaller visible world). Lower value = zoomed out. */
     public static final float CAMERA_ZOOM = 1.25f;
 //    public static final int GAME_WIDTH = (int) 1280;
@@ -53,6 +55,7 @@ public class GameController {
         gamePanel.addKeyListener(keyboardInputs);
         gamePanel.addMouseListener(mouseInputs);
         gamePanel.addMouseMotionListener(mouseInputs);
+        gamePanel.addMouseWheelListener(mouseInputs);
 
         // Game States
         playingState = new Playing(game);
@@ -71,6 +74,8 @@ public class GameController {
             case PAUSEMENU -> pauseMenu.update();
             case PLAYING -> {
                 playingState.update();
+                if (game.isGameOver())
+                    Gamestate.state = Gamestate.GAMEOVER;
             }
         }
     }

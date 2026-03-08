@@ -6,7 +6,6 @@ import Model.LevelLoader;
 import Model.entities.Player1;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,19 +49,13 @@ public class GameView {
 
         Player1 p = game.getPlayer1();
         List<Drawable> drawables = new ArrayList<>();
-        // Walls/trees not drawn — Tiled solid layer provides visuals; Wall entities still used for collision
         int playerSortY = (int) (p.getHitBox().y + p.getHitBox().height);
-        drawables.add(new Drawable(playerSortY, () -> {
-            drawHealthBar(g2d, p.getHitBox(), p.getHealth());
-            g2d.drawImage(p.getCurrentSprite(), (p.getxPos() - 9 * GameController.SCALE), p.getyPos() - 8 * GameController.SCALE, null);
-        }));
+        drawables.add(new Drawable(playerSortY, () ->
+            g2d.drawImage(p.getCurrentSprite(), (p.getxPos() - 9 * GameController.SCALE), p.getyPos() - 8 * GameController.SCALE, null)));
         Collections.sort(drawables, Comparator.comparingInt(d -> d.sortY));
         for (Drawable d : drawables) d.draw.run();
 
         g2d.dispose();
-
-        g.setColor(Color.WHITE);
-        g.drawString("HP: " + p.getHealth() + " | Coords: " + p.getxPos() / GameController.TILE_SIZE + "," + p.getyPos() / GameController.TILE_SIZE + " | Boosts: " + p.getSpeedBoostUsages(), 20, 30);
     }
 
     private static class Drawable {
@@ -70,15 +63,4 @@ public class GameView {
         final Runnable draw;
         Drawable(int sortY, Runnable draw) { this.sortY = sortY; this.draw = draw; }
     }
-
-    private void drawHealthBar(Graphics g, Rectangle2D.Float hitBox, int health) {
-        int x = (int) (hitBox.x - 10);
-        int y = (int) (hitBox.y - 20);
-        g.setColor(new Color(178, 26, 26));
-        g.drawRect(x, y, 50, 15);
-        g.fillRect(x, y, (int) (health / 2), 15);
-        g.setColor(new Color(255, 0, 0));
-        g.fillRect(x, y, (int) (health / 2), 10);
-    }
-
 }

@@ -12,7 +12,9 @@ public class KeyboardInputs implements KeyListener {
     }
     @Override
     public void keyTyped(KeyEvent e) {
-
+        if (Gamestate.state == Gamestate.PLAYING) {
+            gameController.getPlayingState().keyTyped(e);
+        }
     }
 
     @Override

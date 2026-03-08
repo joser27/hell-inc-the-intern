@@ -1,12 +1,7 @@
 package View;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -14,6 +9,7 @@ public class GameFrame {
 
     JFrame frame;
     GamePanel gamePanel;
+
     public GameFrame(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         initFrame();
@@ -24,12 +20,12 @@ public class GameFrame {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.add(gamePanel);
 
-        // Make the frame full screen
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//        frame.setUndecorated(true); // Optional: removes window decorations
-
+        // Use usable screen area (excludes taskbar) so dialogue and UI are not clipped
+        Rectangle usable = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        frame.setSize(usable.width, usable.height);
+        frame.setLocation(usable.x, usable.y);
+        frame.setUndecorated(false);  // set true for borderless fullscreen
+        frame.setResizable(true);
         frame.setVisible(true);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
     }
 }

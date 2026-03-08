@@ -3,10 +3,23 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "mapTMX.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
+        "Pixel Kingdom.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 0.75
+        },
+        "mapTMX.tmx": {
+            "scale": 2,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": 848.25,
+                "y": 670
+            }
+        }
     },
     "last.imagePath": "E:/code/java-2d-engine/demo2DGame/res/paid/Pixel Kingdom - Town Tale",
     "map.height": 64,
@@ -15,9 +28,13 @@
     "map.tileWidth": 16,
     "map.width": 64,
     "openFiles": [
+        "Pixel Kingdom.tsx",
+        "mapTMX.tmx"
     ],
     "project": "tiledProject.tiled-project",
     "recentFiles": [
+        "Pixel Kingdom.tsx",
+        "mapTMX.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

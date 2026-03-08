@@ -22,6 +22,8 @@ Win / Lose
 WIN: Reach your soul quota before the deadline set by your demonic boss
 LOSE: The Church Investigator gathers enough evidence to banish you
 
+Current build: No patrol points; a town-wide suspicion meter (0–100%) fills from deals (+18), door slams (+5), and time creep. At 100% you lose (banished). Time runs only in overworld; deadline (e.g. 10 min) without quota also loses. Win = souls ≥ quota before time runs out or suspicion maxes.
+
 
 3. Dual-View System
 Overworld — Top-Down

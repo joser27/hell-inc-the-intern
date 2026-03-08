@@ -47,8 +47,8 @@ public class GameOver extends State implements Statemethods {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_ENTER) {
+            getGame().resetForNewGame();
             Gamestate.state = Gamestate.PLAYING;
-            getGame().setGameOver(false);
         }
     }
 

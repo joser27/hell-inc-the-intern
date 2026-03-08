@@ -1,12 +1,15 @@
 package Controller;
 
+import Model.EncounterState;
 import Model.gamestates.Gamestate;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
-public class MouseInputs implements MouseListener, MouseMotionListener {
+public class MouseInputs implements MouseListener, MouseMotionListener, MouseWheelListener {
     GameController gameController;
     public MouseInputs(GameController gameController) {
         this.gameController = gameController;
@@ -50,6 +53,17 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
     @Override
     public void mouseDragged(MouseEvent e) {
 
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (Gamestate.state == Gamestate.PLAYING) {
+            EncounterState enc = gameController.getGame().getEncounterState();
+            if (gameController.getGame().isShowWidowFrame() && enc != null) {
+                // Wheel toward user (negative rotation) = see older lines; away = see newer
+                enc.scroll(-e.getWheelRotation());
+            }
+        }
     }
 
     @Override

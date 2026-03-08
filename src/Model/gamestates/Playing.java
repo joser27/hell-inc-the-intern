@@ -54,6 +54,21 @@ public class Playing extends State implements Statemethods {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
+        if (getGame().isShowWidowFrame()) {
+            if (keyCode == KeyEvent.VK_ESCAPE || keyCode == KeyEvent.VK_ENTER) {
+                if (getGame().hasPendingEncounterOutcome()) {
+                    getGame().confirmEncounterClose();
+                } else if (keyCode == KeyEvent.VK_ESCAPE) {
+                    getGame().saveCurrentNpcMemory();
+                    getGame().setShowWidowFrame(false);
+                } else {
+                    getGame().getEncounterState().submitInput();
+                }
+            } else if (keyCode == KeyEvent.VK_BACK_SPACE && !getGame().hasPendingEncounterOutcome()) {
+                getGame().getEncounterState().backspaceInput();
+            }
+            return;
+        }
         if (keyCode == KeyEvent.VK_W) getGame().getPlayer1().setUp(true);
         else if (keyCode == KeyEvent.VK_S) getGame().getPlayer1().setDown(true);
         else if (keyCode == KeyEvent.VK_A) getGame().getPlayer1().setLeft(true);
@@ -63,11 +78,14 @@ public class Playing extends State implements Statemethods {
         if (keyCode == KeyEvent.VK_NUMPAD2) getGame().getPlayer1().useShield();
         if (keyCode == KeyEvent.VK_NUMPAD3) getGame().getPlayer1().useRoar();
         if (keyCode == KeyEvent.VK_ESCAPE) {
-            if (getGame().isShowWidowFrame()) {
-                getGame().setShowWidowFrame(false);
-            } else {
-                Gamestate.state = Gamestate.PAUSEMENU;
-            }
+            Gamestate.state = Gamestate.PAUSEMENU;
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if (getGame().isShowWidowFrame()) {
+            getGame().getEncounterState().appendInputChar(e.getKeyChar());
         }
     }
 
