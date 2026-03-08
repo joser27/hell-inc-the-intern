@@ -93,11 +93,14 @@ public class PlayingView {
                     float dist = dx * dx + dy * dy;
                     float radiusScaled = light.getRadius() * invScale * NIGHT_LIGHT_FALLOFF_EXTEND;
                     float r2 = radiusScaled * radiusScaled;
-                    if (dist >= r2) continue;
-                    float t = (float) Math.sqrt(dist) / radiusScaled;
-                    float t2 = t * t;
-                    float soft = t * t2 * (10f - 15f * t + 6f * t2);
-                    darkness = Math.min(darkness, soft);
+                    float contribution = 1f;
+                    if (dist < r2) {
+                        float t = (float) Math.sqrt(dist) / radiusScaled;
+                        float t2 = t * t;
+                        float soft = t * t2 * (10f - 15f * t + 6f * t2);
+                        contribution = soft;
+                    }
+                    darkness *= contribution;
                 }
                 int alpha = (int) (darkness * (NIGHT_MAX_ALPHA - NIGHT_MIN_ALPHA)) + NIGHT_MIN_ALPHA;
                 pixels[y * w + x] = (Math.min(255, alpha) << 24) | tintRGB;

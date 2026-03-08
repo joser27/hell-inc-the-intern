@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="25">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="26">
  <tileset firstgid="1" source="Pixel Kingdom.tsx"/>
  <layer id="8" name="grass" width="64" height="64">
   <data encoding="csv">
@@ -664,6 +664,12 @@
    <ellipse/>
   </object>
   <object id="24" x="274.875" y="758.284" width="10.25" height="9.25">
+   <properties>
+    <property name="type" value="window"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="25" x="481.42" y="526.466" width="10.25" height="9.25">
    <properties>
     <property name="type" value="window"/>
    </properties>
