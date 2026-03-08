@@ -2,7 +2,8 @@ package Model;
 
 /**
  * Result of one NPC turn: display text plus whether the deal was accepted or the door was slammed.
- * Claude is instructed to append a JSON line to each reply so we can parse this.
+ * Claude is instructed to append a JSON line to each reply: {"dealAccepted":bool,"slamDoor":bool}.
+ * Parsing strips that line and extracts the two flags so the game can update soul count and close the encounter.
  */
 public class EncounterOutcome {
     /** The reply text to show (with any trailing JSON line stripped). */
@@ -19,8 +20,8 @@ public class EncounterOutcome {
     }
 
     /**
-     * Parse Claude's reply: expects optional trailing line {@code {"dealAccepted":bool,"slamDoor":bool}}.
-     * Returns outcome with replyText (without that line) and the two flags (default false if not found).
+     * Parse Claude's reply: looks for a line {@code {"dealAccepted":bool,"slamDoor":bool}} in the last few lines.
+     * Returns outcome with replyText (that line stripped) and the two flags (default false if not found).
      */
     public static EncounterOutcome parse(String rawReply) {
         if (rawReply == null) return new EncounterOutcome("", false, false);
@@ -28,15 +29,24 @@ public class EncounterOutcome {
         boolean dealAccepted = false;
         boolean slamDoor = false;
 
-        // Find last line that looks like {"dealAccepted":true/false,"slamDoor":true/false}
-        int lastNewline = text.lastIndexOf('\n');
-        if (lastNewline >= 0) {
-            String lastLine = text.substring(lastNewline + 1).trim();
-            if (lastLine.startsWith("{") && lastLine.contains("dealAccepted") && lastLine.contains("slamDoor")) {
-                dealAccepted = lastLine.contains("\"dealAccepted\":true");
-                slamDoor = lastLine.contains("\"slamDoor\":true");
-                text = text.substring(0, lastNewline).trim();
+        String[] lines = text.split("\n");
+        int jsonLineIndex = -1;
+        for (int i = lines.length - 1; i >= 0 && i >= lines.length - 3; i--) {
+            String line = lines[i].trim();
+            if (line.startsWith("{") && line.contains("dealAccepted") && line.contains("slamDoor")) {
+                dealAccepted = line.contains("\"dealAccepted\":true");
+                slamDoor = line.contains("\"slamDoor\":true");
+                jsonLineIndex = i;
+                break;
             }
+        }
+        if (jsonLineIndex >= 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < jsonLineIndex; i++) {
+                if (i > 0) sb.append('\n');
+                sb.append(lines[i].trim());
+            }
+            text = sb.toString().trim();
         }
         text = cleanReplyText(text);
         return new EncounterOutcome(text, dealAccepted, slamDoor);

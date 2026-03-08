@@ -24,7 +24,10 @@ import java.util.Map;
  */
 public class PlayingView {
     private final GameView gameView = new GameView();
-    private final Map<String, BufferedImage> encounterFrameCache = new HashMap<>();
+    /** GTA-style encounter: door loaded once; portraits per NPC (key = image path), fallback widow. */
+    private BufferedImage doorFrameImage;
+    private BufferedImage fallbackPortraitImage;
+    private final Map<String, BufferedImage> portraitCache = new HashMap<>();
 
     /** Night overlay texture in world space; built at downscaled resolution for performance. */
     private BufferedImage nightOverlayTexture;
@@ -48,12 +51,15 @@ public class PlayingView {
         ensureNightOverlay(levelLoader);
         if (nightOverlayTexture != null) {
             Graphics2D g2 = (Graphics2D) g;
-            AffineTransform save = g2.getTransform();
+            AffineTransform saveTransform = g2.getTransform();
+            Object saveInterpolation = g2.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
             g2.translate(-playing.getXLvlOffset(), -playing.getYLvlOffset());
             g2.scale(GameController.CAMERA_ZOOM, GameController.CAMERA_ZOOM);
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2.drawImage(nightOverlayTexture, 0, 0, nightOverlayLevelW, nightOverlayLevelH, null);
-            g2.setTransform(save);
+            g2.setTransform(saveTransform);
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    saveInterpolation != null ? saveInterpolation : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         }
         if (!game.isShowWidowFrame()) {
             drawSoulsCounter(g, game);
@@ -197,32 +203,72 @@ public class PlayingView {
         g.drawString(msg, x + pad, y + (boxH + fm.getAscent()) / 2 - 2);
     }
 
-    /** First-person encounter view; frame image comes from current NPC profile (res/npcs.json). */
+    /** GTA-style encounter: black background, generic door (16:9), current NPC portrait (9:16) in same spot for all. */
     private void drawWidowFrame(Graphics g, Game game) {
-        NpcProfile npc = game.getCurrentNpcProfile();
-        BufferedImage frameImage = null;
-        if (npc != null) {
-            frameImage = encounterFrameCache.get(npc.getId());
-            if (frameImage == null) {
-                try {
-                    frameImage = LoadSave.GetSpriteAtlas(npc.getFrameImage());
-                    encounterFrameCache.put(npc.getId(), frameImage);
-                } catch (Exception ignored) { }
-            }
+        int w = GameController.GAME_WIDTH;
+        int h = GameController.GAME_HEIGHT;
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, w, h);
+
+        if (doorFrameImage == null) {
+            try {
+                doorFrameImage = LoadSave.GetSpriteAtlas(LoadSave.GENERIC_DOOR_FRAME);
+            } catch (Exception ignored) { }
         }
-        if (frameImage == null) {
-            g.setColor(new Color(40, 20, 30));
-            g.fillRect(0, 0, GameController.GAME_WIDTH, GameController.GAME_HEIGHT);
+        if (fallbackPortraitImage == null) {
+            try {
+                fallbackPortraitImage = LoadSave.GetSpriteAtlas(LoadSave.WIDOW_PORTRAIT);
+            } catch (Exception ignored) { }
+        }
+
+        if (doorFrameImage == null) {
             g.setColor(Color.WHITE);
-            g.drawString(npc != null ? "Encounter (" + npc.getFrameImage() + " not found)" : "Encounter (no NPC)", 50, 100);
+            g.drawString("Encounter (genericDoorFrame.png missing in res/)", 50, 100);
+            drawEncounterDialogue(g, game, w, h);
             drawEscapeHint(g, game);
             return;
         }
-        int w = GameController.GAME_WIDTH;
-        int h = GameController.GAME_HEIGHT;
-        g.drawImage(frameImage, 0, 0, w, h, null);
+
+        float doorWidth = w * 0.52f;
+        float doorHeight = doorWidth * (9f / 16f);
+        int doorX = (int) ((w - doorWidth) / 2);
+        int doorY = (int) ((h - doorHeight) / 2);
+        g.drawImage(doorFrameImage, doorX, doorY, (int) doorWidth, (int) doorHeight, null);
+
+        BufferedImage portrait = getPortraitForNpc(game.getCurrentNpcProfile());
+        if (portrait != null) {
+            float portraitHeight = h * 0.88f;
+            float portraitWidth = portraitHeight * (9f / 16f);
+            int portraitX = (int) ((w - portraitWidth) / 2 + w * 0.14f);
+            int portraitY = (int) (h - portraitHeight);
+            g.drawImage(portrait, portraitX, portraitY, (int) portraitWidth, (int) portraitHeight, null);
+        }
+
         drawEncounterDialogue(g, game, w, h);
         drawEscapeHint(g, game);
+    }
+
+    private BufferedImage getPortraitForNpc(NpcProfile npc) {
+        String path = npc != null && !npc.getPortraitImage().isEmpty() ? npc.getPortraitImage() : LoadSave.WIDOW_PORTRAIT;
+        BufferedImage img = portraitCache.get(path);
+        if (img == null) {
+            img = loadPortrait(path);
+            if (img != null) portraitCache.put(path, img);
+        }
+        return img != null ? img : fallbackPortraitImage;
+    }
+
+    /** Tries path as-is, then "res/" + path, so portraits are found whether classpath root is res/ or project root. */
+    private BufferedImage loadPortrait(String path) {
+        try {
+            return LoadSave.GetSpriteAtlas(path);
+        } catch (Exception ignored) { }
+        if (!path.startsWith("res/")) {
+            try {
+                return LoadSave.GetSpriteAtlas("res/" + path);
+            } catch (Exception ignored) { }
+        }
+        return null;
     }
 
     private static final int DIALOGUE_PAD = 32;
@@ -234,6 +280,9 @@ public class PlayingView {
     /** Space reserved at bottom of box for input line(s) and hint (so dialogue doesn't overlap). */
     private static final int DIALOGUE_BOTTOM_RESERVE = 72;
 
+    private static final int NAME_ABOVE_BOX_GAP = 6;
+    private static final int NAME_FONT_SIZE = 22;
+
     private void drawEncounterDialogue(Graphics g, Game game, int w, int h) {
         EncounterState enc = game.getEncounterState();
         boolean pendingClose = game.hasPendingEncounterOutcome();
@@ -242,8 +291,26 @@ public class PlayingView {
         int boxWidth = w - 2 * DIALOGUE_PAD;
         int maxTextWidth = boxWidth - 2 * DIALOGUE_INSET;
 
-        g.setColor(new Color(0, 0, 0, 220));
+        String npcName = game.getCurrentNpcProfile() != null ? game.getCurrentNpcProfile().getDisplayName() : "";
+        if (!npcName.isEmpty()) {
+            g.setFont(new Font("SansSerif", Font.BOLD, NAME_FONT_SIZE));
+            g.setColor(new Color(255, 255, 255, 240));
+            FontMetrics nameFm = g.getFontMetrics();
+            int nameY = boxY - NAME_ABOVE_BOX_GAP;
+            g.drawString(npcName, DIALOGUE_PAD, nameY - nameFm.getDescent());
+            g.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        }
+
+        g.setColor(new Color(0, 0, 0, 160));
         g.fillRoundRect(DIALOGUE_PAD, boxY, boxWidth, boxHeight, 12, 12);
+        g.setColor(new Color(255, 255, 255, 200));
+        if (g instanceof Graphics2D) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setStroke(new BasicStroke(2f));
+            g2.drawRoundRect(DIALOGUE_PAD, boxY, boxWidth, boxHeight, 12, 12);
+        } else {
+            g.drawRoundRect(DIALOGUE_PAD, boxY, boxWidth, boxHeight, 12, 12);
+        }
         g.setColor(new Color(255, 255, 255, 230));
         g.setFont(new Font("SansSerif", Font.PLAIN, 18));
 

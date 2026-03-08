@@ -107,12 +107,13 @@ public class NpcLoader {
         String id = extractString(block, "id");
         if (id == null) return null;
         String frameImage = extractString(block, "frameImage");
+        String portraitImage = extractString(block, "portraitImage");
         String displayName = extractString(block, "displayName");
         if (displayName == null) displayName = id;
         String systemPrompt = extractStringLong(block, "systemPrompt");
         if (systemPrompt == null) systemPrompt = "";
         int tattleChance = extractInt(block, "tattleChance", 30);
-        return new NpcProfile(id, frameImage, displayName, systemPrompt, tattleChance);
+        return new NpcProfile(id, frameImage, portraitImage, displayName, systemPrompt, tattleChance);
     }
 
     private static int extractInt(String block, String key, int defaultValue) {

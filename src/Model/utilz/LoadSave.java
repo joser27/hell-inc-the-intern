@@ -32,6 +32,10 @@ public class LoadSave {
 
     /** NPC encounter frame (first-person door view) — Demonic Contractor design. */
     public static final String WIDOW_FRAME = "widowFrame.png";
+    /** GTA-style encounter: door frame (16:9), shown smaller on black background. */
+    public static final String GENERIC_DOOR_FRAME = "genericDoorFrame.png";
+    /** GTA-style encounter: widow portrait (9:16), slightly larger than door. */
+    public static final String WIDOW_PORTRAIT = "widowPortrait.png";
 
     /** Main menu background — gothic village / castle at night. */
     public static final String MENU_BACKGROUND = "menuBackground.png";

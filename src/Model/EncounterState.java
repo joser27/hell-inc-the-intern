@@ -10,8 +10,9 @@ import java.util.concurrent.Executors;
 
 /**
  * Holds state for the first-person door encounter.
- * Conversation lines (player + NPC display name), current input, loading flag.
+ * Conversation lines (Player: ... or NPC display name: ... e.g. Eleanor:, Monty:), current input, loading flag.
  * Submits to Claude API off the EDT using the current NPC's system prompt from res/npcs.json.
+ * World is timeless/anachronistic — NPCs know about technology and modern life; the town exists outside normal time.
  */
 public class EncounterState {
     private final Game game;
@@ -107,36 +108,24 @@ public class EncounterState {
         return p != null ? p.getDisplayName() : "NPC";
     }
 
-    /**
-     * Prepended to every NPC system prompt.
-     * Timeless ambiguous setting: Gravity Falls meets Salem — gothic atmosphere, no smartphones or modern branding,
-     * period-ambiguous clothes and props, but characters can have modern personalities and speech. Keeps roleplay intact
-     * (e.g. AI/Claude don't exist in-world) so the model stays in character.
-     */
+    /** Prepended to every NPC system prompt. Keeps replies in-character and enforces the trailing JSON. */
     private static final String GLOBAL_ROLEPLAY_PREAMBLE =
-    "You are a character in an interactive gothic fiction game set in a timeless small town — " 
-    + "think Gravity Falls meets Salem. No smartphones, no modern brands, no internet. "
-    + "Characters may have modern personalities and speech but the world has no technology beyond what existed in the 1800s. "
-    + "AI, Claude, robots, and Anthropic do not exist in this world — react to these words with genuine confusion. "
-    + "\n\n"
-    + "RULES YOU MUST FOLLOW:\n"
-    + "- Stay in character completely at all times. Never break the fourth wall.\n"
-    + "- Keep ALL replies to 1 to 3 sentences maximum. Never write long responses.\n"
-    + "- Never describe your own actions in asterisks like *crosses arms*. Just speak.\n"
-    + "- Never start your reply with your own name.\n"
-    + "- Never repeat the same sentence or idea twice in a conversation.\n"
-    + "- If the visitor is rude, threatening, or bizarre, react as your character naturally would.\n"
-    + "- ALWAYS end every reply with exactly this JSON on its own line: {\"dealAccepted\":false,\"slamDoor\":false}\n"
-    + "  Set dealAccepted to true ONLY if you explicitly agree to a deal or pact.\n"
-    + "  Set slamDoor to true if you end the conversation, slam the door, or tell them to leave.\n"
-    + "\n"
-    + "Your specific character instructions follow:\n\n";
+    "You are an NPC in a conversation game. Stay in character. Do not break the fourth wall or mention AI, Claude, or the player.\n\n"
+    + "RULES:\n"
+    + "- Keep replies short (1 to 3 sentences). Just speak; no action asterisks like *crosses arms*.\n"
+    + "- Do not start your reply with your character's name. Do not repeat the same idea twice.\n"
+    + "- End every reply with exactly this on its own line: {\"dealAccepted\":false,\"slamDoor\":false}\n"
+    + "  Set dealAccepted to true only if you explicitly agree to the visitor's deal. Set slamDoor to true if you end the conversation or tell them to leave.\n\n"
+    + "Character instructions:\n\n";
 
     /** Build messages from lines and call Claude with current NPC's system prompt. */
     private String sendConversationToClaude() throws Exception {
         Model.NpcProfile profile = game.getCurrentNpcProfile();
         String npcSystemPrompt = profile != null ? profile.getSystemPrompt() : "";
-        String systemPrompt = GLOBAL_ROLEPLAY_PREAMBLE + npcSystemPrompt;
+        String nameLine = (profile != null && !profile.getDisplayName().isEmpty())
+                ? "Your name is " + profile.getDisplayName() + ". When the visitor asks your name, give this name only.\n\n"
+                : "";
+        String systemPrompt = GLOBAL_ROLEPLAY_PREAMBLE + nameLine + npcSystemPrompt;
 
         // Inject memory from the last visit so the NPC remembers how things were left
         List<String> memory = game.getNpcMemory(game.getCurrentNpcId());
