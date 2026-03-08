@@ -22,7 +22,6 @@ public abstract class Entity {
     private BufferedImage bufferedImage;
     int[] action;
     protected int aniTick, aniIndex, aniSpeed = 20;
-    protected int aniTickSmash, aniIndexSmash, aniSpeedSmash = 110;
     protected int actionOffset;
     protected int animationCol, animationRow, animationFrames;
     public String playerAction = RUNNING_DOWN;
