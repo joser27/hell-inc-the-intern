@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-/** Placeholder for playing-state UI; Demonic Contractor uses no ability bar. */
+/** Placeholder for playing-state UI; Hell Inc. uses quota/suspicion HUD only. */
 public class PlayingUI extends State implements Statemethods {
 
     public PlayingUI(Game game) {

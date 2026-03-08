@@ -15,13 +15,13 @@ public class Loading extends State implements Statemethods {
     private static final long LOADING_DURATION_MS = 2500L;
 
     public static final String[] FLAVOR_LINES = {
-        "Loneliness is the oldest door. It is rarely locked.",
-        "The devout are not immune to temptation. They are simply better at pretending.",
-        "A demon who listens well will always outperform one who speaks cleverly.",
-        "Gerald Finch knows something about everyone. Use this.",
+        "Your Q3 soul acquisition numbers are disappointing. We expect better. — Gary",
+        "Leading with the wellness package usually improves close rate. Just saying. — Gary",
+        "Gerald knows something about everyone. Get him on your side first.",
         "Father Creed has never lost an investigation. There is a first time for everything.",
-        "Souls collected do not sleep. Neither should you.",
-        "Harwick still owes Aldous money. Some debts are more useful unpaid."
+        "Harwick still owes Aldous money. Some debts are more useful unpaid.",
+        "Remember: the horror is not monsters. It is quarterly targets. — Hell Inc. Handbook",
+        "Clipboard ready. Briefcase stocked. You got this. Probably. — Gary"
     };
 
     private long startTime = 0;

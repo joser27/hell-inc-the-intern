@@ -42,15 +42,15 @@ public class GameOverView {
         boolean won = gameOver.getPlayerWinner() == 1;
         if (won) {
             g.setColor(new Color(200, 255, 200));
-            String l1 = "You reached your soul quota.";
-            String l2 = "Your demonic master is pleased.";
+            String l1 = "You hit your quota!";
+            String l2 = "Gary is finally pleased. Promotion incoming.";
             g.drawString(l1, cx - bodyFm.stringWidth(l1) / 2, textY);
             textY += LINE_GAP;
             g.drawString(l2, cx - bodyFm.stringWidth(l2) / 2, textY);
         } else {
             g.setColor(new Color(255, 200, 200));
-            String l1 = "The Church Investigator gathered";
-            String l2 = "enough evidence to banish you.";
+            String l1 = "Town suspicion hit 100%.";
+            String l2 = "You've been pulled from the assignment.";
             g.drawString(l1, cx - bodyFm.stringWidth(l1) / 2, textY);
             textY += LINE_GAP;
             g.drawString(l2, cx - bodyFm.stringWidth(l2) / 2, textY);

@@ -147,7 +147,7 @@ public class PlayingView {
         int y = panelY + HUD_INSET;
 
         // Souls
-        String soulsText = "Souls: " + game.getSouls() + " / " + game.getSoulQuota();
+        String soulsText = "Quota: " + game.getSouls() + " / " + game.getSoulQuota();
         g.setFont(new Font("SansSerif", Font.BOLD, SOULS_FONT_SIZE));
         FontMetrics fm = g.getFontMetrics();
         g.setColor(new Color(0, 0, 0, 200));
@@ -165,10 +165,10 @@ public class PlayingView {
         // Label changes with escalation thresholds
         String label;
         Color barColor;
-        if (s < 25f)      { label = "Suspicion — Dormant";       barColor = new Color(120, 80,  160, 200); }
-        else if (s < 50f) { label = "Suspicion — Patrol";        barColor = new Color(160, 90,  120, 220); }
-        else if (s < 75f) { label = "Suspicion — Interviewing"; barColor = new Color(200, 90,  90,  230); }
-        else              { label = "Suspicion — Hunting";       barColor = new Color(220, 60,  60,  240); }
+        if (s < 25f)      { label = "Town buzz — Low";           barColor = new Color(120, 80,  160, 200); }
+        else if (s < 50f) { label = "Town buzz — Rising";        barColor = new Color(160, 90,  120, 220); }
+        else if (s < 75f) { label = "Town buzz — Under review";  barColor = new Color(200, 90,  90,  230); }
+        else              { label = "Town buzz — Assignment over"; barColor = new Color(220, 60,  60,  240); }
 
         g.setFont(new Font("SansSerif", Font.PLAIN, SUSPICION_LABEL_FONT_SIZE));
         FontMetrics smFm = g.getFontMetrics();

@@ -57,7 +57,8 @@ public class MouseInputs implements MouseListener, MouseMotionListener, MouseWhe
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        if (Gamestate.state == Gamestate.OPTIONS)
+            gameController.getOptionsMenu().mouseDragged(e);
     }
 
     @Override

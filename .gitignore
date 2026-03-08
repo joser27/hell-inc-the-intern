@@ -25,6 +25,17 @@ replay_pid*
 
 res/paid/
 
+# Maven
+target/
+dependency-reduced-pom.xml
+
+# Old javac output (run.ps1 used -d out before Maven)
+out/
+
+# IDE (optional — remove if your team commits these)
+.idea/
+*.iml
+
 # Env / API keys (never commit)
 env/
 .env

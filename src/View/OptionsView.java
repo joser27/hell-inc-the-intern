@@ -24,6 +24,28 @@ public class OptionsView {
 
         g.setFont(new Font("Serif", Font.BOLD, 22));
         FontMetrics fm = g.getFontMetrics();
+
+        Rectangle slider = menu.getVolumeSliderBounds();
+        g.setColor(new Color(220, 200, 255));
+        g.drawString("Sound volume", slider.x, slider.y - 8);
+        g.setColor(new Color(40, 28, 60, 200));
+        g.fillRoundRect(slider.x, slider.y, slider.width, slider.height, 6, 6);
+        g.setColor(new Color(120, 100, 160, 200));
+        g.drawRoundRect(slider.x, slider.y, slider.width, slider.height, 6, 6);
+        int fillW = (int) (slider.width * menu.getVolume() / 100f);
+        if (fillW > 0) {
+            g.setColor(new Color(100, 70, 160, 220));
+            g.fillRoundRect(slider.x, slider.y, fillW, slider.height, 6, 6);
+        }
+        int thumbW = 14;
+        int thumbX = slider.x + (int) (slider.width * menu.getVolume() / 100f) - thumbW / 2;
+        if (thumbX < slider.x) thumbX = slider.x;
+        if (thumbX > slider.x + slider.width - thumbW) thumbX = slider.x + slider.width - thumbW;
+        g.setColor(new Color(200, 180, 255));
+        g.fillRoundRect(thumbX, slider.y - 2, thumbW, slider.height + 4, 6, 6);
+        g.setColor(new Color(180, 160, 220));
+        g.drawRoundRect(thumbX, slider.y - 2, thumbW, slider.height + 4, 6, 6);
+
         String fullscreenLabel = menu.isFullscreen() ? "Fullscreen: On" : "Fullscreen: Off";
         drawButton(g, menu.getButtonBounds(0), fullscreenLabel, fm, menu.getHoveredButton() == 0);
 

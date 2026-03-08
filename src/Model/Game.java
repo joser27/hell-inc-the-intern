@@ -33,8 +33,8 @@ public class Game {
     /** Soul quota — reach this to win. */
     private static final int SOUL_QUOTA = 3;
     /**
-     * Town-wide suspicion 0–100.  At 100 Father Creed performs the banishment ritual — game over.
-     * There is no timer; suspicion is the only pressure.
+     * Town-wide suspicion 0–100. At 100 the residents report you and you're pulled from the assignment.
+     * No timer — pressure comes from your choices and rejection rate.
      */
     private float suspicion = 0f;
     /** +15 % per deal accepted: every soul costs you, even a win draws attention. */
@@ -69,7 +69,7 @@ public class Game {
     public Game() {
         levelLoader = new LevelLoader();
         world = levelLoader.getWorld();
-        player1 = new Player1(50 * GameController.TILE_SIZE, 40 * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, .16f * GameController.SCALE, this);
+        player1 = new Player1(50 * GameController.TILE_SIZE, 40 * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, this);
         players = new Player[]{player1};
         walls = new Wall[0];  // Level collision from Tiled solid layer (tile map), not Wall entities
         enemy = new Enemy[0];
@@ -91,7 +91,7 @@ public class Game {
         souls++;
         if (currentNpcId != null) soulsCollected.add(currentNpcId);
         addSuspicion(SUSPICION_PER_DEAL);
-        showEncounterMessage("Soul collected!");
+        showEncounterMessage("Deal signed!");
     }
 
     /** Called when the NPC slams the door / ends the conversation. May add tattle suspicion by personality. */

@@ -1,144 +1,163 @@
-DEMONIC CONTRACTOR
-Game Design Document
-v1.0  |  Java + MVC  |  2D Top-Down
 
+HELL INC.
+The Intern
+Game Design Document
+v1.0  |  Java + MVC  |  2D Top-Down  |  Comedy
+— — — — — — — — — — — — — — — — — — — —
+"Your Q3 soul acquisition numbers are disappointing.We expect better from our interns."
+— Your Performance Review
 
 1. Game Overview
-Demonic Contractor is a 2D top-down social strategy game where the player takes the role of a demon sent to a small gothic town to collect souls. Progress happens not through combat but through conversation. The player must identify each NPC's deepest desire and make them an offer they cannot refuse.
-
-The game uses a dual-view system: a top-down overworld for exploration and strategy, and a first-person encounter view for dialogue — powered by the Claude AI API which plays each NPC and evaluates whether the player's pitch is convincing enough.
+Hell Inc. — The Intern is a 2D top-down comedy social strategy game where the player takes the role of a brand new intern at Hell Incorporated, assigned to a small quirky town to collect souls and meet their quarterly quota. Progress happens not through combat but through conversation — identify each resident's deepest desire and get them to sign on the dotted line.
+The game uses a dual-view system: a top-down overworld for exploration and planning, and a first-person encounter view for dialogue — powered by the Claude AI API which plays each NPC and evaluates whether the player's pitch is convincing enough to close the deal.
+The tone is office comedy with dark edges. Think The Office meets Beetlejuice. The horror is not monsters — it is paperwork, rejection rates, and a micromanaging boss who will not stop sending messages about your close rate.
 
 
 2. Core Game Loop
 The Loop
-Explore the town top-down, observe NPCs, and gather clues about their lives
+Explore the town top-down, observe residents, and gather intel on their desires
 Approach a house and knock — view switches to first-person encounter mode
-Engage the NPC in conversation, identify their hidden desire, and pitch a deal
-The AI evaluates whether the player's dialogue matches the NPC's vulnerability
-If successful, the deal is struck and the town begins to change around it
-Collect enough souls before the Church Investigator exposes you
+Engage the resident in conversation, identify their hidden desire, and pitch a soul acquisition package
+The AI evaluates whether the player's dialogue matches the resident's vulnerability
+If successful, the deal is signed, the town begins to change, and your quota inches closer
+Hit your quota without getting exposed or fired — no timer, just skill and strategy
 
 Win / Lose
-WIN: Reach your soul quota before the deadline set by your demonic boss
-LOSE: The Church Investigator gathers enough evidence to banish you
+Outcome
+Condition
+WIN
+Reach soul quota — Gary sends a congratulatory message and you are promoted to Junior Demon
+LOSE — Fired
+Rejection rate gets too high — Gary pulls you from the assignment for embarrassing Hell Inc.
+LOSE — Exposed
+Town suspicion hits 100% — residents collectively report you to authorities
 
-Current build: No patrol points; a town-wide suspicion meter (0–100%) fills from deals (+18), door slams (+5), and time creep. At 100% you lose (banished). Time runs only in overworld; deadline (e.g. 10 min) without quota also loses. Win = souls ≥ quota before time runs out or suspicion maxes.
+
+The Performance Review System
+Your demonic manager Gary monitors two things: your soul count and your rejection rate. He sends passive aggressive messages when either looks bad. These appear as popup notifications in the corner of the screen. There is no timer — Gary just never stops watching.
+"Hey just checking in on those soul numbers. No pressure but also kind of pressure. — Gary"
+"Quick sync? Your acquisition rate is below the team average. The team average is demons who have been doing this for 400 years. — Gary"
+"I need you to really bring your whole self to this. Your demonic whole self. — Gary"
 
 
 3. Dual-View System
 Overworld — Top-Down
-A Pokemon-style top-down map of a small gothic town. The player walks freely, observes NPC routines, and plans their approach before knocking on any door.
+A Pokemon-style top-down map of a small quirky town. The player walks freely, observes resident routines, and plans their approach. The intern carries a clipboard and a briefcase at all times.
 
 Element
 Description
 Town layout
-2-3 streets, a church, a tavern, a market square, and residential homes
-NPC routines
-NPCs visibly move around town — market, church, neighbors, home
+2-3 streets, a coffee shop, a town hall, a park, and residential homes
+Resident routines
+Residents visibly move around town — coffee shop, park, errands, home
 Visual clues
-Dim lights = home, cross on door = devout, wilting garden = lonely/neglected
+Dim lights = home, luxury car = wealthy, wilting garden = neglected/lonely
 Time of day
-Day/night cycle — some NPCs only approachable at certain times
-Investigator
-Visible on map — player can see and avoid him as he patrols
+Day cycle — some residents only approachable at certain times
+Quota tracker
+Visible soul counter and rejection rate tracker in HUD — no countdown timer
 Ripple effects
-Completed deals visually change the town — nicer house, nervous neighbor, etc.
+Completed deals visually change the town — new car, nervous neighbor, etc.
 
 
 Door Encounter — First-Person
-When the player knocks on a door, the screen cuts to a first-person illustrated view. The NPC's face is visible through a door crack or window with their home partially visible behind them.
+When the player knocks on a door, the screen cuts to a first-person illustrated view. The resident's face is visible through a door crack with their home partially visible behind them. The intern's clipboard is visible at the bottom of the screen.
 
 Element
 Description
 NPC portrait
 Illustrated expressive face that reacts to the conversation in real time
 Home background
-Visual clues behind NPC — religious icons, messy room, family photos
+Visual clues behind NPC — trophies, mess, family photos, luxury items
 Dialogue input
 Player types freely — sent directly to the Claude API
 Mood indicator
 NPC expression shifts subtly as suspicion or warmth changes
-Hellish vignette
-Screen edges glow red as the NPC gets closer to accepting a deal
+Hell Inc. vignette
+Screen edges glow orange/red as NPC gets closer to signing
+Clipboard UI
+Soul acquisition form visible at bottom — fills in as deal progresses
 Exit
-Player can back away at any time — NPC closes door, returns to overworld
+Player can back away — NPC closes door, returns to overworld
 
 
 Transitions
-Knock on door -> brief animation -> hard cut to first-person encounter
-Back away or door slammed -> fade out -> overworld resumes
-Deal accepted -> flash effect -> NPC overworld sprite gains a subtle dark icon
+Knock on door → brief animation → hard cut to first-person encounter
+Back away or door slammed → fade out → overworld resumes
+Deal signed → cash register sound effect → clipboard stamp animation → overworld NPC sprite gets a subtle briefcase icon
+Gary notification → popup in corner, dismissible, slightly annoying
 
 
 4. NPC System
 NPC States
 State
 Description
-Effect on Investigator
+Effect on Quota / Town
 Neutral
 Has not been approached
 No effect
-Suspicious
-Rejected deal, felt something was off
-May report if interviewed
-Bound
+Interested
+Warming up, open to conversation
+May approach player first
+Signed
 Active deal, currently satisfied
-Will not report, may cover for player
+Counts toward quota, may refer others
 Regretting
 Deal did not deliver as hoped
-High chance of confessing
+May complain loudly, raises suspicion
 Fulfilled
 Deal worked out perfectly
-Loyal, may actively mislead investigator
+Loyal, may actively help player
+Suspicious
+Rejected deal, felt something was off
+Tells neighbors, raises town suspicion
 
 
-NPC Archetypes
-The world is deliberately timeless and anachronistic — characters know what technology, the internet, and modern culture are. They exist in a weird liminal gothic town outside of normal time. Monty talks about games and tech naturally. Eleanor has heard of the internet but it made her feel worse. Cassius finds technology beneath him. Creed is suspicious of it. Gerald checks online community boards obsessively. Aldous has a ledger app AND a physical ledger. Marta has stalked Agnes on social media.
-
+NPC Roster
 NPC
-Visual Clue
-Vulnerability
+Personality
+Hidden Desire
 Difficulty
-The Widow (Eleanor Voss)
-Black dress, sunken eyes, extra place setting at the table
-Devastating loneliness and grief — wants to hear Thomas one more time
+Eleanor — The Widow
+Lonely, drifting, mentions husband constantly
+Connection, to not feel alone
 Easy
-The Nosy Neighbor (Gerald Finch)
-Binoculars on windowsill, sharp eyes, leans against doorframe
-Terror of irrelevance — needs to feel like the most important source of info
-Easy-Medium
-The Slacker (Monty Briggs)
-Oversized hoodie, chip crumbs, squints at daylight, headset around neck
-Fear of meaninglessness — secretly wants to matter but terrified of trying
+Gerald — The Gossip
+Talks constantly, knows everything, sharp
+To be the most informed person alive
+Easy / Medium
+Monty — The Slacker
+Gen Z gamer energy, unbothered, dry humor
+To finally be great at something
+Easy
+Aldous — The Merchant
+Ruthless, transactional, hates competitor Harwick
+Destroy Harwick, accumulate wealth
 Medium
-The Ambitious Merchant (Aldous Pemberton)
-Pocket watch, buttoned vest, assessing eyes
-Status-obsessed greed — wants Harwick RUINED and to be THE richest
+Marta — The Jealous Neighbor
+Passive aggressive, obsessed with neighbor Agnes
+Agnes to suffer publicly
 Medium
-The Jealous Neighbor (Marta Hollis)
-Tight bun, eyes always drifting toward Agnes's house
-Pure envy — wants Agnes humiliated more than she wants anything for herself
-Medium
-The Aristocrat (Lord Cassius Vane)
-Silver hair, expensive coat, looks down at everything
-Fear of irrelevance — terrified of being forgotten as the world moves past him
+Cassius — The Aristocrat
+Magnificently condescending, fears irrelevance
+Legacy, restored authority
 Hard
-The Suspicious Priest (Father Creed)
-Black cassock, hand on cross, eyes that see through you
-Buried doubt — if God is good why does evil keep winning
+Father Creed — The Priest
+Calm, diagnostic, unshakeable, one hidden doubt
+None — your hardest target
 Very Hard
 
 
 Ripple Effects
-Wealth deal: NPC's house improves visually — envious neighbors become easier targets
-Revenge deal: Target neighbor becomes paranoid and harder to approach
-Love deal: Attracts town attention — jealous NPC grows more vulnerable
-Knowledge deal: Destabilizes relationships — opens new angles with multiple NPCs
+Wealth package signed: Resident's house improves visually — envious neighbors become easier targets
+Revenge package signed: Target neighbor becomes paranoid and harder to approach
+Fame package signed: Draws town attention — more residents notice the stranger in town
+Knowledge package signed: Destabilizes relationships — opens new angles with multiple NPCs
 
 
 5. AI Conversation System
 How It Works
-Each door encounter is powered by the Claude API. The player's typed dialogue is sent with a system prompt that defines the NPC's personality, hidden desire, current emotional state, and running suspicion/warmth levels. The API returns a structured JSON response every turn.
+Each door encounter is powered by the Claude API. The player's typed dialogue is sent with a system prompt that defines the NPC's personality, hidden desire, current emotional state, and running suspicion and warmth levels. The API returns a structured JSON response every turn.
 
 JSON Response Format
 { "reply": "...", "suspicion": 2, "warmth": 4, "dealAccepted": false, "slamDoor": false }
@@ -151,92 +170,163 @@ String
 What the NPC says out loud in the encounter
 suspicion
 Int 0-10
-How suspicious the NPC is becoming of the player
+How suspicious the NPC is of the intern
 warmth
 Int 0-10
-How receptive the NPC is to the player's pitch
+How receptive the NPC is to the pitch
 dealAccepted
 Boolean
-Whether the NPC accepted the deal on this turn
+Whether the NPC signed the soul acquisition form
 slamDoor
 Boolean
 Whether the NPC immediately ends the conversation
 
 
-System Prompt Contents Per NPC
-Name, age, occupation, and personality type
-Their hidden desire — what they want most in the world
-Current emotional state and life circumstances
-Religious and moral values — affects how easily they are swayed
-Running suspicion and warmth values updated each turn
-Instruction to respond only in valid JSON with no preamble or markdown
+Global Roleplay Preamble
+Every NPC prompt is prepended with a global preamble that establishes the world, keeps characters in character, and enforces the JSON output format. Key rules include:
+World is timeless — technology and old world aesthetics coexist naturally
+Characters know what phones and games are but the town feels slightly out of time
+NPCs are NOT AI — deny it naturally in character if asked
+All replies 1 to 3 sentences maximum
+No asterisk actions — just speak
+Always end with the required JSON on its own line
 
 
-6. The Church Investigator
-Suspicion Meter
-A town-wide suspicion meter fills based on player actions. As it crosses thresholds the Investigator escalates his behavior.
-
-Suspicion Level
-Investigator Behavior
-0-25%
-Dormant — not yet spawned, town is calm
-25-50%
-Spawns and begins casual patrol around town
-50-75%
-Actively interviews NPCs near houses the player has visited
-75-100%
-Hunting mode — moves faster, wider interview radius, near end state
-
+6. The Performance Review Pressure System
+Overview
+There is no timer in Hell Inc. The pressure comes entirely from your choices — not the clock. Two things can end your assignment early: town suspicion hitting 100%, or your rejection rate getting bad enough that Gary pulls you from the field. The longer you stay in town the more suspicious residents become, but you are never racing a countdown. You are racing your own competence.
 
 What Raises Suspicion
-Successfully completing a deal with any NPC
-A Regretting NPC being interviewed by the Investigator
-A Suspicious NPC tattling after being approached
-Time passing naturally — suspicion creeps up even with no action
+Trigger
+Amount
+Notes
+Deal signed
++12%
+Every soul costs you — even a win draws attention
+Door slammed on you
++8%
+The resident felt something was wrong
+Resident tattles after rejection
++10%
+Personality dependent — Creed and Gerald tattle most
+Regretting resident complains publicly
++18%
+Your biggest single risk — manage your deals
+Simply existing in town
++1% every 2 min
+You cannot stay forever — commit to your targets
+
 
 What Lowers Suspicion
-Fulfilled NPCs actively misleading the Investigator during interviews
-Using a Silence ability on a Regretting NPC before they are interviewed
-Offering a deal to the Investigator himself — extremely high risk, very high reward
+Trigger
+Amount
+Notes
+Fulfilled resident defends you
+-10%
+Your best tool — happy clients protect you
+Gerald covers for you after his deal
+-5%
+He knows everyone — unique to his character
+Cassius dismisses concerns with authority
+-12%
+One time use — powerful late game tool
+Silence a regretting resident
+-8%
+Risky — requires approaching them again
 
 
-7. Deal Types
-Deal
-What NPC Receives
+Tattle Behavior Per NPC
+NPC
+Tattle Chance
+Reason
+Father Creed
+100%
+It is literally his calling
+Gerald
+60%
+He tells everyone everything
+Marta
+40%
+Suspicious by nature but focused on Agnes
+Cassius
+30%
+Too proud to admit he was approached
+Aldous
+25%
+Pragmatic — reporting costs him time
+Eleanor
+5%
+Too grief-stricken to engage with authorities
+Monty
+10%
+Too unbothered to walk anywhere about it
+
+
+Gary — Your Demon Manager
+Gary is the passive aggressive Hell Inc. middle manager assigned to oversee your internship. He does not appear on the map but monitors your soul count and rejection rate obsessively. Notification popups appear whenever either metric looks bad. He is your comic antagonist — not threatening, just deeply, persistently annoying. He is your comic antagonist — not threatening, just deeply annoying.
+
+Gary tracks two metrics: soul count and rejection rate. Messages trigger based on whichever looks worse at any given moment.
+
+Trigger
+Gary's Message
+First soul signed
+"Great start! See? Not so hard. I always believed in you. — Gary"
+1st door slam
+"Hey so I saw a rejection on your activity log. Totally normal. Happens to everyone. Once. — Gary"
+2nd consecutive slam
+"Two rejections in a row is a little concerning. Maybe try leading with the wellness package? — Gary"
+3rd consecutive slam
+"Okay I am going to need you to really dig deep here. What is your pitch? Can I hear your pitch? — Gary"
+5th consecutive slam
+"I hate to do this but HR is asking questions about your close rate. Hell Resources. — Gary"
+Quota halfway
+"Nice momentum. Keep this up and I will put in a good word with the Director. Of Darkness. — Gary"
+Quota complete
+"OUTSTANDING. I never doubted you. Please disregard all previous messages. — Gary"
+Too many slams — fired
+"This is not working out. I am pulling you from the assignment. Please return your clipboard. — Gary"
+
+
+
+7. Soul Acquisition Packages
+Deals are rebranded as Hell Inc. soul acquisition packages. Each package has a name, a delivery promise, a soul value, and a town ripple effect.
+
+Package Name
+What Client Receives
 Soul Value
 Town Ripple
-Wealth
-Money, property, or prosperity
+The Prosperity Package
+Wealth, money, property
 Low
 Envy in nearby neighbors
-Love
-Romantic attention or return of lost loved one
+The Romance Package
+Love or return of lost loved one
 Medium
 Rumors spread through town
-Revenge
-Harm or humiliation to a named enemy
+The Satisfaction Package
+Revenge on a named enemy
 Medium
-Target NPC becomes paranoid
-Fame
-Recognition and admiration from the town
+Target becomes paranoid
+The Spotlight Package
+Fame and town recognition
 Medium
-Draws more town scrutiny
-Health
+Draws more scrutiny to player
+The Wellness Package
 Recovery from illness or injury
 Low
 Gratitude, easy re-approach
-Knowledge
-A hidden truth or secret revealed
+The Insider Package
+A hidden truth revealed
 High
 Destabilizes relationships
-Power
+The Executive Package
 Influence and control over others
 High
 Multiple NPCs react
-Resurrection
-Return of a deceased loved one
+The Legacy Package
+Eternal remembrance and impact
 Very High
-Immediate suspicion spike
+Town monument appears
 
 
 
@@ -246,61 +336,62 @@ Layer Name
 Contents
 1
 ground
-Base terrain — grass, dirt, cobblestone roads, water
+Base terrain — grass, pavement, dirt paths, park areas
 2
 ground_detail
-Puddles, cracks, leaves, patches — visual variety on top of ground
+Puddles, cracks, leaves, lawn markings — visual variety
 3
 below_player
-Interior floors, welcome mats, rugs, doorsteps
+Interior floors, welcome mats, doorsteps
 4
 solid
 Walls, fences, trees, buildings — all collidable tiles
 5
 props
-Signs on walls, barrels, crates, torches, flower boxes — non-collidable
+Mailboxes, benches, bins, signs, flower boxes — non-collidable
 6
 above_player
-Tree canopies, roof overhangs, hanging signs — renders over player
+Tree canopies, roof overhangs — renders over player
 7
+lights
+Object layer — light source points with color and radius properties
+8
 triggers
-Object layer — door rectangles, NPC spawns, regions, patrol paths
+Object layer — door rectangles, NPC spawns, regions
 
 
-Triggers layer is an Object Layer in Tiled (not a tile layer). Each rectangle placed on this layer has custom properties read by the Java engine at load time:
-
+Trigger Object Properties
 Trigger Type
 Required Properties
 Door
 type: door | npc_id: widow
 NPC Spawn
-type: npc_spawn | npc_id: drunk
+type: npc_spawn | npc_id: slacker
 Region boundary
-type: region | region_id: church_district
-Patrol path
-type: investigator_patrol | patrol_id: route_1
+type: region | region_id: park_district
+Light source
+type: light | color_r | color_g | color_b | radius | flicker
 
 
 
 9. MVC Architecture
 Model
-World state — all NPC states, suspicion meter, soul count, time of day
+World state — all NPC states, suspicion meter, soul count, quota, rejection rate tracker
 NPC data — personality profiles, hidden desires, current state, conversation history
-Deal system — active deals, ripple effect queue, soul value tracking
-Investigator logic — patrol state, interview targets, suspicion thresholds
+Deal system — active packages, ripple effect queue, soul value tracking
+Gary notification system — quota thresholds, message queue, popup state
 AI service — sends prompts to Claude API, parses JSON, updates NPC state
-
 View
-Overworld renderer — tile map, NPC sprites, player, day/night lighting overlay
-Encounter renderer — NPC portrait, dialogue box, mood visuals, hellish vignette effect
-UI overlay — soul counter, suspicion meter, time of day, deal history log
+Overworld renderer — tile map, NPC sprites, player, day lighting, night overlay with multiply blend
+Encounter renderer — NPC portrait, dialogue box, clipboard UI, Hell Inc. vignette effect
+UI overlay — soul counter, suspicion meter, quota progress, Gary notification popups
+Loading screen — NPC portrait cutout over door background, GTA 5 style per encounter
 Transition handler — manages cut and fade between overworld and encounter view
-
 Controller
 Player input — movement in overworld, free text input in encounter view
 Trigger handler — detects door/spawn/region overlaps and fires events
 Encounter controller — manages conversation turns, calls AI service, applies response to model
-Game loop — tick-based updates for NPC routines, investigator patrol, suspicion changes
+Game loop — tick-based updates for NPC routines, suspicion changes, Gary notifications
 
 
 10. Tech Stack
@@ -311,15 +402,25 @@ Java
 Architecture
 MVC with custom game engine
 Map Editor
-Tiled (TMX format, Object Layers for triggers)
+Tiled (TMX format, Object Layers for triggers and lights)
 AI / NPC Dialogue
 Anthropic Claude API — claude-sonnet-4-20250514
+HTTP Client
+OkHttp 4.12
+JSON Parsing
+Gson 2.10
+Audio
+Java Sound API — OGG via VorbisSPI, WAV for SFX
+Build / Dependencies
+Maven with maven-shade-plugin for fat JAR distribution
 Tile Size
 32x32 pixels
 View Modes
 Top-down overworld + First-person door encounter
 Art Style
 Pixel art overworld, illustrated portraits for encounters
+Night Lighting
+Custom MultiplyComposite + BufferedImage lightmap with radial gradients
 
 
 
@@ -328,15 +429,42 @@ In Scope
 One small town map with 6-8 unique NPCs
 Dual-view system — top-down overworld and first-person encounter
 AI-powered NPC dialogue via Claude API with structured JSON responses
-3 deal types: Wealth, Love, Revenge
-Church Investigator with patrol and basic interview behavior
-Town-wide suspicion meter with escalation thresholds
-Win and lose condition
+3 soul acquisition packages: Prosperity, Romance, Satisfaction
+Town suspicion meter with escalation and tattle behavior
+Quota win condition + rejection rate lose condition — no timer
+Gary notification system with quota-based messages
+Night lighting via multiply blend lightmap
+GTA 5 style NPC loading screen per encounter
+Fake loading screen between state changes with Hell Inc. flavor text
+Main menu with town background and shadow figure
 
 Future Scope
 Full ripple effect chain reactions between NPCs
-Complete deal roster — all 8 deal types
-Player ability upgrades purchased with soul energy
-Rival demon NPC competing for the same souls
-Multiple districts or a second town map
+Complete soul acquisition package roster — all 8 packages
+Gary appears physically on the map in later stages to check on you
+Hell Inc. employee handbook as an in-game tutorial document
+Multiple districts or a second town assignment
 Animated NPC portraits and reaction sequences
+Rival intern NPC competing for the same souls
+Performance review cutscene at game end — good or bad ending
+itch.io release with fat JAR — Java runtime bundled via jpackage
+
+
+12. Tone Reference
+Hell Inc. — The Intern should feel like the following things at all times:
+
+Reference
+What It Contributes
+The Office
+Mundane workplace anxiety, passive aggressive management, performance metrics
+Beetlejuice
+Bureaucratic afterlife, absurd paperwork, charming weirdness
+Suck Up!
+Core AI persuasion loop — player talks, AI judges, NPC reacts
+That's Not My Neighbor
+First-person door encounter visual style and tension
+Gravity Falls meets Salem
+Timeless small town, modern personalities, gothic undertones
+
+
+The horror is not monsters. It is quarterly targets.

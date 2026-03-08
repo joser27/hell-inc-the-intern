@@ -44,6 +44,13 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>res</directory>
+                <targetPath>.</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <!-- Fat JAR for distribution -->
             <plugin>
@@ -56,11 +63,20 @@
                         <goals><goal>shade</goal></goals>
                         <configuration>
                             <manifestEntries>
-                                <Main-Class>Main.Main</Main-Class>
+                                <Main-Class>Main</Main-Class>
                             </manifestEntries>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Run game: mvn exec:java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>Main</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

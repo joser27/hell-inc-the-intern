@@ -17,6 +17,10 @@ public class LoadSave {
 //    public static final String PLAYER1_ATLAS = "Character-Base.png";
     public static final String PLAYER1_ATLAS = "characterSprites/Puny-Characters/Archer-Green.png";
     public static final String PLAYER2_ATLAS = "Orc-Peon-Cyan.png";
+    /** Hell Inc. intern sprite sheet: 384x960, 8 cols x 20 rows, 48x48 per frame. Idle/walk only. */
+    public static final String INTERN_ATLAS = "characterSprites/boyIntern.png";
+    /** Player run sheet: 632x237, 8 cols x 3 rows. Row 0=right, 1=down, 2=up; left = right flipped. */
+    public static final String RUN_ATLAS = "characterSprites/run.png";
     public static final String PISTOL_STATIC_IMG = "GUN_01_[square_frame]_01_V1.00.png";
     public static final String BOMB_EXPLOSION = "Retro Impact Effect Pack 1 A.png";
     public static final String VECTOR_45 = "Vector 45 acp spritesheet - 75 ms per frame.png";
@@ -30,15 +34,17 @@ public class LoadSave {
     public static final String UI_SQUARES = "gui_free.png";
     public static final String UI_ICONS = "UiIconsPack_Transparent_Icons.png";
 
-    /** NPC encounter frame (first-person door view) — Demonic Contractor design. */
+    /** NPC encounter frame (first-person door view) — Hell Inc. design. */
     public static final String WIDOW_FRAME = "widowFrame.png";
     /** GTA-style encounter: door frame (16:9), shown smaller on black background. */
     public static final String GENERIC_DOOR_FRAME = "genericDoorFrame.png";
     /** GTA-style encounter: widow portrait (9:16), slightly larger than door. */
     public static final String WIDOW_PORTRAIT = "widowPortrait.png";
 
-    /** Main menu background — gothic village / castle at night. */
+    /** Main menu background — GTA-style frame/scene. */
     public static final String MENU_BACKGROUND = "menuBackground.png";
+    /** Main menu: intern/contractor portrait (9:16), GTA-style. */
+    public static final String DEMON_PORTRAIT = "demonPortrait.png";
 
     /** Door knock one-shot (res/audio/knock.ogg). */
     public static final String KNOCK_SOUND = "audio/knock.ogg";

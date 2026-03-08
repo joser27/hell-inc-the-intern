@@ -477,7 +477,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="10" name="collision" width="64" height="64" visible="0">
+ <layer id="10" name="collision" width="64" height="64">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -546,13 +546,13 @@
 </data>
  </layer>
  <objectgroup id="9" name="triggers">
-  <object id="4" x="881.25" y="641.5" width="29.25" height="30.25">
+  <object id="4" x="878.125" y="653" width="29.25" height="30.25">
    <properties>
     <property name="npc_id" value="widow"/>
     <property name="npc_name" value="Eleanor Voss"/>
    </properties>
   </object>
-  <object id="5" x="832" y="831" width="33" height="23">
+  <object id="5" x="831.625" y="830.875" width="33" height="23">
    <properties>
     <property name="npc_id" value="gossip"/>
     <property name="npc_name" value="Gerald Finch"/>

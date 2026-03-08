@@ -30,19 +30,19 @@ public class Constants {
             // Return number of sprites in animation
             switch(player_action) {
                 case RUNNING_DOWN -> {
-                    return new int[]{2,0,2};//COL,ROW,ANIMATION LENGTH
+                    return new int[]{0,0,8};// run.png: 8 frames per direction
                 }
                 case RUNNING_UP -> {
-                    return new int[]{2,4,2};//COL,ROW,ANIMATION LENGTH
+                    return new int[]{0,0,8};
                 }
                 case RUNNING_LEFT -> {
-                    return new int[]{2,6,2};//COL,ROW,ANIMATION LENGTH
+                    return new int[]{0,0,8};
                 }
                 case RUNNING_RIGHT -> {
-                    return new int[]{2,2,2};//COL,ROW,ANIMATION LENGTH
+                    return new int[]{0,0,8};
                 }
                 case IDLE -> {
-                    return new int[]{0,0,1};//COL,ROW,ANIMATION LENGTH
+                    return new int[]{0,0,1};// run.png: idle = first frame of direction
                 }
                 case OGRE_ATTACK_DOWN -> {
                     return new int[]{5,0,4};//COL,ROW,ANIMATION LENGTH

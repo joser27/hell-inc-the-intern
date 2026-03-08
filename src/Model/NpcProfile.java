@@ -2,7 +2,7 @@ package Model;
 
 /**
  * Data for one NPC: Tiled npc_id, frame image, portrait image (GTA-style), display name, system prompt, and tattle chance (0–100).
- * When the door is slammed, there is a tattleChance% chance they report to the Investigator (+extra suspicion).
+ * When the door is slammed, there is a tattleChance% chance they report to authorities (+town suspicion).
  */
 public class NpcProfile {
     private final String id;

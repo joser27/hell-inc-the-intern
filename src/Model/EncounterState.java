@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
  */
 public class EncounterState {
     private final Game game;
-    private final List<String> lines = new ArrayList<>();  // "Player: ..." or "Widow: ..."
+    private final List<String> lines = new ArrayList<>();  // "Player: ..." or "NPC name: ..."
     private final StringBuilder inputLine = new StringBuilder();
     private boolean loading = false;
     private String lastError = null;
@@ -108,9 +108,9 @@ public class EncounterState {
         return p != null ? p.getDisplayName() : "NPC";
     }
 
-    /** Prepended to every NPC system prompt. Keeps replies in-character and enforces the trailing JSON. */
+    /** Prepended to every NPC system prompt. Tone is light office comedy (The Office meets Beetlejuice), not horror. */
     private static final String GLOBAL_ROLEPLAY_PREAMBLE =
-    "You are an NPC in a conversation game. Stay in character. Do not break the fourth wall or mention AI, Claude, or the player.\n\n"
+    "You are an NPC in a lighthearted conversation game. Stay in character. Do not break the fourth wall or mention AI, Claude, or the player. The tone is comedy with dark edges — quirky, not scary.\n\n"
     + "RULES:\n"
     + "- Keep replies short (1 to 3 sentences). Just speak; no action asterisks like *crosses arms*.\n"
     + "- Do not start your reply with your character's name. Do not repeat the same idea twice.\n"

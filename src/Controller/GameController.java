@@ -2,6 +2,7 @@ package Controller;
 
 import Model.Game;
 import Model.gamestates.*;
+import Model.utilz.SoundPlayer;
 import View.GameFrame;
 import View.GamePanel;
 import View.PlayingView;
@@ -75,11 +76,17 @@ public class GameController {
         loadingState = new Loading(game);
         pauseMenu = new PauseMenu(game);
 
+        SoundPlayer.preloadKnock();
         gameLoop.startGameLoop();
 
     }
 
     void update() {
+        boolean inMenuFlow = Gamestate.state == Gamestate.MENU
+                || Gamestate.state == Gamestate.OPTIONS
+                || Gamestate.state == Gamestate.ABOUT;
+        if (inMenuFlow) SoundPlayer.startMenuMusic();
+        else SoundPlayer.stopMenuMusic();
         switch(Gamestate.state){
             case MENU -> menuState.update();
             case OPTIONS -> optionsMenu.update();
