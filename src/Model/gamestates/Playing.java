@@ -73,6 +73,7 @@ public class Playing extends State implements Statemethods {
             }
             return;
         }
+        if (keyCode == KeyEvent.VK_E) getGame().tryKnockOnDoor();
         if (keyCode == KeyEvent.VK_W) getGame().getPlayer1().setUp(true);
         else if (keyCode == KeyEvent.VK_S) getGame().getPlayer1().setDown(true);
         else if (keyCode == KeyEvent.VK_A) getGame().getPlayer1().setLeft(true);

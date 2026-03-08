@@ -65,6 +65,8 @@ public class PlayingView {
             drawSoulsCounter(g, game);
             if (game.isLastEncounterMessageVisible())
                 drawEncounterOutcomeMessage(g, game);
+            if (game.getDoorTriggerNpcId() != null)
+                drawKnockHint(g);
         } else {
             drawWidowFrame(g, game);
         }
@@ -201,6 +203,18 @@ public class PlayingView {
         g.fillRoundRect(x, y, boxW, boxH, 12, 12);
         g.setColor(Color.WHITE);
         g.drawString(msg, x + pad, y + (boxH + fm.getAscent()) / 2 - 2);
+    }
+
+    /** Shown when the player is standing at a door (overworld only). */
+    private void drawKnockHint(Graphics g) {
+        String hint = "Press E to knock";
+        g.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        FontMetrics fm = g.getFontMetrics();
+        int tw = fm.stringWidth(hint);
+        int x = (GameController.GAME_WIDTH - tw) / 2;
+        int y = GameController.GAME_HEIGHT - 80;
+        g.setColor(new Color(255, 255, 255, 220));
+        g.drawString(hint, x, y);
     }
 
     /** GTA-style encounter: black background, generic door (16:9), current NPC portrait (9:16) in same spot for all. */

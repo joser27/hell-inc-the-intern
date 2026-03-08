@@ -3,6 +3,7 @@ package Model;
 import Controller.GameController;
 import Model.entities.*;
 import Model.utilz.NpcLoader;
+import Model.utilz.SoundPlayer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +21,6 @@ public class Game {
     private boolean gameOver = false;
     private CollisionChecker collisionChecker;
     /** Which trigger (npc_id) the player was in last update; null if none. Used to open encounter only on first step in. */
-    private String wasInTriggerNpcId = null;
     /** NPCs whose soul has been collected; their door triggers no longer open the encounter. */
     private final Set<String> soulsCollected = new HashSet<>();
     /** When true, overworld is paused and view shows first-person encounter frame (ESC to close). */
@@ -163,6 +163,13 @@ public class Game {
         if (lastEncounterMessage != null && System.currentTimeMillis() >= lastEncounterMessageUntil)
             lastEncounterMessage = null;
         checkTriggers();
+        if (pendingKnockNpcId != null && System.currentTimeMillis() >= pendingKnockUntil) {
+            saveCurrentNpcMemory();
+            currentNpcId = pendingKnockNpcId;
+            pendingKnockNpcId = null;
+            showWidowFrame = true;
+            encounterState.clearConversation();
+        }
         if (!showWidowFrame) {
             entitiesUpdates();
             // Passive suspicion creep — only ticks while in the overworld, not during encounters
@@ -190,7 +197,15 @@ public class Game {
     /** Profile for the NPC we're currently in encounter with (from res/npcs.json). */
     public NpcProfile getCurrentNpcProfile() { return currentNpcId != null ? NpcLoader.getById(currentNpcId) : null; }
 
-    /** When the player enters a door trigger (npc_id in Tiled), open that NPC's encounter if we don't have their soul yet. */
+    /** Which door trigger (npc_id) the player is currently standing in; null if none. Updated each tick. */
+    private String playerInTriggerNpcId = null;
+    /** After knock key: npc_id to open when delay elapses; null if no pending knock. */
+    private String pendingKnockNpcId = null;
+    private long pendingKnockUntil = 0;
+    /** Delay in ms between knock sound and opening the encounter. */
+    private static final long KNOCK_DELAY_MS = 450;
+
+    /** Updates which door trigger the player is in. Does not open the encounter — use tryKnockOnDoor() when player presses E. */
     private void checkTriggers() {
         var hitBox = player1.getHitBox();
         String triggerNow = null;
@@ -203,14 +218,21 @@ public class Game {
                 }
             }
         }
-        if (triggerNow != null && wasInTriggerNpcId == null) {
-            saveCurrentNpcMemory();   // capture lines from any previous encounter before clearing
-            currentNpcId = triggerNow;
-            showWidowFrame = true;
-            encounterState.clearConversation();
-        }
-        wasInTriggerNpcId = triggerNow;
+        playerInTriggerNpcId = triggerNow;
     }
+
+    /** Call when the player presses the knock key (e.g. E). Plays knock sound and opens the encounter after a short delay. */
+    public void tryKnockOnDoor() {
+        if (showWidowFrame) return;
+        if (playerInTriggerNpcId == null) return;
+        if (pendingKnockNpcId != null) return; // already knocking
+        SoundPlayer.playKnock();
+        pendingKnockNpcId = playerInTriggerNpcId;
+        pendingKnockUntil = System.currentTimeMillis() + KNOCK_DELAY_MS;
+    }
+
+    /** The npc_id of the door the player is currently standing at (for "Press E to knock" hint); null if not at a door or already knocking. */
+    public String getDoorTriggerNpcId() { return pendingKnockNpcId != null ? null : playerInTriggerNpcId; }
 
     private void entitiesUpdates() {
         player1.update();
@@ -263,7 +285,8 @@ public class Game {
         lastEncounterMessage = null;
         pendingEncounterOutcome = 0;
         currentNpcId = null;
-        wasInTriggerNpcId = null;
+        playerInTriggerNpcId = null;
+        pendingKnockNpcId = null;
         setShowWidowFrame(false);
     }
 

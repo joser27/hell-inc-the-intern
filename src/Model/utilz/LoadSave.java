@@ -40,6 +40,9 @@ public class LoadSave {
     /** Main menu background — gothic village / castle at night. */
     public static final String MENU_BACKGROUND = "menuBackground.png";
 
+    /** Door knock one-shot (res/audio/knock.ogg). */
+    public static final String KNOCK_SOUND = "audio/knock.ogg";
+
     // Player 1 Abilities
     public static final String Death_Surge = "Death_Surge.png";
     public static final String Decimating_Smash = "Decimating_Smash1.png";
