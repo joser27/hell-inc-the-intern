@@ -5,7 +5,6 @@ import Model.EncounterState;
 import Model.Game;
 import Model.NpcProfile;
 import Model.gamestates.Playing;
-import Model.gamestates.PlayingUI;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
@@ -25,7 +24,6 @@ public class PlayingView {
 
     public void render(Graphics g, Game game, Playing playing) {
         gameView.render(g, game, playing.getXLvlOffset(), playing.getYLvlOffset());
-        drawPlayingUI(g, playing.getPlayingUI());
         if (!game.isShowWidowFrame()) {
             drawSoulsCounter(g, game);
             if (game.isLastEncounterMessageVisible())
@@ -287,19 +285,6 @@ public class PlayingView {
         g.setFont(new Font("SansSerif", Font.PLAIN, 14));
         String hint = game.hasPendingEncounterOutcome() ? "Press ENTER or ESC to return to overworld" : "ESC — Back to overworld";
         g.drawString(hint, 24, GameController.GAME_HEIGHT - 24);
-    }
-
-    private void drawPlayingUI(Graphics g, PlayingUI ui) {
-        // if (ui == null) return;
-        // int barY = GameController.GAME_HEIGHT - 50 * GameController.SCALE;
-        // g.setColor(new Color(255, 255, 255, 100));
-        // g.fillRect(0, barY - 10 * GameController.SCALE, GameController.GAME_WIDTH, 60 * GameController.SCALE);
-        // int startX = GameController.GAME_WIDTH / 2 - (5 * 20 * GameController.SCALE) / 2;
-        // g.drawImage(ui.getPlayer1_P(), startX, barY, null);
-        // g.drawImage(ui.getPlayer1_Q(), startX + 20 * GameController.SCALE, barY, null);
-        // g.drawImage(ui.getPlayer1_W(), startX + 40 * GameController.SCALE, barY, null);
-        // g.drawImage(ui.getPlayer1_E(), startX + 60 * GameController.SCALE, barY, null);
-        // g.drawImage(ui.getPlayer1_R(), startX + 80 * GameController.SCALE, barY, null);
     }
 
 }

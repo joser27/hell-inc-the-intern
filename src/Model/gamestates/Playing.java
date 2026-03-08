@@ -73,10 +73,6 @@ public class Playing extends State implements Statemethods {
         else if (keyCode == KeyEvent.VK_S) getGame().getPlayer1().setDown(true);
         else if (keyCode == KeyEvent.VK_A) getGame().getPlayer1().setLeft(true);
         else if (keyCode == KeyEvent.VK_D) getGame().getPlayer1().setRight(true);
-        if (keyCode == KeyEvent.VK_NUMPAD0) getGame().getPlayer1().attack();
-        if (keyCode == KeyEvent.VK_NUMPAD1) getGame().getPlayer1().smashAttack(true);
-        if (keyCode == KeyEvent.VK_NUMPAD2) getGame().getPlayer1().useShield();
-        if (keyCode == KeyEvent.VK_NUMPAD3) getGame().getPlayer1().useRoar();
         if (keyCode == KeyEvent.VK_ESCAPE) {
             Gamestate.state = Gamestate.PAUSEMENU;
         }
@@ -96,6 +92,5 @@ public class Playing extends State implements Statemethods {
         else if (keyCode == KeyEvent.VK_S) getGame().getPlayer1().setDown(false);
         else if (keyCode == KeyEvent.VK_A) getGame().getPlayer1().setLeft(false);
         else if (keyCode == KeyEvent.VK_D) getGame().getPlayer1().setRight(false);
-        if (keyCode == KeyEvent.VK_NUMPAD1) getGame().getPlayer1().smashAttack(false);
     }
 }
