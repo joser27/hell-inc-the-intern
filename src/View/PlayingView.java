@@ -45,8 +45,18 @@ public class PlayingView {
     /** Falloff extends this far past nominal radius (1.5 = 50% softer edge). */
     private static final float NIGHT_LIGHT_FALLOFF_EXTEND = 1.5f;
 
+    /** Actual display size passed in from the controller so encounter covers the full panel (including fullscreen). */
+    private int displayW = GameController.GAME_WIDTH;
+    private int displayH = GameController.GAME_HEIGHT;
+
     public void render(Graphics g, Game game, Playing playing) {
-        gameView.render(g, game, playing.getXLvlOffset(), playing.getYLvlOffset());
+        render(g, game, playing, GameController.GAME_WIDTH, GameController.GAME_HEIGHT);
+    }
+
+    public void render(Graphics g, Game game, Playing playing, int displayWidth, int displayHeight) {
+        this.displayW = displayWidth;
+        this.displayH = displayHeight;
+        gameView.render(g, game, playing.getXLvlOffset(), playing.getYLvlOffset(), displayW, displayH);
         LevelLoader levelLoader = game.getLevelLoader();
         ensureNightOverlay(levelLoader);
         if (nightOverlayTexture != null) {
@@ -197,8 +207,8 @@ public class PlayingView {
         int pad = 32;
         int boxW = tw + pad * 2;
         int boxH = 56;
-        int x = (GameController.GAME_WIDTH - boxW) / 2;
-        int y = GameController.GAME_HEIGHT - 140;
+        int x = (displayW - boxW) / 2;
+        int y = displayH - 140;
         g.setColor(new Color(0, 0, 0, 200));
         g.fillRoundRect(x, y, boxW, boxH, 12, 12);
         g.setColor(Color.WHITE);
@@ -211,16 +221,16 @@ public class PlayingView {
         g.setFont(new Font("SansSerif", Font.PLAIN, 18));
         FontMetrics fm = g.getFontMetrics();
         int tw = fm.stringWidth(hint);
-        int x = (GameController.GAME_WIDTH - tw) / 2;
-        int y = GameController.GAME_HEIGHT - 80;
+        int x = (displayW - tw) / 2;
+        int y = displayH - 80;
         g.setColor(new Color(255, 255, 255, 220));
         g.drawString(hint, x, y);
     }
 
     /** GTA-style encounter: black background, generic door (16:9), current NPC portrait (9:16) in same spot for all. */
     private void drawWidowFrame(Graphics g, Game game) {
-        int w = GameController.GAME_WIDTH;
-        int h = GameController.GAME_HEIGHT;
+        int w = displayW;
+        int h = displayH;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, w, h);
 
@@ -441,7 +451,7 @@ public class PlayingView {
         g.setColor(new Color(255, 255, 255, 200));
         g.setFont(new Font("SansSerif", Font.PLAIN, 14));
         String hint = game.hasPendingEncounterOutcome() ? "Press ENTER or ESC to return to overworld" : "ESC — Back to overworld";
-        g.drawString(hint, 24, GameController.GAME_HEIGHT - 24);
+        g.drawString(hint, 24, displayH - 24);
     }
 
 }

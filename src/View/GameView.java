@@ -28,13 +28,17 @@ public class GameView {
     private static final int SPRITE_OFFSET_Y = 160;
 
     public void render(Graphics g, Game game, int xLvlOffset, int yLvlOffset) {
-        int screenWidth = GameController.GAME_WIDTH;
-        int screenHeight = GameController.GAME_HEIGHT;
+        render(g, game, xLvlOffset, yLvlOffset, GameController.GAME_WIDTH, GameController.GAME_HEIGHT);
+    }
+
+    /** @param displayWidth  actual panel width (use for fullscreen)
+     *  @param displayHeight actual panel height (use for fullscreen) */
+    public void render(Graphics g, Game game, int xLvlOffset, int yLvlOffset, int displayWidth, int displayHeight) {
         float zoom = GameController.CAMERA_ZOOM;
         LevelLoader levelLoader = game.getLevelLoader();
 
         g.setColor(new Color(79, 131, 52, 255));
-        g.fillRect(0, 0, screenWidth, screenHeight);
+        g.fillRect(0, 0, displayWidth, displayHeight);
 
         Graphics2D g2d = (Graphics2D) g.create();
         // Java: last-specified first-applied, so (translate then scale) => world (x,y) -> (x*zoom - xLvlOffset, y*zoom - yLvlOffset). Offset from Playing = playerCenter*zoom - screen/2.

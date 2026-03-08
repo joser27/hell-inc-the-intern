@@ -27,13 +27,27 @@ public class Playing extends State implements Statemethods {
         updateCameraCenteredOnPlayer();
     }
 
-    /** Keeps the player at screen center. Java applies last-specified first, so (translate then scale) => (p*zoom - offset). So offset = playerCenter*zoom - screen/2. */
+    /** Keeps the player at screen center, clamped so the camera never shows outside the level. Uses actual display size so fullscreen has no bottom bar. */
     private void updateCameraCenteredOnPlayer() {
         float zoom = GameController.CAMERA_ZOOM;
+        int screenW = controller.getDisplayWidth();
+        int screenH = controller.getDisplayHeight();
+        if (screenW <= 0) screenW = GameController.GAME_WIDTH;
+        if (screenH <= 0) screenH = GameController.GAME_HEIGHT;
         float playerCenterX = (float) (getGame().getPlayer1().getHitBox().getX() + getGame().getPlayer1().getHitBox().getWidth() * 0.5);
         float playerCenterY = (float) (getGame().getPlayer1().getHitBox().getY() + getGame().getPlayer1().getHitBox().getHeight() * 0.5);
-        xLvlOffset = Math.round(playerCenterX * zoom - GameController.GAME_WIDTH * 0.5f);
-        yLvlOffset = Math.round(playerCenterY * zoom - GameController.GAME_HEIGHT * 0.5f);
+        xLvlOffset = Math.round(playerCenterX * zoom - screenW * 0.5f);
+        yLvlOffset = Math.round(playerCenterY * zoom - screenH * 0.5f);
+
+        LevelLoader level = getGame().getLevelLoader();
+        if (level != null) {
+            int levelW = level.getLevelWidthPixels();
+            int levelH = level.getLevelHeightPixels();
+            int maxX = (int) (levelW * zoom) - screenW;
+            int maxY = (int) (levelH * zoom) - screenH;
+            xLvlOffset = Math.max(0, Math.min(xLvlOffset, Math.max(0, maxX)));
+            yLvlOffset = Math.max(0, Math.min(yLvlOffset, Math.max(0, maxY)));
+        }
     }
 
     @Override

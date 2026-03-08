@@ -13,6 +13,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class Game {
+
+    public enum GameMode { CAMPAIGN, ENDLESS }
+    private GameMode gameMode = GameMode.CAMPAIGN;
+    public GameMode getGameMode() { return gameMode; }
+    public void setGameMode(GameMode mode) { this.gameMode = mode; }
+
     private Player1 player1;
     private Wall[] walls;
     private Enemy[] enemy;
@@ -108,8 +114,9 @@ public class Game {
         }
     }
 
-    /** Add to town suspicion (capped at 100). */
+    /** Add to town suspicion (capped at 100). Blocked in god mode. */
     public void addSuspicion(float amount) {
+        if (godMode) return;
         suspicion = Math.min(100f, suspicion + amount);
     }
 
@@ -122,6 +129,49 @@ public class Game {
     }
 
     public int getSouls() { return souls; }
+
+    // ---- Dev cheats (F7 menu in KeyboardInputs) ----
+
+    private boolean godMode = false;
+    public boolean isGodMode() { return godMode; }
+
+    /** Toggle god mode: suspicion freezes, can't lose. */
+    public void cheatToggleGodMode() {
+        godMode = !godMode;
+        showEncounterMessage(godMode ? "[CHEAT] God mode ON" : "[CHEAT] God mode OFF");
+    }
+
+    /** +1 soul toward quota (no NPC needed). */
+    public void cheatAddSoul() {
+        souls++;
+        showEncounterMessage("[CHEAT] Soul added (" + souls + "/" + SOUL_QUOTA + ")");
+    }
+
+    /** Suspicion back to 0. */
+    public void cheatClearSuspicion() {
+        suspicion = 0f;
+        showEncounterMessage("[CHEAT] Suspicion cleared");
+    }
+
+    /** Mark all NPCs as collected — instant win on next tick. */
+    public void cheatInstantWin() {
+        souls = SOUL_QUOTA;
+        showEncounterMessage("[CHEAT] Quota filled — you win!");
+    }
+
+    /** Reset all NPC memory so every encounter is fresh. */
+    public void cheatClearNpcMemory() {
+        npcMemory.clear();
+        soulsCollected.clear();
+        showEncounterMessage("[CHEAT] NPC memory + souls reset");
+    }
+
+    /** Halve current suspicion. */
+    public void cheatHalveSuspicion() {
+        suspicion = Math.max(0f, suspicion / 2f);
+        showEncounterMessage("[CHEAT] Suspicion halved → " + (int) suspicion + "%");
+    }
+
     public String getLastEncounterMessage() { return lastEncounterMessage; }
     public boolean isLastEncounterMessageVisible() { return lastEncounterMessage != null && System.currentTimeMillis() < lastEncounterMessageUntil; }
     public void clearLastEncounterMessage() { lastEncounterMessage = null; }

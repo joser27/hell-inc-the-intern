@@ -8,6 +8,7 @@ import View.GamePanel;
 import View.PlayingView;
 import View.PauseMenuView;
 import View.LoadMenuView;
+import View.ModeSelectView;
 import View.GameOverView;
 import View.LoadingView;
 import View.OptionsView;
@@ -18,6 +19,7 @@ import java.awt.*;
 public class GameController {
     private static final GraphicsEnvironment GE = GraphicsEnvironment.getLocalGraphicsEnvironment();
     private LoadMenu menuState;
+    private ModeSelect modeSelectState;
     private OptionsMenu optionsMenu;
     private AboutMenu aboutMenu;
     private Playing playingState;
@@ -31,6 +33,7 @@ public class GameController {
     private final PlayingView playingView = new PlayingView();
     private final PauseMenuView pauseMenuView = new PauseMenuView();
     private final LoadMenuView loadMenuView = new LoadMenuView();
+    private final ModeSelectView modeSelectView = new ModeSelectView();
     private final OptionsView optionsView = new OptionsView();
     private final AboutView aboutView = new AboutView();
     private final GameOverView gameOverView = new GameOverView();
@@ -75,6 +78,7 @@ public class GameController {
         gameOverState = new GameOver(game);
         loadingState = new Loading(game);
         pauseMenu = new PauseMenu(game);
+        modeSelectState = new ModeSelect(game, this);
 
         SoundPlayer.preloadKnock();
         SoundPlayer.preloadSteps();
@@ -84,6 +88,7 @@ public class GameController {
 
     void update() {
         boolean inMenuFlow = Gamestate.state == Gamestate.MENU
+                || Gamestate.state == Gamestate.MODE_SELECT
                 || Gamestate.state == Gamestate.OPTIONS
                 || Gamestate.state == Gamestate.ABOUT;
         if (inMenuFlow) SoundPlayer.startMenuMusic();
@@ -94,6 +99,7 @@ public class GameController {
             SoundPlayer.stopNightAmbience();
         switch(Gamestate.state){
             case MENU -> menuState.update();
+            case MODE_SELECT -> modeSelectState.update();
             case OPTIONS -> optionsMenu.update();
             case ABOUT -> aboutMenu.update();
             case GAMEOVER -> gameOverState.update();
@@ -113,6 +119,7 @@ public class GameController {
     public void render(Graphics g) {
         switch (Gamestate.state) {
             case MENU -> loadMenuView.render(g, menuState, this);
+            case MODE_SELECT -> modeSelectView.render(g, modeSelectState, this);
             case OPTIONS -> {
                 if (optionsMenu.isOpenedFromPlaying()) {
                     playingView.render(g, game, playingState);
@@ -123,14 +130,14 @@ public class GameController {
             }
             case ABOUT -> aboutView.render(g, aboutMenu, this);
             case GAMEOVER -> {
-                playingView.render(g, game, playingState);
+                playingView.render(g, game, playingState, getDisplayWidth(), getDisplayHeight());
                 gameOverState.setPlayerWinner(game.getPlayerWinner());
                 gameOverView.render(g, gameOverState);
             }
             case LOADING -> loadingView.render(g, loadingState, getDisplayWidth(), getDisplayHeight());
-            case PLAYING -> playingView.render(g, game, playingState);
+            case PLAYING -> playingView.render(g, game, playingState, getDisplayWidth(), getDisplayHeight());
             case PAUSEMENU -> {
-                playingView.render(g, game, playingState);
+                playingView.render(g, game, playingState, getDisplayWidth(), getDisplayHeight());
                 pauseMenuView.render(g, pauseMenu);
             }
         }
@@ -177,6 +184,10 @@ public class GameController {
 
     public LoadMenu getMenuState() {
         return menuState;
+    }
+
+    public ModeSelect getModeSelectState() {
+        return modeSelectState;
     }
 
     public OptionsMenu getOptionsMenu() {
