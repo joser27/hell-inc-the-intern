@@ -43,6 +43,7 @@ public class LevelLoader {
     private Map<String, int[][]> layersByName = new LinkedHashMap<>();
     private List<String> drawLayerOrder = new ArrayList<>();
     private final List<Trigger> triggers = new ArrayList<>();
+    private final List<Light> lights = new ArrayList<>();
     /** Scaled tile cache: gid -> 48x48 image (or null for empty). */
     private final Map<Integer, Image> tileImageCache = new HashMap<>();
 
@@ -114,6 +115,7 @@ public class LevelLoader {
                 drawLayerOrder.add(name);
         }
         loadTriggers(map);
+        loadLights(map);
         } finally {
             try { if (is != null) is.close(); } catch (IOException ignored) { }
         }
@@ -143,6 +145,43 @@ public class LevelLoader {
                     }
                 }
                 triggers.add(new Trigger(x, y, w, h, npcId));
+            }
+            break;
+        }
+    }
+
+    /** Parse objectgroup "lights": each object's center (x+width/2, y+height/2) and radius in game pixels. Optional property "radius" (Tiled pixels). */
+    private void loadLights(org.w3c.dom.Element map) {
+        float scale = (float) GameController.TILE_SIZE / tileWidth;
+        var objectGroups = map.getElementsByTagName("objectgroup");
+        for (int g = 0; g < objectGroups.getLength(); g++) {
+            var og = (org.w3c.dom.Element) objectGroups.item(g);
+            if (!"lights".equals(og.getAttribute("name"))) continue;
+            var objects = og.getElementsByTagName("object");
+            for (int i = 0; i < objects.getLength(); i++) {
+                var obj = (org.w3c.dom.Element) objects.item(i);
+                float tx = Float.parseFloat(obj.getAttribute("x"));
+                float ty = Float.parseFloat(obj.getAttribute("y"));
+                float tw = obj.hasAttribute("width") ? Float.parseFloat(obj.getAttribute("width")) : 0;
+                float th = obj.hasAttribute("height") ? Float.parseFloat(obj.getAttribute("height")) : 0;
+                float centerX = (tx + tw * 0.5f) * scale;
+                float centerY = (ty + th * 0.5f) * scale;
+                Float radiusTiled = null;
+                var propList = obj.getElementsByTagName("property");
+                for (int p = 0; p < propList.getLength(); p++) {
+                    var prop = (org.w3c.dom.Element) propList.item(p);
+                    if ("radius".equals(prop.getAttribute("name"))) {
+                        try {
+                            radiusTiled = Float.parseFloat(prop.getAttribute("value"));
+                        } catch (NumberFormatException ignored) { }
+                        break;
+                    }
+                }
+                float radius = radiusTiled != null
+                        ? radiusTiled * scale
+                        : Math.max(GameController.TILE_SIZE * 5f, Math.max(tw, th) * 0.5f * scale);
+                if (radius <= 0) radius = GameController.TILE_SIZE * 5f;
+                lights.add(new Light(centerX, centerY, radius));
             }
             break;
         }
@@ -290,5 +329,10 @@ public class LevelLoader {
     /** Triggers from Tiled objectgroup "triggers" (bounds in game pixels). */
     public List<Trigger> getTriggers() {
         return Collections.unmodifiableList(triggers);
+    }
+
+    /** Lights from Tiled objectgroup "lights" (center and radius in game pixels). */
+    public List<Light> getLights() {
+        return Collections.unmodifiableList(lights);
     }
 }

@@ -9,8 +9,15 @@ import java.awt.*;
 public class GamePanel extends JPanel {
     GameLoop gameLoop;
     GameController gameController;
+
+    /** Actual FPS: count of completed paints in the last second (EDT), not repaint() requests. */
+    private volatile int lastFps;
+    private int framesThisSecond;
+    private long lastFpsTimeMs;
+
     public GamePanel(GameController gameController) {
         this.gameController = gameController;
+        lastFpsTimeMs = System.currentTimeMillis();
         setPanelSize();
     }
 
@@ -22,9 +29,23 @@ public class GamePanel extends JPanel {
         setDoubleBuffered(true);
         setFocusable(true);
     }
+
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         gameLoop.render(g);
+        long now = System.currentTimeMillis();
+        framesThisSecond++;
+        if (now - lastFpsTimeMs >= 1000) {
+            lastFps = framesThisSecond;
+            framesThisSecond = 0;
+            lastFpsTimeMs = now;
+        }
+    }
+
+    /** Frames actually drawn in the last completed second (read from game thread). */
+    public int getLastFps() {
+        return lastFps;
     }
 
     public void setGameLoop(GameLoop gameLoop) {

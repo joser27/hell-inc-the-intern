@@ -3,11 +3,14 @@ package View;
 import Controller.GameController;
 import Model.EncounterState;
 import Model.Game;
+import Model.LevelLoader;
+import Model.Light;
 import Model.NpcProfile;
 import Model.gamestates.Playing;
 import Model.utilz.LoadSave;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,19 +20,37 @@ import java.util.Map;
 /**
  * Renders the Playing state: full-screen game world and Player1 ability UI.
  * When an NPC encounter is active, draws that NPC's first-person frame (from res/npcs.json) over the overworld.
+ * Night is a separate bluish texture with radial light gradients from Tiled "lights" layer, layered with multiply blend.
  */
 public class PlayingView {
     private final GameView gameView = new GameView();
     private final Map<String, BufferedImage> encounterFrameCache = new HashMap<>();
 
-    /** Night overlay: dark blue tint for a spooky feel (R, G, B, alpha). */
-    private static final int NIGHT_OVERLAY_ALPHA = 150;
-    private static final Color NIGHT_OVERLAY = new Color(0, 0, 15, NIGHT_OVERLAY_ALPHA);
+    /** Night overlay texture in world space; built at downscaled resolution for performance. */
+    private BufferedImage nightOverlayTexture;
+    private int nightOverlayLevelW = -1;
+    private int nightOverlayLevelH = -1;
+    /** Build overlay at 1/DOWNSCALE resolution; drawn scaled up with bilinear filtering. */
+    private static final int NIGHT_OVERLAY_DOWNSCALE = 4;
+
+    /** Tint colour for dark areas (RGB only; alpha is computed per-pixel from light distance). */
+    private static final int NIGHT_TINT_R = 10, NIGHT_TINT_G = 10, NIGHT_TINT_B = 30;
+    /** Max alpha in darkest areas (0-255). Higher = darker night. */
+    private static final int NIGHT_MAX_ALPHA = 190;
 
     public void render(Graphics g, Game game, Playing playing) {
         gameView.render(g, game, playing.getXLvlOffset(), playing.getYLvlOffset());
-        g.setColor(NIGHT_OVERLAY);
-        g.fillRect(0, 0, GameController.GAME_WIDTH, GameController.GAME_HEIGHT);
+        LevelLoader levelLoader = game.getLevelLoader();
+        ensureNightOverlay(levelLoader);
+        if (nightOverlayTexture != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            AffineTransform save = g2.getTransform();
+            g2.translate(-playing.getXLvlOffset(), -playing.getYLvlOffset());
+            g2.scale(GameController.CAMERA_ZOOM, GameController.CAMERA_ZOOM);
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(nightOverlayTexture, 0, 0, nightOverlayLevelW, nightOverlayLevelH, null);
+            g2.setTransform(save);
+        }
         if (!game.isShowWidowFrame()) {
             drawSoulsCounter(g, game);
             if (game.isLastEncounterMessageVisible())
@@ -37,6 +58,47 @@ public class PlayingView {
         } else {
             drawWidowFrame(g, game);
         }
+    }
+
+    /**
+     * Builds night overlay once at downscaled resolution. Uses alpha to represent darkness:
+     * high alpha = dark, low/zero alpha = lit (transparent). Drawn with default SrcOver (hw-accelerated).
+     */
+    private void ensureNightOverlay(LevelLoader levelLoader) {
+        if (levelLoader == null) return;
+        int levelW = levelLoader.getLevelWidthPixels();
+        int levelH = levelLoader.getLevelHeightPixels();
+        if (levelW <= 0 || levelH <= 0) return;
+        if (nightOverlayTexture != null && nightOverlayLevelW == levelW && nightOverlayLevelH == levelH)
+            return;
+        nightOverlayLevelW = levelW;
+        nightOverlayLevelH = levelH;
+        int w = Math.max(1, levelW / NIGHT_OVERLAY_DOWNSCALE);
+        int h = Math.max(1, levelH / NIGHT_OVERLAY_DOWNSCALE);
+        nightOverlayTexture = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        int tintRGB = (NIGHT_TINT_R << 16) | (NIGHT_TINT_G << 8) | NIGHT_TINT_B;
+        List<Light> lights = levelLoader.getLights();
+        float invScale = 1f / NIGHT_OVERLAY_DOWNSCALE;
+        int[] pixels = new int[w * h];
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                float darkness = 1f;
+                for (Light light : lights) {
+                    float dx = x - light.getCenterX() * invScale;
+                    float dy = y - light.getCenterY() * invScale;
+                    float dist = dx * dx + dy * dy;
+                    float radiusScaled = light.getRadius() * invScale;
+                    float r2 = radiusScaled * radiusScaled;
+                    if (dist >= r2) continue;
+                    float t = (float) Math.sqrt(dist) / radiusScaled;
+                    t = t * t;
+                    darkness = Math.min(darkness, t);
+                }
+                int alpha = (int) (darkness * NIGHT_MAX_ALPHA);
+                pixels[y * w + x] = (alpha << 24) | tintRGB;
+            }
+        }
+        nightOverlayTexture.setRGB(0, 0, w, h, pixels, 0, w);
     }
 
     // HUD layout: one panel top-left, scaled for readability
