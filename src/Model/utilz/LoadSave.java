@@ -33,6 +33,9 @@ public class LoadSave {
     /** NPC encounter frame (first-person door view) — Demonic Contractor design. */
     public static final String WIDOW_FRAME = "widowFrame.png";
 
+    /** Main menu background — gothic village / castle at night. */
+    public static final String MENU_BACKGROUND = "menuBackground.png";
+
     // Player 1 Abilities
     public static final String Death_Surge = "Death_Surge.png";
     public static final String Decimating_Smash = "Decimating_Smash1.png";

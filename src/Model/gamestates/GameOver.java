@@ -1,6 +1,5 @@
 package Model.gamestates;
 
-import Controller.GameController;
 import Model.Game;
 
 import java.awt.*;
@@ -46,9 +45,9 @@ public class GameOver extends State implements Statemethods {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_ENTER) {
+        if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_ESCAPE || keyCode == KeyEvent.VK_SPACE) {
             getGame().resetForNewGame();
-            Gamestate.state = Gamestate.PLAYING;
+            Gamestate.state = Gamestate.MENU;
         }
     }
 

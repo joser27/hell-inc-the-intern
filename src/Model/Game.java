@@ -39,8 +39,10 @@ public class Game {
     private float suspicion = 0f;
     /** +15 % per deal accepted: every soul costs you, even a win draws attention. */
     private static final float SUSPICION_PER_DEAL = 15f;
-    /** +8 % when a door is slammed: the NPC felt something was wrong. */
-    private static final float SUSPICION_PER_SLAM = 8f;
+    /** +14 % when a door is slammed: the NPC felt something was wrong. */
+    private static final float SUSPICION_PER_SLAM = 14f;
+    /** Extra +10 % when the NPC reports you to the Investigator (rolled per their tattleChance). */
+    private static final float SUSPICION_PER_TATTLE = 10f;
     /** Passive creep: +1 % every 2 minutes (120 s) of overworld time. At 120 UPS = 1/(120*120) per tick. */
     private static final float SUSPICION_CREEP_PER_TICK = 1f / (120f * 120f);
 
@@ -92,10 +94,18 @@ public class Game {
         showEncounterMessage("Soul collected!");
     }
 
-    /** Called when the NPC slams the door / ends the conversation. */
+    /** Called when the NPC slams the door / ends the conversation. May add tattle suspicion by personality. */
     public void onEncounterSlammed() {
         addSuspicion(SUSPICION_PER_SLAM);
-        showEncounterMessage("They slammed the door.");
+        NpcProfile npc = currentNpcId != null ? NpcLoader.getById(currentNpcId) : null;
+        boolean tattled = npc != null && npc.getTattleChance() > 0
+            && (int)(Math.random() * 100) < npc.getTattleChance();
+        if (tattled) {
+            addSuspicion(SUSPICION_PER_TATTLE);
+            showEncounterMessage("They slammed the door. They reported you to the Investigator.");
+        } else {
+            showEncounterMessage("They slammed the door.");
+        }
     }
 
     /** Add to town suspicion (capped at 100). */

@@ -111,7 +111,14 @@ public class NpcLoader {
         if (displayName == null) displayName = id;
         String systemPrompt = extractStringLong(block, "systemPrompt");
         if (systemPrompt == null) systemPrompt = "";
-        return new NpcProfile(id, frameImage, displayName, systemPrompt);
+        int tattleChance = extractInt(block, "tattleChance", 30);
+        return new NpcProfile(id, frameImage, displayName, systemPrompt, tattleChance);
+    }
+
+    private static int extractInt(String block, String key, int defaultValue) {
+        Pattern p = Pattern.compile("\"" + Pattern.quote(key) + "\"\\s*:\\s*(-?\\d+)");
+        Matcher m = p.matcher(block);
+        return m.find() ? Integer.parseInt(m.group(1).trim()) : defaultValue;
     }
 
     private static String extractString(String block, String key) {

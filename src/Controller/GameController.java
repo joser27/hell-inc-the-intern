@@ -8,12 +8,16 @@ import View.PlayingView;
 import View.PauseMenuView;
 import View.LoadMenuView;
 import View.GameOverView;
+import View.OptionsView;
+import View.AboutView;
 
 import java.awt.*;
 
 public class GameController {
     private static final GraphicsEnvironment GE = GraphicsEnvironment.getLocalGraphicsEnvironment();
     private LoadMenu menuState;
+    private OptionsMenu optionsMenu;
+    private AboutMenu aboutMenu;
     private Playing playingState;
     private GameOver gameOverState;
     private PauseMenu pauseMenu;
@@ -24,6 +28,8 @@ public class GameController {
     private final PlayingView playingView = new PlayingView();
     private final PauseMenuView pauseMenuView = new PauseMenuView();
     private final LoadMenuView loadMenuView = new LoadMenuView();
+    private final OptionsView optionsView = new OptionsView();
+    private final AboutView aboutView = new AboutView();
     private final GameOverView gameOverView = new GameOverView();
     private static final int originalTileSize = 16; //16x16 tile
     public static final int SCALE = 4;
@@ -58,8 +64,10 @@ public class GameController {
         gamePanel.addMouseWheelListener(mouseInputs);
 
         // Game States
-        playingState = new Playing(game);
-        menuState = new LoadMenu(game);
+        playingState = new Playing(game, this);
+        menuState = new LoadMenu(game, this);
+        optionsMenu = new OptionsMenu(game, this);
+        aboutMenu = new AboutMenu(game, this);
         gameOverState = new GameOver(game);
         pauseMenu = new PauseMenu(game);
 
@@ -70,6 +78,8 @@ public class GameController {
     void update() {
         switch(Gamestate.state){
             case MENU -> menuState.update();
+            case OPTIONS -> optionsMenu.update();
+            case ABOUT -> aboutMenu.update();
             case GAMEOVER -> gameOverState.update();
             case PAUSEMENU -> pauseMenu.update();
             case PLAYING -> {
@@ -85,7 +95,16 @@ public class GameController {
 
     public void render(Graphics g) {
         switch (Gamestate.state) {
-            case MENU -> loadMenuView.render(g, menuState);
+            case MENU -> loadMenuView.render(g, menuState, this);
+            case OPTIONS -> {
+                if (optionsMenu.isOpenedFromPlaying()) {
+                    playingView.render(g, game, playingState);
+                    g.setColor(new Color(0, 0, 0, 140));
+                    g.fillRect(0, 0, getDisplayWidth(), getDisplayHeight());
+                }
+                optionsView.render(g, optionsMenu, this);
+            }
+            case ABOUT -> aboutView.render(g, aboutMenu, this);
             case GAMEOVER -> {
                 playingView.render(g, game, playingState);
                 gameOverState.setPlayerWinner(game.getPlayerWinner());
@@ -97,6 +116,18 @@ public class GameController {
                 pauseMenuView.render(g, pauseMenu);
             }
         }
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        gameFrame.setFullscreen(fullscreen);
+    }
+
+    public boolean isFullscreen() {
+        return gameFrame.isFullscreen();
+    }
+
+    public void quitGame() {
+        gameFrame.quit();
     }
 
     public Game getGame() {
@@ -111,12 +142,31 @@ public class GameController {
         return GAME_HEIGHT;
     }
 
+    /** Current panel size (fills fullscreen when maximized). Use for menu/options/about so they fill the window. */
+    public int getDisplayWidth() {
+        int w = gamePanel != null ? gamePanel.getWidth() : 0;
+        return w > 0 ? w : GAME_WIDTH;
+    }
+
+    public int getDisplayHeight() {
+        int h = gamePanel != null ? gamePanel.getHeight() : 0;
+        return h > 0 ? h : GAME_HEIGHT;
+    }
+
     public int getTileSize() {
         return TILE_SIZE;
     }
 
     public LoadMenu getMenuState() {
         return menuState;
+    }
+
+    public OptionsMenu getOptionsMenu() {
+        return optionsMenu;
+    }
+
+    public AboutMenu getAboutMenu() {
+        return aboutMenu;
     }
 
     public Playing getPlayingState() {

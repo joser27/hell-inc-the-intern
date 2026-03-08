@@ -10,77 +10,101 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class LoadMenu extends State implements Statemethods {
-    private BufferedImage startButtonImg;
-    private Image scaledImg;
-    private int x , y;
-    private int startPlacementX = GameController.GAME_WIDTH/2, startPlacementY = GameController.GAME_HEIGHT/2;
-    private int startButtonWidth = 900, startButtonHeight = 840;
-    Font fontStart;
-    Font fontMenu;
+    public static final int BUTTON_PLAY = 0;
+    public static final int BUTTON_OPTIONS = 1;
+    public static final int BUTTON_ABOUT = 2;
+    public static final int BUTTON_QUIT = 3;
+    public static final int BUTTON_NONE = -1;
 
+    private final GameController controller;
+    private BufferedImage backgroundImage;
+    private int hoveredButton = BUTTON_NONE;
 
-    public LoadMenu(Game game) {
+    private final Rectangle[] buttonBounds = new Rectangle[4];
+
+    public LoadMenu(Game game, GameController controller) {
         super(game);
-        startButtonImg = LoadSave.GetSpriteAtlas(LoadSave.START_BUTTON);
-        scaledImg = startButtonImg.getScaledInstance(startButtonWidth / GameController.SCALE,startButtonHeight/ GameController.SCALE,Image.SCALE_DEFAULT);
-        startPlacementX = (GameController.GAME_WIDTH/2)-scaledImg.getWidth(null);
-        startPlacementY = (GameController.GAME_HEIGHT/2);
-        fontStart = LoadSave.GetFont(LoadSave.FONT_DEFAULT,60);
-        fontMenu = LoadSave.GetFont(LoadSave.FONT_DEFAULT,30);
+        this.controller = controller;
+        backgroundImage = LoadSave.GetSpriteAtlas(LoadSave.MENU_BACKGROUND);
+        for (int i = 0; i < 4; i++) buttonBounds[i] = new Rectangle();
+        layoutButtons();
+    }
+
+    private void layoutButtons() {
+        int w = controller.getDisplayWidth();
+        int h = controller.getDisplayHeight();
+        int btnW = 280;
+        int btnH = 48;
+        int centerX = w / 2;
+        int startY = (int) (h * 0.54);
+        int gap = 48;
+        for (int i = 0; i < 4; i++) {
+            int y = startY + i * (btnH + gap);
+            buttonBounds[i].setBounds(centerX - btnW / 2, y - btnH / 2, btnW, btnH);
+        }
     }
 
     @Override
     public void update() {
-        if (x > startPlacementX && x < startPlacementX + startButtonWidth) {
-            if (y > startPlacementY && y < startPlacementY + startButtonHeight ) {
-                x = 0;
-                y = 0;
-                Gamestate.state = Gamestate.PLAYING;
-            }
+        layoutButtons();
+    }
+
+    @Override
+    public void render(Graphics g) { /* Done by LoadMenuView */ }
+
+    public BufferedImage getBackgroundImage() { return backgroundImage; }
+    public Rectangle getButtonBounds(int index) { return buttonBounds[index]; }
+    public int getHoveredButton() { return hoveredButton; }
+
+    /** Returns BUTTON_PLAY, BUTTON_OPTIONS, BUTTON_ABOUT, BUTTON_QUIT, or BUTTON_NONE. */
+    public int getButtonAt(int x, int y) {
+        for (int i = 0; i < 4; i++) {
+            if (buttonBounds[i].contains(x, y)) return i;
         }
+        return BUTTON_NONE;
+    }
 
+    public void setHoveredButton(int button) { this.hoveredButton = button; }
+
+    public void triggerButton(int button) {
+        if (button == BUTTON_PLAY) {
+            Gamestate.state = Gamestate.PLAYING;
+        } else if (button == BUTTON_OPTIONS) {
+            controller.getOptionsMenu().setReturnState(Gamestate.MENU);
+            Gamestate.state = Gamestate.OPTIONS;
+        } else if (button == BUTTON_ABOUT) {
+            Gamestate.state = Gamestate.ABOUT;
+        } else if (button == BUTTON_QUIT) {
+            controller.quitGame();
+        }
     }
 
     @Override
-    public void render(Graphics g) { /* Rendering done by View.LoadMenuView */ }
-
-    public Image getScaledStartImage() { return scaledImg; }
-    public Font getFontStart() { return fontStart; }
-    public Font getFontMenu() { return fontMenu; }
-    public int getStartPlacementX() { return startPlacementX; }
-    public int getStartPlacementY() { return startPlacementY; }
+    public void mouseClicked(MouseEvent e) { }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
+    public void mousePressed(MouseEvent e) { }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        x = e.getX();
-        y = e.getY();
+        int x = e.getX();
+        int y = e.getY();
+        int btn = getButtonAt(x, y);
+        if (btn != BUTTON_NONE) triggerButton(btn);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
+        setHoveredButton(getButtonAt(e.getX(), e.getY()));
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_ENTER) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             Gamestate.state = Gamestate.PLAYING;
         }
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
+    public void keyReleased(KeyEvent e) { }
 }

@@ -21,6 +21,8 @@ public class KeyboardInputs implements KeyListener {
     public void keyPressed(KeyEvent e) {
         switch(Gamestate.state) {
             case MENU -> gameController.getMenuState().keyPressed(e);
+            case OPTIONS -> gameController.getOptionsMenu().keyPressed(e);
+            case ABOUT -> gameController.getAboutMenu().keyPressed(e);
             case PLAYING -> gameController.getPlayingState().keyPressed(e);
             case GAMEOVER -> gameController.getGameOverState().keyPressed(e);
             case PAUSEMENU -> gameController.getPauseMenu().keyPressed(e);

@@ -2,6 +2,7 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -9,9 +10,12 @@ public class GameFrame {
 
     JFrame frame;
     GamePanel gamePanel;
+    private boolean fullscreen = false;
+    private final Rectangle windowedBounds;
 
     public GameFrame(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
+        windowedBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         initFrame();
     }
 
@@ -19,13 +23,47 @@ public class GameFrame {
         frame = new JFrame();
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.add(gamePanel);
-
-        // Use usable screen area (excludes taskbar) so dialogue and UI are not clipped
-        Rectangle usable = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-        frame.setSize(usable.width, usable.height);
-        frame.setLocation(usable.x, usable.y);
-        frame.setUndecorated(false);  // set true for borderless fullscreen
+        frame.setSize(windowedBounds.width, windowedBounds.height);
+        frame.setLocation(windowedBounds.x, windowedBounds.y);
+        frame.setUndecorated(false);
         frame.setResizable(true);
         frame.setVisible(true);
+    }
+
+    public boolean isFullscreen() { return fullscreen; }
+
+    /**
+     * True fullscreen = borderless and maximized. Java does not allow setUndecorated()
+     * after the frame is shown, so we recreate the frame when toggling.
+     */
+    public void setFullscreen(boolean fullscreen) {
+        if (this.fullscreen == fullscreen) return;
+        this.fullscreen = fullscreen;
+
+        frame.setVisible(false);
+        frame.remove(gamePanel);
+        frame.dispose();
+
+        frame = new JFrame();
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setUndecorated(fullscreen);
+        frame.add(gamePanel);
+        if (fullscreen) {
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            frame.setResizable(false);
+        } else {
+            frame.setSize(windowedBounds.width, windowedBounds.height);
+            frame.setLocation(windowedBounds.x, windowedBounds.y);
+            frame.setResizable(true);
+        }
+        frame.setVisible(true);
+        gamePanel.requestFocusInWindow();
+    }
+
+    /** Close the game (triggers default close operation → EXIT_ON_CLOSE). */
+    public void quit() {
+        if (frame != null) {
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+        }
     }
 }

@@ -8,14 +8,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class Playing extends State implements Statemethods {
-    private int xLvlOffset;  // scaled offset so playerCenter*zoom - xLvlOffset = screen/2
+    private final GameController controller;
+    private int xLvlOffset;
     private int yLvlOffset;
     private PlayingUI ui;
 
-    public Playing(Game game) {
+    public Playing(Game game, GameController controller) {
         super(game);
+        this.controller = controller;
         ui = new PlayingUI(game);
     }
+
+    public GameController getController() { return controller; }
 
     @Override
     public void update() {
@@ -74,7 +78,8 @@ public class Playing extends State implements Statemethods {
         else if (keyCode == KeyEvent.VK_A) getGame().getPlayer1().setLeft(true);
         else if (keyCode == KeyEvent.VK_D) getGame().getPlayer1().setRight(true);
         if (keyCode == KeyEvent.VK_ESCAPE) {
-            Gamestate.state = Gamestate.PAUSEMENU;
+            getController().getOptionsMenu().setReturnState(Gamestate.PLAYING);
+            Gamestate.state = Gamestate.OPTIONS;
         }
     }
 
