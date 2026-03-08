@@ -34,9 +34,13 @@ public class PlayingView {
     private static final int NIGHT_OVERLAY_DOWNSCALE = 4;
 
     /** Tint colour for dark areas (RGB only; alpha is computed per-pixel from light distance). */
-    private static final int NIGHT_TINT_R = 10, NIGHT_TINT_G = 10, NIGHT_TINT_B = 30;
+    private static final int NIGHT_TINT_R = 5, NIGHT_TINT_G = 8, NIGHT_TINT_B = 55;
     /** Max alpha in darkest areas (0-255). Higher = darker night. */
     private static final int NIGHT_MAX_ALPHA = 190;
+    /** Min alpha at light centers; lights never fully bright (0 = current behaviour). */
+    private static final int NIGHT_MIN_ALPHA = 55;
+    /** Falloff extends this far past nominal radius (1.5 = 50% softer edge). */
+    private static final float NIGHT_LIGHT_FALLOFF_EXTEND = 1.5f;
 
     public void render(Graphics g, Game game, Playing playing) {
         gameView.render(g, game, playing.getXLvlOffset(), playing.getYLvlOffset());
@@ -87,15 +91,16 @@ public class PlayingView {
                     float dx = x - light.getCenterX() * invScale;
                     float dy = y - light.getCenterY() * invScale;
                     float dist = dx * dx + dy * dy;
-                    float radiusScaled = light.getRadius() * invScale;
+                    float radiusScaled = light.getRadius() * invScale * NIGHT_LIGHT_FALLOFF_EXTEND;
                     float r2 = radiusScaled * radiusScaled;
                     if (dist >= r2) continue;
                     float t = (float) Math.sqrt(dist) / radiusScaled;
-                    t = t * t;
-                    darkness = Math.min(darkness, t);
+                    float t2 = t * t;
+                    float soft = t * t2 * (10f - 15f * t + 6f * t2);
+                    darkness = Math.min(darkness, soft);
                 }
-                int alpha = (int) (darkness * NIGHT_MAX_ALPHA);
-                pixels[y * w + x] = (alpha << 24) | tintRGB;
+                int alpha = (int) (darkness * (NIGHT_MAX_ALPHA - NIGHT_MIN_ALPHA)) + NIGHT_MIN_ALPHA;
+                pixels[y * w + x] = (Math.min(255, alpha) << 24) | tintRGB;
             }
         }
         nightOverlayTexture.setRGB(0, 0, w, h, pixels, 0, w);
