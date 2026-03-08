@@ -8,6 +8,7 @@ import View.PlayingView;
 import View.PauseMenuView;
 import View.LoadMenuView;
 import View.GameOverView;
+import View.LoadingView;
 import View.OptionsView;
 import View.AboutView;
 
@@ -20,6 +21,7 @@ public class GameController {
     private AboutMenu aboutMenu;
     private Playing playingState;
     private GameOver gameOverState;
+    private Loading loadingState;
     private PauseMenu pauseMenu;
     private Game game;
     private GamePanel gamePanel;
@@ -31,6 +33,7 @@ public class GameController {
     private final OptionsView optionsView = new OptionsView();
     private final AboutView aboutView = new AboutView();
     private final GameOverView gameOverView = new GameOverView();
+    private final LoadingView loadingView = new LoadingView();
     private static final int originalTileSize = 16; //16x16 tile
     public static final int SCALE = 4;
     public static final int TILE_SIZE = originalTileSize * SCALE; //48x48 tile
@@ -69,6 +72,7 @@ public class GameController {
         optionsMenu = new OptionsMenu(game, this);
         aboutMenu = new AboutMenu(game, this);
         gameOverState = new GameOver(game);
+        loadingState = new Loading(game);
         pauseMenu = new PauseMenu(game);
 
         gameLoop.startGameLoop();
@@ -81,6 +85,7 @@ public class GameController {
             case OPTIONS -> optionsMenu.update();
             case ABOUT -> aboutMenu.update();
             case GAMEOVER -> gameOverState.update();
+            case LOADING -> loadingState.update();
             case PAUSEMENU -> pauseMenu.update();
             case PLAYING -> {
                 playingState.update();
@@ -110,6 +115,7 @@ public class GameController {
                 gameOverState.setPlayerWinner(game.getPlayerWinner());
                 gameOverView.render(g, gameOverState);
             }
+            case LOADING -> loadingView.render(g, loadingState, getDisplayWidth(), getDisplayHeight());
             case PLAYING -> playingView.render(g, game, playingState);
             case PAUSEMENU -> {
                 playingView.render(g, game, playingState);
@@ -175,6 +181,10 @@ public class GameController {
 
     public GameOver getGameOverState() {
         return gameOverState;
+    }
+
+    public Loading getLoadingState() {
+        return loadingState;
     }
 
     public PauseMenu getPauseMenu() {

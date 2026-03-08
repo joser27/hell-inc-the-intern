@@ -22,8 +22,14 @@ public class PlayingView {
     private final GameView gameView = new GameView();
     private final Map<String, BufferedImage> encounterFrameCache = new HashMap<>();
 
+    /** Night overlay: dark blue tint for a spooky feel (R, G, B, alpha). */
+    private static final int NIGHT_OVERLAY_ALPHA = 150;
+    private static final Color NIGHT_OVERLAY = new Color(0, 0, 15, NIGHT_OVERLAY_ALPHA);
+
     public void render(Graphics g, Game game, Playing playing) {
         gameView.render(g, game, playing.getXLvlOffset(), playing.getYLvlOffset());
+        g.setColor(NIGHT_OVERLAY);
+        g.fillRect(0, 0, GameController.GAME_WIDTH, GameController.GAME_HEIGHT);
         if (!game.isShowWidowFrame()) {
             drawSoulsCounter(g, game);
             if (game.isLastEncounterMessageVisible())

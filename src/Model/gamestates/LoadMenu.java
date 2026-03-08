@@ -68,7 +68,7 @@ public class LoadMenu extends State implements Statemethods {
 
     public void triggerButton(int button) {
         if (button == BUTTON_PLAY) {
-            Gamestate.state = Gamestate.PLAYING;
+            Gamestate.state = Gamestate.LOADING;
         } else if (button == BUTTON_OPTIONS) {
             controller.getOptionsMenu().setReturnState(Gamestate.MENU);
             Gamestate.state = Gamestate.OPTIONS;
@@ -101,7 +101,7 @@ public class LoadMenu extends State implements Statemethods {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            Gamestate.state = Gamestate.PLAYING;
+            Gamestate.state = Gamestate.LOADING;
         }
     }
 
