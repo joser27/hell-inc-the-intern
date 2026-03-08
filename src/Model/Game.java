@@ -169,6 +169,8 @@ public class Game {
             pendingKnockNpcId = null;
             showWidowFrame = true;
             encounterState.clearConversation();
+            SoundPlayer.stopNightAmbience();
+            SoundPlayer.startEncounterMusic();
         }
         if (!showWidowFrame) {
             entitiesUpdates();
@@ -191,7 +193,13 @@ public class Game {
     }
 
     public boolean isShowWidowFrame() { return showWidowFrame; }
-    public void setShowWidowFrame(boolean show) { this.showWidowFrame = show; }
+    public void setShowWidowFrame(boolean show) {
+        this.showWidowFrame = show;
+        if (!show) {
+            SoundPlayer.stopEncounterMusic();
+            SoundPlayer.startNightAmbience();
+        }
+    }
     public EncounterState getEncounterState() { return encounterState; }
     public String getCurrentNpcId() { return currentNpcId; }
     /** Profile for the NPC we're currently in encounter with (from res/npcs.json). */

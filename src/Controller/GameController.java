@@ -77,6 +77,7 @@ public class GameController {
         pauseMenu = new PauseMenu(game);
 
         SoundPlayer.preloadKnock();
+        SoundPlayer.preloadSteps();
         gameLoop.startGameLoop();
 
     }
@@ -87,6 +88,10 @@ public class GameController {
                 || Gamestate.state == Gamestate.ABOUT;
         if (inMenuFlow) SoundPlayer.startMenuMusic();
         else SoundPlayer.stopMenuMusic();
+        if (Gamestate.state == Gamestate.PLAYING && !game.isShowWidowFrame())
+            SoundPlayer.startNightAmbience();
+        else
+            SoundPlayer.stopNightAmbience();
         switch(Gamestate.state){
             case MENU -> menuState.update();
             case OPTIONS -> optionsMenu.update();

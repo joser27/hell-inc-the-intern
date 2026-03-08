@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.gamestates.Gamestate;
+import View.GameView;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -19,6 +20,10 @@ public class KeyboardInputs implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+            GameView.toggleDebugHitboxes();
+            return;
+        }
         switch(Gamestate.state) {
             case MENU -> gameController.getMenuState().keyPressed(e);
             case OPTIONS -> gameController.getOptionsMenu().keyPressed(e);
