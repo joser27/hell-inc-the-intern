@@ -2,15 +2,15 @@
 HELL INC.
 The Intern
 Game Design Document
-v1.0  |  Java + MVC  |  2D Top-Down  |  Comedy
+v1.1  |  Java + MVC  |  2D Top-Down  |  Comedy
 — — — — — — — — — — — — — — — — — — — —
 "Your Q3 soul acquisition numbers are disappointing.We expect better from our interns."
 — Your Performance Review
 
 1. Game Overview
-Hell Inc. — The Intern is a 2D top-down comedy social strategy game where the player takes the role of a brand new intern at Hell Incorporated, assigned to a small quirky town to collect souls and meet their quarterly quota. Progress happens not through combat but through conversation — identify each resident's deepest desire and get them to sign on the dotted line.
-The game uses a dual-view system: a top-down overworld for exploration and planning, and a first-person encounter view for dialogue — powered by the Claude AI API which plays each NPC and evaluates whether the player's pitch is convincing enough to close the deal.
-The tone is office comedy with dark edges. Think The Office meets Beetlejuice. The horror is not monsters — it is paperwork, rejection rates, and a micromanaging boss who will not stop sending messages about your close rate.
+Hell Inc. — The Intern is a 2D top-down comedy social strategy game where the player takes the role of a brand new intern at Hell Incorporated, assigned to a small quirky town to collect souls and meet their quota. Progress happens not through combat but through conversation — identify each resident's deepest desire and get them to sign on the dotted line. Two modes: Campaign (one assignment, 8 souls to win) and Endless (escalating assignments: 1, then 2, 4, 8 … souls per assignment; see how long you last).
+The game uses a dual-view system: a top-down overworld for exploration and planning, and a first-person encounter view for dialogue — powered by the Claude AI API which plays each NPC and evaluates whether the player's pitch is convincing enough to close the deal. There is no timer and no day counter; the only pressure is the suspicion race — get your souls before the town catches on.
+The tone is office comedy with dark edges. Think The Office meets Beetlejuice. The horror is not monsters — it is paperwork, suspicion, and a micromanaging boss who will not stop sending messages about your numbers.
 
 
 2. Core Game Loop
@@ -20,21 +20,25 @@ Approach a house and knock — view switches to first-person encounter mode
 Engage the resident in conversation, identify their hidden desire, and pitch a soul acquisition package
 The AI evaluates whether the player's dialogue matches the resident's vulnerability
 If successful, the deal is signed, the town begins to change, and your quota inches closer
-Hit your quota without getting exposed or fired — no timer, just skill and strategy
+Meet your quota before town suspicion hits 100% — no timer, no days. Pressure is the suspicion race and who you target.
+
+Game Modes
+Campaign — One assignment. Quota is 8 souls. Get 8 before suspicion hits 100% to win. Lose only to 100% suspicion.
+Endless — Repeated assignments. First assignment: 1 soul. Each time you meet the quota, you get an "Assignment Complete" screen (Gary message, stats, -10% suspicion relief), then the next assignment starts with quota doubled (1 → 2 → 4 → 8 → 16 …). Souls and collected-NPC set reset each assignment. No win condition — see how many assignments you can clear before suspicion hits 100%.
 
 Win / Lose
 Outcome
 Condition
-WIN
-Reach soul quota — Gary sends a congratulatory message and you are promoted to Junior Demon
-LOSE — Fired
-Rejection rate gets too high — Gary pulls you from the assignment for embarrassing Hell Inc.
-LOSE — Exposed
-Town suspicion hits 100% — residents collectively report you to authorities
+WIN (Campaign only)
+Reach soul quota (8) — Gary is pleased, promotion incoming. Game Over (good).
+LOSE
+Town suspicion hits 100% — residents collectively report you; you are pulled from the assignment. Game Over (bad).
+Endless
+No win — only lose when suspicion hits 100%. High score = total souls collected and how many assignments you completed.
 
 
 The Performance Review System
-Your demonic manager Gary monitors two things: your soul count and your rejection rate. He sends passive aggressive messages when either looks bad. These appear as popup notifications in the corner of the screen. There is no timer — Gary just never stops watching.
+Your demonic manager Gary monitors your soul count and town suspicion. He sends passive aggressive messages when things look bad. These appear as popup notifications. There is no timer and no day counter — Gary just never stops watching. The only pressure is the suspicion race: get your souls before the town catches on.
 "Hey just checking in on those soul numbers. No pressure but also kind of pressure. — Gary"
 "Quick sync? Your acquisition rate is below the team average. The team average is demons who have been doing this for 400 years. — Gary"
 "I need you to really bring your whole self to this. Your demonic whole self. — Gary"
@@ -53,9 +57,9 @@ Residents visibly move around town — coffee shop, park, errands, home
 Visual clues
 Dim lights = home, luxury car = wealthy, wilting garden = neglected/lonely
 Time of day
-Day cycle — some residents only approachable at certain times
+Night atmosphere (lighting, ambience) — no day counter or time pressure
 Quota tracker
-Visible soul counter and rejection rate tracker in HUD — no countdown timer
+Visible soul counter and suspicion meter in HUD — no countdown timer
 Ripple effects
 Completed deals visually change the town — new car, nervous neighbor, etc.
 
@@ -201,19 +205,19 @@ Trigger
 Amount
 Notes
 Deal signed
-+12%
++15%
 Every soul costs you — even a win draws attention
 Door slammed on you
-+8%
++14%
 The resident felt something was wrong
 Resident tattles after rejection
 +10%
 Personality dependent — Creed and Gerald tattle most
 Regretting resident complains publicly
-+18%
+TBD
 Your biggest single risk — manage your deals
 Simply existing in town
-+1% every 2 min
++1% every 2 min (passive creep)
 You cannot stay forever — commit to your targets
 
 
@@ -263,9 +267,9 @@ Too unbothered to walk anywhere about it
 
 
 Gary — Your Demon Manager
-Gary is the passive aggressive Hell Inc. middle manager assigned to oversee your internship. He does not appear on the map but monitors your soul count and rejection rate obsessively. Notification popups appear whenever either metric looks bad. He is your comic antagonist — not threatening, just deeply, persistently annoying. He is your comic antagonist — not threatening, just deeply annoying.
+Gary is the passive aggressive Hell Inc. middle manager assigned to oversee your internship. He does not appear on the map but monitors your soul count and town suspicion. Notification popups appear when metrics look bad. He is your comic antagonist — not threatening, just deeply, persistently annoying.
 
-Gary tracks two metrics: soul count and rejection rate. Messages trigger based on whichever looks worse at any given moment.
+Gary tracks soul count and suspicion. In Endless, he also sends messages on the "Assignment Complete" transition screen before the next assignment.
 
 Trigger
 Gary's Message
@@ -281,10 +285,12 @@ First soul signed
 "I hate to do this but HR is asking questions about your close rate. Hell Resources. — Gary"
 Quota halfway
 "Nice momentum. Keep this up and I will put in a good word with the Director. Of Darkness. — Gary"
-Quota complete
+Quota complete (Campaign win)
 "OUTSTANDING. I never doubted you. Please disregard all previous messages. — Gary"
-Too many slams — fired
-"This is not working out. I am pulling you from the assignment. Please return your clipboard. — Gary"
+Assignment complete (Endless)
+Random Gary line on transition screen; next assignment quota doubles (e.g. "Next assignment quota: 2 souls")
+Suspicion 100% — pulled
+Town reports you; you are pulled from the assignment. Game Over.
 
 
 
@@ -376,22 +382,24 @@ type: light | color_r | color_g | color_b | radius | flicker
 
 9. MVC Architecture
 Model
-World state — all NPC states, suspicion meter, soul count, quota, rejection rate tracker
+World state — NPC states, suspicion meter, soul count, quota (Campaign: 8; Endless: 1 then 2, 4, 8 …), souls-collected set per assignment
 NPC data — personality profiles, hidden desires, current state, conversation history
 Deal system — active packages, ripple effect queue, soul value tracking
-Gary notification system — quota thresholds, message queue, popup state
+Game modes — Campaign (one assignment, 8 souls) vs Endless (escalating quota, assignment-complete transition)
+Gary notification system — quota thresholds, message queue, popup state; Assignment Complete screen in Endless
 AI service — sends prompts to Claude API, parses JSON, updates NPC state
 View
-Overworld renderer — tile map, NPC sprites, player, day lighting, night overlay with multiply blend
+Overworld renderer — tile map, NPC sprites, player, night overlay with multiply blend
 Encounter renderer — NPC portrait, dialogue box, clipboard UI, Hell Inc. vignette effect
-UI overlay — soul counter, suspicion meter, quota progress, Gary notification popups
+UI overlay — soul counter (quota x/y; in Endless, total souls), suspicion meter, Gary notification popups
+Assignment Complete screen (Endless only) — Gary message, stats, next quota, ENTER to continue
 Loading screen — NPC portrait cutout over door background, GTA 5 style per encounter
 Transition handler — manages cut and fade between overworld and encounter view
 Controller
-Player input — movement in overworld, free text input in encounter view
+Player input — movement in overworld, free text input in encounter view; mode select (Campaign / Endless) before play
 Trigger handler — detects door/spawn/region overlaps and fires events
 Encounter controller — manages conversation turns, calls AI service, applies response to model
-Game loop — tick-based updates for NPC routines, suspicion changes, Gary notifications
+Game loop — tick-based updates for NPC routines, suspicion changes, Gary notifications; on quota met, Campaign → Game Over win, Endless → Assignment Complete then next assignment
 
 
 10. Tech Stack
@@ -431,7 +439,7 @@ Dual-view system — top-down overworld and first-person encounter
 AI-powered NPC dialogue via Claude API with structured JSON responses
 3 soul acquisition packages: Prosperity, Romance, Satisfaction
 Town suspicion meter with escalation and tattle behavior
-Quota win condition + rejection rate lose condition — no timer
+Campaign: one assignment, 8 souls to win. Endless: start at 1 soul, quota doubles each assignment. Lose only when suspicion hits 100%. No timer, no days.
 Gary notification system with quota-based messages
 Night lighting via multiply blend lightmap
 GTA 5 style NPC loading screen per encounter

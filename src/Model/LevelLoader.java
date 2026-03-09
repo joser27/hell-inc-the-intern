@@ -44,6 +44,8 @@ public class LevelLoader {
     private List<String> drawLayerOrder = new ArrayList<>();
     private final List<Trigger> triggers = new ArrayList<>();
     private final List<Light> lights = new ArrayList<>();
+    /** Collision rectangles from objectgroup "collision" (game pixels). Merged into world[][] with tile-layer collision. */
+    private final List<Rectangle> collisionObjects = new ArrayList<>();
     /** Scaled tile cache: gid -> 48x48 image (or null for empty). */
     private final Map<Integer, Image> tileImageCache = new HashMap<>();
 
@@ -116,6 +118,7 @@ public class LevelLoader {
         }
         loadTriggers(map);
         loadLights(map);
+        loadCollisionObjects(map);
         } finally {
             try { if (is != null) is.close(); } catch (IOException ignored) { }
         }
@@ -182,6 +185,27 @@ public class LevelLoader {
                         : Math.max(GameController.TILE_SIZE * 5f, Math.max(tw, th) * 0.5f * scale);
                 if (radius <= 0) radius = GameController.TILE_SIZE * 5f;
                 lights.add(new Light(centerX, centerY, radius));
+            }
+            break;
+        }
+    }
+
+    /** Parse objectgroup "collision": each object's x,y,width,height (Tiled pixels) scaled to game pixels. Used to mark tiles solid in buildCollisionFromLayer. */
+    private void loadCollisionObjects(org.w3c.dom.Element map) {
+        float scale = (float) GameController.TILE_SIZE / tileWidth;
+        var objectGroups = map.getElementsByTagName("objectgroup");
+        for (int g = 0; g < objectGroups.getLength(); g++) {
+            var og = (org.w3c.dom.Element) objectGroups.item(g);
+            if (!"collision".equals(og.getAttribute("name"))) continue;
+            var objects = og.getElementsByTagName("object");
+            for (int i = 0; i < objects.getLength(); i++) {
+                var obj = (org.w3c.dom.Element) objects.item(i);
+                float x = Float.parseFloat(obj.getAttribute("x")) * scale;
+                float y = Float.parseFloat(obj.getAttribute("y")) * scale;
+                float w = (obj.hasAttribute("width") ? Float.parseFloat(obj.getAttribute("width")) : 0) * scale;
+                float h = (obj.hasAttribute("height") ? Float.parseFloat(obj.getAttribute("height")) : 0) * scale;
+                if (w > 0 && h > 0)
+                    collisionObjects.add(new Rectangle((int) x, (int) y, (int) w, (int) h));
             }
             break;
         }
@@ -255,20 +279,23 @@ public class LevelLoader {
         // Already loaded in loadTilesetFromTsx
     }
 
-    /** Builds collision map from Tiled "collision" layer (non-zero GID = solid). */
+    /** Builds collision map from Tiled tile layer "collision" (non-zero GID = solid). Object-layer collision is handled separately via getCollisionRects(). */
     private void buildCollisionFromLayer() {
-        int[][] collisionLayer = layersByName.get("collision");
-        if (collisionLayer == null) {
-            world = new int[mapHeight][mapWidth];
-            return;
-        }
         world = new int[mapHeight][mapWidth];
-        for (int i = 0; i < mapHeight; i++) {
-            for (int j = 0; j < mapWidth; j++) {
-                int gid = collisionLayer[i][j] & 0x1FFFFFFF;
-                world[i][j] = (gid != 0) ? 1 : 0;
+        int[][] collisionLayer = layersByName.get("collision");
+        if (collisionLayer != null) {
+            for (int i = 0; i < mapHeight; i++) {
+                for (int j = 0; j < mapWidth; j++) {
+                    int gid = collisionLayer[i][j] & 0x1FFFFFFF;
+                    world[i][j] = (gid != 0) ? 1 : 0;
+                }
             }
         }
+    }
+
+    /** Pixel-precise collision rectangles from the objectgroup "collision" layer (game pixels). */
+    public List<Rectangle> getCollisionRects() {
+        return Collections.unmodifiableList(collisionObjects);
     }
 
     /** Returns tile image for the given GID, scaled to TILE_SIZE (48). Returns null for empty (0 or invalid). */

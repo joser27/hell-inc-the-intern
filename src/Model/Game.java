@@ -34,10 +34,17 @@ public class Game {
     /** Which NPC the current encounter is with (npc_id from Tiled). */
     private String currentNpcId = null;
     private EncounterState encounterState;
-    /** Souls collected from deals. */
+    /** Souls collected this assignment (resets each assignment in Endless). */
     private int souls = 0;
-    /** Soul quota — reach this to win. */
-    private static final int SOUL_QUOTA = 3;
+    /** Total souls collected across all assignments (for Endless scoring). */
+    private int totalSouls = 0;
+
+    /** Campaign: 8 souls to win. */
+    private static final int ASSIGNMENT_QUOTA = 8;
+    /** Endless: first assignment quota, then doubles each time (1 → 2 → 4 → 8...). */
+    private static final int ENDLESS_START_QUOTA = 1;
+    /** Current soul quota for this assignment. */
+    private int currentQuota = ASSIGNMENT_QUOTA;
     /**
      * Town-wide suspicion 0–100. At 100 the residents report you and you're pulled from the assignment.
      * No timer — pressure comes from your choices and rejection rate.
@@ -95,6 +102,7 @@ public class Game {
     /** Called when the NPC accepts the deal (soul sold). */
     public void onDealAccepted() {
         souls++;
+        totalSouls++;
         if (currentNpcId != null) soulsCollected.add(currentNpcId);
         addSuspicion(SUSPICION_PER_DEAL);
         showEncounterMessage("Deal signed!");
@@ -121,7 +129,8 @@ public class Game {
     }
 
     public float getSuspicion() { return suspicion; }
-    public int getSoulQuota() { return SOUL_QUOTA; }
+    public int getSoulQuota() { return currentQuota; }
+    public int getTotalSouls() { return totalSouls; }
 
     private void showEncounterMessage(String msg) {
         lastEncounterMessage = msg;
@@ -144,7 +153,8 @@ public class Game {
     /** +1 soul toward quota (no NPC needed). */
     public void cheatAddSoul() {
         souls++;
-        showEncounterMessage("[CHEAT] Soul added (" + souls + "/" + SOUL_QUOTA + ")");
+        totalSouls++;
+        showEncounterMessage("[CHEAT] Soul added (" + souls + "/" + currentQuota + ")");
     }
 
     /** Suspicion back to 0. */
@@ -153,10 +163,10 @@ public class Game {
         showEncounterMessage("[CHEAT] Suspicion cleared");
     }
 
-    /** Mark all NPCs as collected — instant win on next tick. */
+    /** Fill current quota — Campaign: win. Endless: Assignment Complete transition. */
     public void cheatInstantWin() {
-        souls = SOUL_QUOTA;
-        showEncounterMessage("[CHEAT] Quota filled — you win!");
+        souls = currentQuota;
+        showEncounterMessage("[CHEAT] Quota filled!");
     }
 
     /** Reset all NPC memory so every encounter is fresh. */
@@ -219,6 +229,7 @@ public class Game {
             pendingKnockNpcId = null;
             showWidowFrame = true;
             encounterState.clearConversation();
+            encounterState.requestOpeningLine();
             SoundPlayer.stopNightAmbience();
             SoundPlayer.startEncounterMusic();
         }
@@ -230,16 +241,39 @@ public class Game {
         }
     }
 
+    /** True when quota was just met — controller reads this to transition to DAY_SUMMARY. */
+    private boolean quotaJustMet = false;
+    public boolean isQuotaJustMet() { return quotaJustMet; }
+    public void clearQuotaJustMet() { quotaJustMet = false; }
+
     private void checkWinLose() {
-        if (souls >= SOUL_QUOTA) {
-            gameOver = true;
-            playerWinner = 1;
-            return;
-        }
         if (suspicion >= 100f) {
             gameOver = true;
             playerWinner = 0;
+            return;
         }
+        if (souls >= currentQuota && !quotaJustMet) {
+            if (gameMode == GameMode.CAMPAIGN) {
+                gameOver = true;
+                playerWinner = 1;
+            } else {
+                quotaJustMet = true;  // Endless: show Assignment Complete, then next assignment
+            }
+        }
+    }
+
+    /** Called from DaySummary when the player presses ENTER (Endless only). Resets for next assignment. */
+    public void advanceAfterQuota() {
+        quotaJustMet = false;
+        souls = 0;
+        soulsCollected.clear();
+        currentQuota *= 2;
+        suspicion = Math.max(0f, suspicion - 10f);
+    }
+
+    /** Next assignment's quota (Endless), for summary screen. */
+    public int getNextAssignmentQuota() {
+        return currentQuota * 2;
     }
 
     public boolean isShowWidowFrame() { return showWidowFrame; }
@@ -336,6 +370,7 @@ public class Game {
         gameOver = false;
         playerWinner = 1;
         souls = 0;
+        totalSouls = 0;
         soulsCollected.clear();
         suspicion = 0f;
         npcMemory.clear();
@@ -345,6 +380,8 @@ public class Game {
         currentNpcId = null;
         playerInTriggerNpcId = null;
         pendingKnockNpcId = null;
+        currentQuota = (gameMode == GameMode.ENDLESS) ? ENDLESS_START_QUOTA : ASSIGNMENT_QUOTA;
+        quotaJustMet = false;
         setShowWidowFrame(false);
     }
 

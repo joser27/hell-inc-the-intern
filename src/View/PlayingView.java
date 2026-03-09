@@ -147,7 +147,6 @@ public class PlayingView {
         int panelW = SUSPICION_BAR_W + HUD_INSET * 2;
         int panelH = HUD_INSET + SOULS_LINE_HEIGHT + HUD_ROW_GAP + SUSPICION_BLOCK_H + HUD_INSET;
 
-        // Panel background
         g.setColor(new Color(0, 0, 0, 140));
         g.fillRoundRect(panelX, panelY, panelW, panelH, 12, 12);
         g.setColor(new Color(80, 60, 100, 100));
@@ -156,8 +155,10 @@ public class PlayingView {
         int cx = panelX + HUD_INSET;
         int y = panelY + HUD_INSET;
 
-        // Souls
-        String soulsText = "Quota: " + game.getSouls() + " / " + game.getSoulQuota();
+        // Souls (and total in Endless)
+        String soulsText = game.getGameMode() == Game.GameMode.ENDLESS
+                ? "Quota: " + game.getSouls() + " / " + game.getSoulQuota() + "  (Total: " + game.getTotalSouls() + ")"
+                : "Quota: " + game.getSouls() + " / " + game.getSoulQuota();
         g.setFont(new Font("SansSerif", Font.BOLD, SOULS_FONT_SIZE));
         FontMetrics fm = g.getFontMetrics();
         g.setColor(new Color(0, 0, 0, 200));
@@ -315,14 +316,22 @@ public class PlayingView {
         int boxWidth = w - 2 * DIALOGUE_PAD;
         int maxTextWidth = boxWidth - 2 * DIALOGUE_INSET;
 
-        String npcName = game.getCurrentNpcProfile() != null ? game.getCurrentNpcProfile().getDisplayName() : "";
+        NpcProfile profile = game.getCurrentNpcProfile();
+        String npcName = profile != null ? profile.getDisplayName() : "";
         if (!npcName.isEmpty()) {
             g.setFont(new Font("SansSerif", Font.BOLD, NAME_FONT_SIZE));
             g.setColor(new Color(255, 255, 255, 240));
             FontMetrics nameFm = g.getFontMetrics();
             int nameY = boxY - NAME_ABOVE_BOX_GAP;
             g.drawString(npcName, DIALOGUE_PAD, nameY - nameFm.getDescent());
-            g.setFont(new Font("SansSerif", Font.PLAIN, 18));
+            if (profile != null) {
+                g.setFont(new Font("SansSerif", Font.PLAIN, 14));
+                g.setColor(new Color(200, 180, 255, 220));
+                String diffLabel = "Difficulty: " + profile.getDifficultyLabel();
+                g.drawString(diffLabel, DIALOGUE_PAD + boxWidth - g.getFontMetrics().stringWidth(diffLabel), nameY - nameFm.getDescent());
+                g.setFont(new Font("SansSerif", Font.PLAIN, 18));
+                g.setColor(new Color(255, 255, 255, 230));
+            }
         }
 
         g.setColor(new Color(0, 0, 0, 160));
@@ -338,14 +347,39 @@ public class PlayingView {
         g.setColor(new Color(255, 255, 255, 230));
         g.setFont(new Font("SansSerif", Font.PLAIN, 18));
 
-        // "Returning visitor" badge — shown only when the NPC has memory of a prior visit
+        // "Returning visitor" badge and intel (desire + hint) when the player has visited before
         boolean hasMemory = game.getCurrentNpcId() != null
                 && !game.getNpcMemory(game.getCurrentNpcId()).isEmpty();
-        int topPad = hasMemory ? 38 : 28;
+        int topPad = 28;
         if (hasMemory) {
             g.setColor(new Color(180, 150, 255, 160));
             g.setFont(new Font("SansSerif", Font.ITALIC, 12));
             g.drawString("~ they remember you ~", DIALOGUE_PAD + DIALOGUE_INSET, boxY + 18);
+            topPad = 38;
+            if (profile != null && (!profile.getHiddenDesire().isEmpty() || !profile.getPersuasionHints().isEmpty())) {
+                g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                g.setColor(new Color(220, 210, 255, 230));
+                int intelY = boxY + topPad;
+                if (!profile.getHiddenDesire().isEmpty()) {
+                    String desireLine = "Desire: " + profile.getHiddenDesire();
+                    List<String> desireWrapped = wrapText(g.getFontMetrics(), desireLine, maxTextWidth);
+                    for (String line : desireWrapped) {
+                        g.drawString(line, DIALOGUE_PAD + DIALOGUE_INSET, intelY);
+                        intelY += LINE_HEIGHT - 2;
+                    }
+                    intelY += 4;
+                }
+                if (!profile.getPersuasionHints().isEmpty()) {
+                    String hintLine = "Hint: " + profile.getPersuasionHints().get(0);
+                    List<String> hintWrapped = wrapText(g.getFontMetrics(), hintLine, maxTextWidth);
+                    for (String line : hintWrapped) {
+                        g.drawString(line, DIALOGUE_PAD + DIALOGUE_INSET, intelY);
+                        intelY += LINE_HEIGHT - 2;
+                    }
+                    intelY += 6;
+                }
+                topPad = intelY - boxY;
+            }
             g.setColor(new Color(255, 255, 255, 230));
             g.setFont(new Font("SansSerif", Font.PLAIN, 18));
         }

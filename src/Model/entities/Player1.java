@@ -160,7 +160,7 @@ public class Player1 extends Player {
             xSpeed *= scale;
             ySpeed *= scale;
         }
-        game.getCollisionChecker().handleCollision(this, game.getEntities(), game.getLevelLoader().getWorld(), GameController.TILE_SIZE, xSpeed, ySpeed);
+        game.getCollisionChecker().handleCollision(this, game.getEntities(), game.getLevelLoader().getWorld(), GameController.TILE_SIZE, game.getLevelLoader().getCollisionRects(), xSpeed, ySpeed);
     }
 
     public void update() {

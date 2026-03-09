@@ -44,21 +44,11 @@ public class GameView {
         // Java: last-specified first-applied, so (translate then scale) => world (x,y) -> (x*zoom - xLvlOffset, y*zoom - yLvlOffset). Offset from Playing = playerCenter*zoom - screen/2.
         g2d.translate(-xLvlOffset, -yLvlOffset);
         g2d.scale(zoom, zoom);
-        // Draw all tiles; no culling so the map stays visible when the camera moves (clip handles off-screen)
+        // Draw tile layers that go below the player (above_player is drawn after the player)
+        final String abovePlayerLayer = "above_player";
         for (String layerName : levelLoader.getDrawLayerNames()) {
-            int[][] gids = levelLoader.getLayerGids(layerName);
-            if (gids == null) continue;
-            for (int i = 0; i < gids.length; i++) {
-                for (int j = 0; j < gids[i].length; j++) {
-                    int gid = gids[i][j];
-                    if ((gid & 0x1FFFFFFF) == 0) continue;
-                    int drawX = GameController.TILE_SIZE * j;
-                    int drawY = GameController.TILE_SIZE * i;
-                    Image tile = levelLoader.getTileImage(gid);
-                    if (tile != null)
-                        g2d.drawImage(tile, drawX, drawY, null);
-                }
-            }
+            if (abovePlayerLayer.equals(layerName)) continue;
+            drawTileLayer(g2d, levelLoader, layerName);
         }
 
         Player1 p = game.getPlayer1();
@@ -75,11 +65,30 @@ public class GameView {
         Collections.sort(drawables, Comparator.comparingInt(d -> d.sortY));
         for (Drawable d : drawables) d.draw.run();
 
+        // Draw above_player layer on top of the player (e.g. roof overhangs, tree canopies)
+        drawTileLayer(g2d, levelLoader, abovePlayerLayer);
+
         if (debugHitbox) {
             drawDebugHitboxes(g2d, game);
         }
 
         g2d.dispose();
+    }
+
+    private void drawTileLayer(Graphics2D g2d, LevelLoader levelLoader, String layerName) {
+        int[][] gids = levelLoader.getLayerGids(layerName);
+        if (gids == null) return;
+        for (int i = 0; i < gids.length; i++) {
+            for (int j = 0; j < gids[i].length; j++) {
+                int gid = gids[i][j];
+                if ((gid & 0x1FFFFFFF) == 0) continue;
+                int drawX = GameController.TILE_SIZE * j;
+                int drawY = GameController.TILE_SIZE * i;
+                Image tile = levelLoader.getTileImage(gid);
+                if (tile != null)
+                    g2d.drawImage(tile, drawX, drawY, null);
+            }
+        }
     }
 
     private void drawDebugHitboxes(Graphics2D g2d, Game game) {
@@ -105,6 +114,17 @@ public class GameView {
                         g2d.drawRect(col * tileSize, row * tileSize, tileSize, tileSize);
                     }
                 }
+            }
+        }
+
+        // Object-layer collision rects — semi-transparent blue
+        if (levelLoader != null) {
+            for (java.awt.Rectangle r : levelLoader.getCollisionRects()) {
+                g2d.setColor(new Color(0, 100, 255, 90));
+                g2d.fillRect(r.x, r.y, r.width, r.height);
+                g2d.setColor(new Color(0, 100, 255, 200));
+                g2d.setStroke(new BasicStroke(1f));
+                g2d.drawRect(r.x, r.y, r.width, r.height);
             }
         }
 

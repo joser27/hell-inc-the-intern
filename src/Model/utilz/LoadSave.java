@@ -44,7 +44,7 @@ public class LoadSave {
     /** Main menu background — GTA-style frame/scene. */
     public static final String MENU_BACKGROUND = "menuBackground.png";
     /** Main menu: intern/contractor portrait (9:16), GTA-style. */
-    public static final String DEMON_PORTRAIT = "demonPortrait.png";
+    public static final String DEMON_PORTRAIT = "demonPortrait3.png";
 
     /** Door knock one-shot (res/audio/knock.ogg). */
     public static final String KNOCK_SOUND = "audio/knock.ogg";

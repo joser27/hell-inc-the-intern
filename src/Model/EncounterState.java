@@ -118,16 +118,32 @@ public class EncounterState {
     + "  Set dealAccepted to true only if you explicitly agree to the visitor's deal. Set slamDoor to true if you end the conversation or tell them to leave.\n\n"
     + "Character instructions:\n\n";
 
-    /** Build messages from lines and call Claude with current NPC's system prompt. */
-    private String sendConversationToClaude() throws Exception {
+    /** English-level instruction injected so NPC speech matches their class (simple → formal/archaic). */
+    private static String languageInstructionFor(String englishLevel) {
+        if (englishLevel == null) englishLevel = "conversational";
+        return switch (englishLevel.toLowerCase()) {
+            case "simple" -> "LANGUAGE: Use only simple, everyday English. Short sentences. Common words. No fancy or formal words. Like talking to a friend who prefers plain talk.\n\n";
+            case "formal" -> "LANGUAGE: Use clear, formal English. Precise words. Polite but professional. No slang.\n\n";
+            case "archaic" -> "LANGUAGE: Use formal, slightly old-fashioned or archaic English. Measured and dignified. Vocabulary that sounds like an older, high-status person.\n\n";
+            default -> "LANGUAGE: Use natural, conversational English. How people actually talk. Some slang is fine if it fits the character.\n\n";
+        };
+    }
+
+    /** Time-of-day context: night, dark outside. Some NPCs know ~8pm, others just that it's night. */
+    private static final String TIME_OF_DAY =
+        "TIME OF DAY: It is nighttime. It is dark outside; the visitor has come to the door in the evening. "
+        + "The exact time is around 8pm — some characters are aware of the time, others simply notice that it's night and a bit late for a stranger to call. "
+        + "Let this affect how you react (e.g. surprise at the hour, remark on the dark, or not caring about the clock).\n\n";
+
+    /** Build the full system prompt (preamble + name + language + time + NPC prompt + memory). */
+    private String buildSystemPrompt() {
         Model.NpcProfile profile = game.getCurrentNpcProfile();
         String npcSystemPrompt = profile != null ? profile.getSystemPrompt() : "";
         String nameLine = (profile != null && !profile.getDisplayName().isEmpty())
                 ? "Your name is " + profile.getDisplayName() + ". When the visitor asks your name, give this name only.\n\n"
                 : "";
-        String systemPrompt = GLOBAL_ROLEPLAY_PREAMBLE + nameLine + npcSystemPrompt;
-
-        // Inject memory from the last visit so the NPC remembers how things were left
+        String langLine = profile != null ? languageInstructionFor(profile.getEnglishLevel()) : "";
+        String systemPrompt = GLOBAL_ROLEPLAY_PREAMBLE + nameLine + langLine + TIME_OF_DAY + npcSystemPrompt;
         List<String> memory = game.getNpcMemory(game.getCurrentNpcId());
         if (!memory.isEmpty()) {
             StringBuilder memBlock = new StringBuilder(
@@ -135,6 +151,42 @@ public class EncounterState {
             for (String line : memory) memBlock.append("  ").append(line).append("\n");
             systemPrompt = systemPrompt + memBlock;
         }
+        return systemPrompt;
+    }
+
+    private static final String KNOCK_PROMPT = "*knocks on the door*";
+
+    /** Request the NPC's opening line when the visitor has just knocked. Call once when the encounter opens. */
+    public void requestOpeningLine() {
+        if (loading) return;
+        lines.add("Player: " + KNOCK_PROMPT);
+        loading = true;
+        executor.submit(() -> {
+            try {
+                String systemPrompt = buildSystemPrompt();
+                String rawReply = claude.sendConversation(systemPrompt, List.of(KNOCK_PROMPT), List.of());
+                EncounterOutcome outcome = rawReply != null ? EncounterOutcome.parse(rawReply) : new EncounterOutcome("", false, false);
+                String replyText = outcome.replyText != null ? outcome.replyText.trim() : "";
+                SwingUtilities.invokeLater(() -> {
+                    if (!replyText.isEmpty()) {
+                        lines.add(getNpcDisplayName() + ": " + replyText);
+                        resetScroll();
+                    }
+                    loading = false;
+                });
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(() -> {
+                    lastError = e.getMessage();
+                    lines.add("(Error: " + e.getMessage() + ")");
+                    loading = false;
+                });
+            }
+        });
+    }
+
+    /** Build messages from lines and call Claude with current NPC's system prompt. */
+    private String sendConversationToClaude() throws Exception {
+        String systemPrompt = buildSystemPrompt();
         String npcPrefix = getNpcDisplayName() + ": ";
         List<String> userParts = new ArrayList<>();
         List<String> assistantParts = new ArrayList<>();

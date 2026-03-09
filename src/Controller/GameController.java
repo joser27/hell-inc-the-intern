@@ -9,6 +9,7 @@ import View.PlayingView;
 import View.PauseMenuView;
 import View.LoadMenuView;
 import View.ModeSelectView;
+import View.DaySummaryView;
 import View.GameOverView;
 import View.LoadingView;
 import View.OptionsView;
@@ -20,6 +21,7 @@ public class GameController {
     private static final GraphicsEnvironment GE = GraphicsEnvironment.getLocalGraphicsEnvironment();
     private LoadMenu menuState;
     private ModeSelect modeSelectState;
+    private DaySummary daySummaryState;
     private OptionsMenu optionsMenu;
     private AboutMenu aboutMenu;
     private Playing playingState;
@@ -34,6 +36,7 @@ public class GameController {
     private final PauseMenuView pauseMenuView = new PauseMenuView();
     private final LoadMenuView loadMenuView = new LoadMenuView();
     private final ModeSelectView modeSelectView = new ModeSelectView();
+    private final DaySummaryView daySummaryView = new DaySummaryView();
     private final OptionsView optionsView = new OptionsView();
     private final AboutView aboutView = new AboutView();
     private final GameOverView gameOverView = new GameOverView();
@@ -79,6 +82,7 @@ public class GameController {
         loadingState = new Loading(game);
         pauseMenu = new PauseMenu(game);
         modeSelectState = new ModeSelect(game, this);
+        daySummaryState = new DaySummary(game);
 
         SoundPlayer.preloadKnock();
         SoundPlayer.preloadSteps();
@@ -107,9 +111,14 @@ public class GameController {
             case PAUSEMENU -> pauseMenu.update();
             case PLAYING -> {
                 playingState.update();
-                if (game.isGameOver())
+                if (game.isQuotaJustMet()) {
+                    daySummaryState.enter();
+                    Gamestate.state = Gamestate.DAY_SUMMARY;
+                } else if (game.isGameOver()) {
                     Gamestate.state = Gamestate.GAMEOVER;
+                }
             }
+            case DAY_SUMMARY -> daySummaryState.update();
         }
     }
 
@@ -132,10 +141,14 @@ public class GameController {
             case GAMEOVER -> {
                 playingView.render(g, game, playingState, getDisplayWidth(), getDisplayHeight());
                 gameOverState.setPlayerWinner(game.getPlayerWinner());
-                gameOverView.render(g, gameOverState);
+                gameOverView.render(g, gameOverState, game, getDisplayWidth(), getDisplayHeight());
             }
             case LOADING -> loadingView.render(g, loadingState, getDisplayWidth(), getDisplayHeight());
             case PLAYING -> playingView.render(g, game, playingState, getDisplayWidth(), getDisplayHeight());
+            case DAY_SUMMARY -> {
+                playingView.render(g, game, playingState, getDisplayWidth(), getDisplayHeight());
+                daySummaryView.render(g, daySummaryState, game, getDisplayWidth(), getDisplayHeight());
+            }
             case PAUSEMENU -> {
                 playingView.render(g, game, playingState, getDisplayWidth(), getDisplayHeight());
                 pauseMenuView.render(g, pauseMenu);
@@ -188,6 +201,10 @@ public class GameController {
 
     public ModeSelect getModeSelectState() {
         return modeSelectState;
+    }
+
+    public DaySummary getDaySummaryState() {
+        return daySummaryState;
     }
 
     public OptionsMenu getOptionsMenu() {

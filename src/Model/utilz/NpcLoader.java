@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +112,35 @@ public class NpcLoader {
         String systemPrompt = extractStringLong(block, "systemPrompt");
         if (systemPrompt == null) systemPrompt = "";
         int tattleChance = extractInt(block, "tattleChance", 30);
-        return new NpcProfile(id, frameImage, portraitImage, displayName, systemPrompt, tattleChance);
+        int difficulty = extractInt(block, "difficulty", 2);
+        String englishLevel = extractString(block, "englishLevel");
+        if (englishLevel == null || englishLevel.isEmpty()) englishLevel = "conversational";
+        String hiddenDesire = extractString(block, "hiddenDesire");
+        if (hiddenDesire == null) hiddenDesire = "";
+        List<String> persuasionHints = extractStringArray(block, "persuasionHints");
+        return new NpcProfile(id, frameImage, portraitImage, displayName, systemPrompt, tattleChance,
+                difficulty, englishLevel, hiddenDesire, persuasionHints);
+    }
+
+    /** Parses "key": ["a", "b", "c"] into a list of strings. */
+    private static List<String> extractStringArray(String block, String key) {
+        String prefix = "\"" + key + "\"\\s*:\\s*\\[";
+        int idx = block.indexOf(prefix);
+        if (idx < 0) return List.of();
+        int start = block.indexOf("[", idx) + 1;
+        int depth = 1;
+        int end = start;
+        for (int i = start; i < block.length(); i++) {
+            char c = block.charAt(i);
+            if (c == '[') depth++;
+            else if (c == ']') { depth--; if (depth == 0) { end = i; break; } }
+        }
+        String arr = block.substring(start, end);
+        List<String> out = new ArrayList<>();
+        Pattern p = Pattern.compile("\"([^\"]*)\"");
+        Matcher m = p.matcher(arr);
+        while (m.find()) out.add(unescape(m.group(1)));
+        return out;
     }
 
     private static int extractInt(String block, String key, int defaultValue) {
