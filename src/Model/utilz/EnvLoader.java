@@ -14,11 +14,17 @@ public class EnvLoader {
     private static final String ENV_DIR = "env";
     private static final String ENV_FILE = ".env";
     private static final String KEY_ANTHROPIC = "ANTHROPIC_API_KEY";
+    private static final String KEY_CLAUDE_URL = "CLAUDE_API_URL";
 
     private static Map<String, String> cache;
 
     public static String getAnthropicApiKey() {
         return getEnv().get(KEY_ANTHROPIC);
+    }
+
+    /** Returns CLAUDE_API_URL if set (Lambda proxy), otherwise null. */
+    public static String getClaudeApiUrl() {
+        return getEnv().get(KEY_CLAUDE_URL);
     }
 
     public static Map<String, String> getEnv() {

@@ -9,23 +9,33 @@ import java.util.List;
 
 /**
  * Minimal client for Anthropic Messages API (Claude).
- * Reads API key from env/.env (ANTHROPIC_API_KEY).
+ * Uses a Lambda proxy URL for production (no API key shipped with the game).
+ * Falls back to direct Anthropic API with ANTHROPIC_API_KEY from env/.env for local dev.
  */
 public class ClaudeApiClient {
-    private static final String API_URL = "https://api.anthropic.com/v1/messages";
+    private static final String DIRECT_API_URL = "https://api.anthropic.com/v1/messages";
+
+    private static final String PROXY_URL = "https://rx25ulq5xcupw3cpzr3qerxtou0rkvsg.lambda-url.us-east-1.on.aws/";
+
     /** Cheapest: claude-haiku-4-5-20251001. Better quality: claude-sonnet-4-20250514 */
     private static final String MODEL = "claude-haiku-4-5-20251001";
     private static final String ANTHROPIC_VERSION = "2023-06-01";
 
+    private final String apiUrl;
     private final String apiKey;
+    private final boolean useProxy;
     private final HttpClient http;
 
     public ClaudeApiClient() {
-        this(EnvLoader.getAnthropicApiKey());
-    }
-
-    public ClaudeApiClient(String apiKey) {
-        this.apiKey = apiKey;
+        if (!PROXY_URL.isBlank()) {
+            this.apiUrl = PROXY_URL;
+            this.apiKey = null;
+            this.useProxy = true;
+        } else {
+            this.apiUrl = DIRECT_API_URL;
+            this.apiKey = EnvLoader.getAnthropicApiKey();
+            this.useProxy = false;
+        }
         this.http = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(30))
                 .build();
@@ -43,45 +53,61 @@ public class ClaudeApiClient {
      * userMessages and assistantMessages are paired; if there is one more user message, it is the current turn.
      */
     public String sendConversation(String systemPrompt, List<String> userMessages, List<String> assistantMessages) throws Exception {
-        if (apiKey == null || apiKey.isBlank())
-            throw new IllegalStateException("ANTHROPIC_API_KEY not set in env/.env");
+        if (!useProxy && (apiKey == null || apiKey.isBlank()))
+            throw new IllegalStateException("ANTHROPIC_API_KEY not set in env/.env and no CLAUDE_API_URL proxy configured");
         String body = buildConversationBody(systemPrompt, userMessages, assistantMessages);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL))
-                .header("x-api-key", apiKey)
-                .header("anthropic-version", ANTHROPIC_VERSION)
+        System.err.println("[ClaudeAPI] POST " + apiUrl + " (proxy=" + useProxy + ", bodyLen=" + body.length() + ", messages=" + userMessages.size() + "u/" + assistantMessages.size() + "a)");
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
                 .header("content-type", "application/json")
                 .timeout(Duration.ofSeconds(60))
-                .POST(HttpRequest.BodyPublishers.ofString(body))
-                .build();
-        HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200)
+                .POST(HttpRequest.BodyPublishers.ofString(body));
+        if (!useProxy) {
+            reqBuilder.header("x-api-key", apiKey);
+            reqBuilder.header("anthropic-version", ANTHROPIC_VERSION);
+        }
+        HttpResponse<String> response = http.send(reqBuilder.build(), HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            System.err.println("[ClaudeAPI] ERROR " + response.statusCode() + ": " + response.body());
+            System.err.println("[ClaudeAPI] Request body (first 500 chars): " + body.substring(0, Math.min(500, body.length())));
             throw new RuntimeException("Claude API error " + response.statusCode() + ": " + response.body());
+        }
         return extractTextFromResponse(response.body());
     }
 
-    private static String buildConversationBody(String systemPrompt, List<String> userMessages, List<String> assistantMessages) {
-        StringBuilder msgJson = new StringBuilder();
+    /** Builds the JSON body. Proxy mode uses {systemPrompt, messages} to match the Lambda. Direct mode uses {system, model, max_tokens, messages} for Anthropic. */
+    private String buildConversationBody(String systemPrompt, List<String> userMessages, List<String> assistantMessages) {
+        StringBuilder messages = new StringBuilder();
+        messages.append("[");
+        boolean first = true;
         int n = Math.min(userMessages.size(), assistantMessages.size());
         for (int i = 0; i < n; i++) {
-            if (msgJson.length() > 0) msgJson.append(",\n");
-            msgJson.append("    { \"role\": \"user\", \"content\": \"").append(escapeJson(userMessages.get(i))).append("\" },\n");
-            msgJson.append("    { \"role\": \"assistant\", \"content\": \"").append(escapeJson(assistantMessages.get(i))).append("\" }");
+            if (!first) messages.append(",");
+            messages.append("{\"role\":\"user\",\"content\":\"").append(escapeJson(userMessages.get(i))).append("\"},");
+            messages.append("{\"role\":\"assistant\",\"content\":\"").append(escapeJson(assistantMessages.get(i))).append("\"}");
+            first = false;
         }
         if (userMessages.size() > assistantMessages.size()) {
-            if (msgJson.length() > 0) msgJson.append(",\n");
-            msgJson.append("    { \"role\": \"user\", \"content\": \"").append(escapeJson(userMessages.get(userMessages.size() - 1))).append("\" }");
+            if (!first) messages.append(",");
+            messages.append("{\"role\":\"user\",\"content\":\"").append(escapeJson(userMessages.get(userMessages.size() - 1))).append("\"}");
         }
-        String systemPart = (systemPrompt != null && !systemPrompt.isBlank())
-                ? "  \"system\": \"" + escapeJson(systemPrompt) + "\",\n"
-                : "";
-        return "{\n"
-                + systemPart
-                + "  \"model\": \"" + MODEL + "\",\n"
-                + "  \"max_tokens\": 1024,\n"
-                + "  \"messages\": [\n"
-                + msgJson + "\n  ]\n"
-                + "}";
+        messages.append("]");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        if (useProxy) {
+            if (systemPrompt != null && !systemPrompt.isBlank())
+                sb.append("\"systemPrompt\":\"").append(escapeJson(systemPrompt)).append("\",");
+            sb.append("\"messages\":").append(messages);
+        } else {
+            if (systemPrompt != null && !systemPrompt.isBlank())
+                sb.append("\"system\":\"").append(escapeJson(systemPrompt)).append("\",");
+            sb.append("\"model\":\"").append(MODEL).append("\",");
+            sb.append("\"max_tokens\":1024,");
+            sb.append("\"messages\":").append(messages);
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     private static String escapeJson(String s) {
