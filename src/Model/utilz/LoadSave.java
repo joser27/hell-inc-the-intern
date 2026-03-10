@@ -37,7 +37,6 @@ public class LoadSave {
     public static final String GRASS_TILESET = "Set 1.2.png";
     public static final String TREE_4 = "Tree-3-4.png";
     public static final String ARROW_PROJECTILE = "arrowProjectile.png";
-    public static final String UI_SQUARES = "gui_free.png";
     public static final String UI_ICONS = "UiIconsPack_Transparent_Icons.png";
 
     /** NPC encounter frame (first-person door view) — Hell Inc. design. */
@@ -86,14 +85,18 @@ public class LoadSave {
 
 
     public static BufferedImage GetSpriteAtlas(String fileName) {
-        BufferedImage image = null;
-        String imagePathWalk = "/" + fileName;
-        InputStream is = LoadSave.class.getResourceAsStream(imagePathWalk);
+        InputStream is = LoadSave.class.getResourceAsStream("/" + fileName);
+        if (is == null) is = LoadSave.class.getClassLoader().getResourceAsStream(fileName);
+        if (is == null && !fileName.startsWith("res/")) {
+            is = LoadSave.class.getResourceAsStream("/res/" + fileName);
+            if (is == null) is = LoadSave.class.getClassLoader().getResourceAsStream("res/" + fileName);
+        }
+        if (is == null)
+            throw new RuntimeException("Image not found (classpath/JAR): " + fileName + " — add to src/main/resources or res/");
         try {
-            image = ImageIO.read(is);
-
+            return ImageIO.read(is);
         } catch (IOException e) {
-            throw new RuntimeException("Error reading image", e);
+            throw new RuntimeException("Error reading image: " + fileName, e);
         } finally {
             try {
                 is.close();
@@ -101,18 +104,21 @@ public class LoadSave {
                 e.printStackTrace();
             }
         }
-        return image;
     }
 
     public static Image GetImage(String fileName) {
-        Image img = null;
-        String imagePathWalk = "/" + fileName;
-        InputStream is = LoadSave.class.getResourceAsStream(imagePathWalk);
+        InputStream is = LoadSave.class.getResourceAsStream("/" + fileName);
+        if (is == null) is = LoadSave.class.getClassLoader().getResourceAsStream(fileName);
+        if (is == null && !fileName.startsWith("res/")) {
+            is = LoadSave.class.getResourceAsStream("/res/" + fileName);
+            if (is == null) is = LoadSave.class.getClassLoader().getResourceAsStream("res/" + fileName);
+        }
+        if (is == null)
+            throw new RuntimeException("Image not found (classpath/JAR): " + fileName + " — add to src/main/resources or res/");
         try {
-            img = ImageIO.read(is);
-
+            return ImageIO.read(is);
         } catch (IOException e) {
-            throw new RuntimeException("Error reading image", e);
+            throw new RuntimeException("Error reading image: " + fileName, e);
         } finally {
             try {
                 is.close();
@@ -120,7 +126,6 @@ public class LoadSave {
                 e.printStackTrace();
             }
         }
-        return img;
     }
 
     public static Font GetFont(String fileName, int size) {

@@ -25,18 +25,16 @@ public class PauseMenu extends State implements Statemethods {
     public PauseMenu(Game game) {
         super(game);
         img = new BufferedImage[20][9];
-        BufferedImage temp = LoadSave.GetSpriteAtlas(LoadSave.UI_SQUARES);
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 9; j++) {
-                Image scaledImage = temp.getSubimage((320/20) * i, (144/9) * j, 320/20, 144/9).getScaledInstance( pauseSizeWidth,  pauseSizeHeight, Image.SCALE_DEFAULT);
-
-                // Convert Image to BufferedImage
-                BufferedImage bufferedImage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-                Graphics g = bufferedImage.getGraphics();
-                g.drawImage(scaledImage, 0, 0, null);
+                BufferedImage tile = new BufferedImage(pauseSizeWidth, pauseSizeHeight, BufferedImage.TYPE_INT_ARGB);
+                Graphics g = tile.getGraphics();
+                g.setColor(new Color(60, 50, 80, 220));
+                g.fillRect(0, 0, pauseSizeWidth, pauseSizeHeight);
+                g.setColor(new Color(100, 85, 130, 200));
+                g.drawRect(0, 0, pauseSizeWidth - 1, pauseSizeHeight - 1);
                 g.dispose();
-
-                img[i][j] = bufferedImage;
+                img[i][j] = tile;
             }
         }
     }
