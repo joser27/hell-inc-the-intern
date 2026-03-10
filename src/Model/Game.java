@@ -5,6 +5,8 @@ import Model.entities.*;
 import Model.utilz.NpcLoader;
 import Model.utilz.SoundPlayer;
 
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,6 +87,12 @@ public class Game {
     /** One tick counter per Tiled vfx spawn point — each point spawns on its own schedule. */
     private int[] fireflySpawnTickPerPoint;
 
+    /** When the player walks over a plant decoration, it rustles. Key = "x,y", value = rustle end time (ms). */
+    private final Map<String, Long> decorationRustleEndTimes = new HashMap<>();
+    /** Decorations the player was overlapping last frame — rustle only when stepping onto one, not while standing. */
+    private final Set<String> playerOverlappingDecorationKeys = new HashSet<>();
+    private static final long DECORATION_RUSTLE_DURATION_MS = 450;
+
     /** Firefly lifetime in seconds — tweak these to change how long they last before fading out. */
     private static final float FIREFLY_LIFETIME_MIN_SEC = 4f;
     private static final float FIREFLY_LIFETIME_MAX_SEC = 7f;
@@ -99,10 +107,16 @@ public class Game {
     /** Chance (0–1) to use small firefly (row 0). Rest use large firefly (row 1). Higher = more small ones. */
     private static final float FIREFLY_SMALL_CHANCE = 0.85f;
 
+    /** Spawn tile (col, row) when player leaves the map; teleported back here with a Gary message. */
+    private static final int SPAWN_TILE_X = 41;
+    private static final int SPAWN_TILE_Y = 43;
+    /** How far past the level edge (px) the player can go before being teleported back. Gives a bit of leeway. */
+    private static final int LEVEL_BOUNDS_MARGIN = 200;
+
     public Game() {
         levelLoader = new LevelLoader();
         world = levelLoader.getWorld();
-        player1 = new Player1(41 * GameController.TILE_SIZE, 43 * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, this);
+        player1 = new Player1(SPAWN_TILE_X * GameController.TILE_SIZE, SPAWN_TILE_Y * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, this);
         players = new Player[]{player1};
         walls = new Wall[0];  // Level collision from Tiled solid layer (tile map), not Wall entities
         enemy = new Enemy[0];
@@ -229,17 +243,24 @@ public class Game {
         }
     }
 
+    /** Consecutive door slams (reset when a deal is accepted). Used for Gary messages. */
+    private int consecutiveSlams = 0;
+
     /** Called when the NPC accepts the deal (soul sold). */
     public void onDealAccepted() {
+        consecutiveSlams = 0;
         souls++;
         totalSouls++;
         if (currentNpcId != null) soulsCollected.add(currentNpcId);
         addSuspicion(SUSPICION_PER_DEAL);
         showEncounterMessage("Deal signed!");
+        if (souls == 1) showGaryMessage("Great start! See? Not so hard. I always believed in you. — Gary");
+        else if (souls == (currentQuota + 1) / 2) showGaryMessage("Nice momentum. Keep this up and I will put in a good word with the Director. Of Darkness. — Gary");
     }
 
     /** Called when the NPC slams the door / ends the conversation. May add tattle suspicion by personality. */
     public void onEncounterSlammed() {
+        consecutiveSlams++;
         addSuspicion(SUSPICION_PER_SLAM);
         NpcProfile npc = currentNpcId != null ? NpcLoader.getById(currentNpcId) : null;
         boolean tattled = npc != null && npc.getTattleChance() > 0
@@ -250,6 +271,10 @@ public class Game {
         } else {
             showEncounterMessage("They slammed the door.");
         }
+        if (consecutiveSlams == 1) showGaryMessage("Hey so I saw a rejection on your activity log. Totally normal. Happens to everyone. Once. — Gary");
+        else if (consecutiveSlams == 2) showGaryMessage("Two rejections in a row is a little concerning. Maybe try leading with the wellness package? — Gary");
+        else if (consecutiveSlams == 3) showGaryMessage("Okay I am going to need you to really dig deep here. What is your pitch? Can I hear your pitch? — Gary");
+        else if (consecutiveSlams >= 5) showGaryMessage("I hate to do this but HR is asking questions about your close rate. Hell Resources. — Gary");
     }
 
     /** Add to town suspicion (capped at 100). Blocked in god mode. */
@@ -316,6 +341,32 @@ public class Game {
     public boolean isLastEncounterMessageVisible() { return lastEncounterMessage != null && System.currentTimeMillis() < lastEncounterMessageUntil; }
     public void clearLastEncounterMessage() { lastEncounterMessage = null; }
 
+    /** Gary phone popup: message text and when to auto-hide (ms). Dismissible with E/ENTER. */
+    private String garyMessage = null;
+    private long garyMessageUntil = 0;
+    private static final long GARY_MESSAGE_DURATION_MS = 8000;
+    /** Last message from Gary (or default); shown when player opens the phone. Persists so phone always has something to read. */
+    private String lastGaryMessage = "Your Q3 soul acquisition numbers are disappointing. We expect better. — Gary";
+    /** True when the player has opened the phone to view messages (e.g. pressed P). */
+    private boolean phoneOpen = false;
+
+    private void showGaryMessage(String msg) {
+        garyMessage = msg;
+        lastGaryMessage = msg;
+        garyMessageUntil = System.currentTimeMillis() + GARY_MESSAGE_DURATION_MS;
+    }
+
+    public String getGaryMessage() { return garyMessage; }
+    public boolean isGaryMessageVisible() { return garyMessage != null && System.currentTimeMillis() < garyMessageUntil; }
+    public void dismissGaryMessage() { garyMessage = null; }
+    /** Message to show on the phone: current popup if active, otherwise last message (or default). */
+    public String getMessageToShowOnPhone() { return garyMessage != null ? garyMessage : lastGaryMessage; }
+    /** Phone is visible because Gary just sent a message (popup) or because the player opened it. */
+    public boolean isPhoneVisible() { return phoneOpen || isGaryMessageVisible(); }
+    public void openPhone() { phoneOpen = true; }
+    public void closePhone() { phoneOpen = false; }
+    public boolean isPhoneOpen() { return phoneOpen; }
+
     /**
      * Saves the last MEMORY_LINES dialogue lines for the current NPC so they can be
      * injected as context on the next visit.  Safe to call even if lines is empty.
@@ -352,6 +403,8 @@ public class Game {
         if (gameOver) return;
         if (lastEncounterMessage != null && System.currentTimeMillis() >= lastEncounterMessageUntil)
             lastEncounterMessage = null;
+        if (garyMessage != null && System.currentTimeMillis() >= garyMessageUntil)
+            garyMessage = null;
         checkTriggers();
         if (pendingKnockNpcId != null && System.currentTimeMillis() >= pendingKnockUntil) {
             saveCurrentNpcMemory();
@@ -365,11 +418,63 @@ public class Game {
         }
         if (!showWidowFrame) {
             entitiesUpdates();
+            checkPlayerBoundsAndTeleport();
+            checkReadables();
+            if (showingReadable != null && System.currentTimeMillis() >= showingReadableUntil)
+                closeReadable();
+            checkDecorationRustle();
             updateParticles();
             // Passive suspicion creep — only ticks while in the overworld, not during encounters
             addSuspicion(SUSPICION_CREEP_PER_TICK);
             checkWinLose();
         }
+    }
+
+    /** If the player has left the level bounds (including margin), teleport back to spawn (tile 41,43) and show a Gary message. */
+    private void checkPlayerBoundsAndTeleport() {
+        int levelW = levelLoader.getLevelWidthPixels();
+        int levelH = levelLoader.getLevelHeightPixels();
+        int m = LEVEL_BOUNDS_MARGIN;
+        Rectangle2D.Float h = player1.getHitBox();
+        float x = h.x;
+        float y = h.y;
+        float w = h.width;
+        float hH = h.height;
+        if (x < -m || y < -m || x + w > levelW + m || y + hH > levelH + m) {
+            int spawnX = SPAWN_TILE_X * GameController.TILE_SIZE;
+            int spawnY = SPAWN_TILE_Y * GameController.TILE_SIZE;
+            player1.setXHitBox(spawnX);
+            player1.setYHitBox(spawnY);
+            showGaryMessage("Stay in the assignment area. We do not reimburse for unauthorized travel. — Gary");
+        }
+    }
+
+    /** When the player steps onto a plant (not already standing on it), mark it rustling. Trigger area is only the base tile (footprint), not the full 2-tile sprite. */
+    private void checkDecorationRustle() {
+        Rectangle playerBox = player1.getHitBox().getBounds();
+        int tileSize = GameController.TILE_SIZE;
+        Set<String> currentlyOverlapping = new HashSet<>();
+        for (LevelLoader.Decoration dec : levelLoader.getDecorations()) {
+            Rectangle plantBase = new Rectangle(dec.x, dec.y, tileSize, tileSize);
+            if (playerBox.intersects(plantBase)) {
+                String key = dec.x + "," + dec.y;
+                currentlyOverlapping.add(key);
+                if (!playerOverlappingDecorationKeys.contains(key)) {
+                    decorationRustleEndTimes.put(key, System.currentTimeMillis() + DECORATION_RUSTLE_DURATION_MS);
+                }
+            }
+        }
+        playerOverlappingDecorationKeys.clear();
+        playerOverlappingDecorationKeys.addAll(currentlyOverlapping);
+        decorationRustleEndTimes.entrySet().removeIf(e -> System.currentTimeMillis() >= e.getValue());
+    }
+
+    /** Horizontal pixel offset for drawing a rustling plant (wobble). Returns 0 if not rustling. */
+    public int getDecorationRustleOffsetX(int decX, int decY) {
+        String key = decX + "," + decY;
+        Long end = decorationRustleEndTimes.get(key);
+        if (end == null || System.currentTimeMillis() >= end) return 0;
+        return (int) (4 * Math.sin(System.currentTimeMillis() / 55.0));
     }
 
     /** True when quota was just met — controller reads this to transition to DAY_SUMMARY. */
@@ -457,6 +562,42 @@ public class Game {
     /** The npc_id of the door the player is currently standing at (for "Press E to knock" hint); null if not at a door or already knocking. */
     public String getDoorTriggerNpcId() { return pendingKnockNpcId != null ? null : playerInTriggerNpcId; }
 
+    /** Readable zone the player is currently in; null if none. Updated each tick. */
+    private Readable playerInReadableZone = null;
+    /** Readable currently being shown (E opened it); null when dialog is closed. */
+    private Readable showingReadable = null;
+    /** When to auto-close the readable (ms). */
+    private long showingReadableUntil = 0;
+    /** How long readable text stays on screen (ms) before auto-dismissing. */
+    private static final long READABLE_DURATION_MS = 4000;
+
+    private void checkReadables() {
+        var hitBox = player1.getHitBox();
+        Readable in = null;
+        for (Readable r : levelLoader.getReadables()) {
+            if (r.intersects(hitBox)) {
+                in = r;
+                break;
+            }
+        }
+        playerInReadableZone = in;
+    }
+
+    /** The readable zone the player is in (for "Press E to read" hint). Null if not in one or a read dialog is already open. */
+    public Readable getCurrentReadableZone() { return showingReadable != null ? null : playerInReadableZone; }
+    /** The readable whose text is currently shown; null if none. */
+    public Readable getShowingReadable() { return showingReadable; }
+    /** Open the read dialog for the zone the player is in. No-op if not in a zone. Auto-closes after READABLE_DURATION_MS. */
+    public void tryRead() {
+        if (showWidowFrame) return;
+        if (playerInReadableZone != null) {
+            showingReadable = playerInReadableZone;
+            showingReadableUntil = System.currentTimeMillis() + READABLE_DURATION_MS;
+        }
+    }
+    /** Close the read dialog. */
+    public void closeReadable() { showingReadable = null; }
+
     private void entitiesUpdates() {
         player1.update();
         for (int i = 0; i < enemy.length; i++)
@@ -508,6 +649,9 @@ public class Game {
         npcMemory.clear();
         encounterState.clearConversation();
         lastEncounterMessage = null;
+        garyMessage = null;
+        phoneOpen = false;
+        lastGaryMessage = "Your Q3 soul acquisition numbers are disappointing. We expect better. — Gary";
         pendingEncounterOutcome = 0;
         currentNpcId = null;
         playerInTriggerNpcId = null;

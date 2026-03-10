@@ -87,15 +87,46 @@ public class Playing extends State implements Statemethods {
             }
             return;
         }
+        if ((keyCode == KeyEvent.VK_E || keyCode == KeyEvent.VK_ENTER) && getGame().isGaryMessageVisible()) {
+            getGame().dismissGaryMessage();
+            return;
+        }
+        if ((keyCode == KeyEvent.VK_E || keyCode == KeyEvent.VK_ENTER) && getGame().isPhoneOpen()) {
+            getGame().closePhone();
+            return;
+        }
+        if (keyCode == KeyEvent.VK_P && !getGame().isShowWidowFrame()) {
+            if (getGame().isPhoneOpen()) getGame().closePhone();
+            else getGame().openPhone();
+            return;
+        }
+        if (keyCode == KeyEvent.VK_ESCAPE) {
+            if (getGame().isPhoneOpen()) {
+                getGame().closePhone();
+                return;
+            }
+            if (getGame().getShowingReadable() != null) {
+                getGame().closeReadable();
+                return;
+            }
+            getController().getOptionsMenu().setReturnState(Gamestate.PLAYING);
+            Gamestate.state = Gamestate.OPTIONS;
+        }
+        if (keyCode == KeyEvent.VK_E || keyCode == KeyEvent.VK_ENTER) {
+            if (getGame().getShowingReadable() != null) {
+                getGame().closeReadable();
+                return;
+            }
+            if (keyCode == KeyEvent.VK_E && getGame().getCurrentReadableZone() != null) {
+                getGame().tryRead();
+                return;
+            }
+        }
         if (keyCode == KeyEvent.VK_E) getGame().tryKnockOnDoor();
         if (keyCode == KeyEvent.VK_W) getGame().getPlayer1().setUp(true);
         else if (keyCode == KeyEvent.VK_S) getGame().getPlayer1().setDown(true);
         else if (keyCode == KeyEvent.VK_A) getGame().getPlayer1().setLeft(true);
         else if (keyCode == KeyEvent.VK_D) getGame().getPlayer1().setRight(true);
-        if (keyCode == KeyEvent.VK_ESCAPE) {
-            getController().getOptionsMenu().setReturnState(Gamestate.PLAYING);
-            Gamestate.state = Gamestate.OPTIONS;
-        }
     }
 
     @Override

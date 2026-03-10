@@ -6,6 +6,7 @@ import Model.Game;
 import Model.LevelLoader;
 import Model.Light;
 import Model.NpcProfile;
+import Model.Readable;
 import Model.gamestates.Playing;
 import Model.utilz.LoadSave;
 
@@ -31,6 +32,8 @@ public class PlayingView {
 
     /** Shown above the player when they can knock on a door. */
     private BufferedImage exclamationMarkImage;
+    /** Gary text popup: 32x48 sprite, screen area (7,13)-(24,37). */
+    private BufferedImage phoneSpriteImage;
     /** Night overlay texture in world space; built at downscaled resolution for performance. */
     private BufferedImage nightOverlayTexture;
     private int nightOverlayLevelW = -1;
@@ -78,8 +81,14 @@ public class PlayingView {
             drawSoulsCounter(g, game);
             if (game.isLastEncounterMessageVisible())
                 drawEncounterOutcomeMessage(g, game);
-            if (game.getDoorTriggerNpcId() != null)
+            if (game.getShowingReadable() != null)
+                drawReadDialog(g, game, playing);
+            else if (game.getDoorTriggerNpcId() != null)
                 drawKnockHint(g, game, playing);
+            else if (game.getCurrentReadableZone() != null)
+                drawReadHint(g, game, playing);
+            if (game.isPhoneVisible())
+                drawGaryPhone(g, game);
         } else {
             drawWidowFrame(g, game);
         }
@@ -254,6 +263,169 @@ public class PlayingView {
         int y = displayH - 80;
         g.setColor(new Color(255, 255, 255, 220));
         g.drawString(hint, x, y);
+    }
+
+    /** Shown when the player is in a readable zone (overworld only): exclamation above player, hint at bottom. */
+    private void drawReadHint(Graphics g, Game game, Playing playing) {
+        float zoom = GameController.CAMERA_ZOOM;
+        Model.entities.Player1 player = game.getPlayer1();
+        java.awt.geom.Rectangle2D.Float hitbox = player.getHitBox();
+        float worldX = (float) (hitbox.x + hitbox.width / 2);
+        float worldY = (float) hitbox.y;
+        int screenX = (int) (worldX * zoom) - playing.getXLvlOffset();
+        int screenY = (int) (worldY * zoom) - playing.getYLvlOffset();
+        int iconX = screenX - KNOCK_ICON_SIZE / 2;
+        int iconY = screenY - KNOCK_ICON_OFFSET_ABOVE - KNOCK_ICON_SIZE;
+        if (exclamationMarkImage == null) {
+            try { exclamationMarkImage = LoadSave.GetSpriteAtlas(LoadSave.EXCLAMATION_MARK); } catch (Exception ignored) { }
+        }
+        if (exclamationMarkImage != null)
+            g.drawImage(exclamationMarkImage, iconX, iconY, KNOCK_ICON_SIZE, KNOCK_ICON_SIZE, null);
+        String hint = "Press E to read";
+        g.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        FontMetrics fm = g.getFontMetrics();
+        int tw = fm.stringWidth(hint);
+        g.setColor(new Color(255, 255, 255, 220));
+        g.drawString(hint, (displayW - tw) / 2, displayH - 80);
+    }
+
+    private static final int READ_DIALOG_PAD = 48;
+    private static final int READ_LINE_HEIGHT = 26;
+    private static final int READ_TITLE_FONT_SIZE = 22;
+    private static final int READ_BODY_FONT_SIZE = 18;
+    /** Gap between bottom of text block and player's head (screen px). Text floats above player. */
+    private static final int READ_ABOVE_PLAYER_GAP = 100;
+
+    /** Text only, no background. Drawn above the player's head; auto-dismisses after ~2s. */
+    private void drawReadDialog(Graphics g, Game game, Playing playing) {
+        Readable r = game.getShowingReadable();
+        if (r == null) return;
+        float zoom = GameController.CAMERA_ZOOM;
+        java.awt.geom.Rectangle2D.Float hitbox = game.getPlayer1().getHitBox();
+        float playerCenterX = (float) (hitbox.x + hitbox.width / 2);
+        float playerTopY = (float) hitbox.y;
+        int screenCenterX = (int) (playerCenterX * zoom) - playing.getXLvlOffset();
+        int playerScreenTop = (int) (playerTopY * zoom) - playing.getYLvlOffset();
+        int maxW = displayW - 2 * READ_DIALOG_PAD;
+        g.setFont(new Font("SansSerif", Font.PLAIN, READ_BODY_FONT_SIZE));
+        FontMetrics bodyFm = g.getFontMetrics();
+        List<String> lines = wrapText(r.getText(), maxW, bodyFm);
+        int bodyH = lines.size() * READ_LINE_HEIGHT;
+        int titleH = 0;
+        if (r.getTitle() != null && !r.getTitle().isEmpty()) {
+            g.setFont(new Font("SansSerif", Font.BOLD, READ_TITLE_FONT_SIZE));
+            titleH = g.getFontMetrics().getHeight() + 12;
+        }
+        g.setFont(new Font("SansSerif", Font.PLAIN, READ_BODY_FONT_SIZE));
+        int totalH = titleH + bodyH;
+        int y = playerScreenTop - READ_ABOVE_PLAYER_GAP - totalH;
+        if (r.getTitle() != null && !r.getTitle().isEmpty()) {
+            g.setFont(new Font("SansSerif", Font.BOLD, READ_TITLE_FONT_SIZE));
+            FontMetrics titleFm = g.getFontMetrics();
+            g.setColor(new Color(220, 200, 255));
+            g.drawString(r.getTitle(), screenCenterX - titleFm.stringWidth(r.getTitle()) / 2, y + titleFm.getAscent());
+            y += titleH;
+            g.setFont(new Font("SansSerif", Font.PLAIN, READ_BODY_FONT_SIZE));
+        }
+        g.setColor(new Color(230, 220, 255));
+        for (String line : lines) {
+            int lw = bodyFm.stringWidth(line);
+            g.drawString(line, screenCenterX - lw / 2, y + bodyFm.getAscent());
+            y += READ_LINE_HEIGHT;
+        }
+    }
+
+    private List<String> wrapText(String text, int maxWidth, FontMetrics fm) {
+        List<String> out = new ArrayList<>();
+        if (text == null || text.isEmpty()) return out;
+        String[] paragraphs = text.split("\\n");
+        for (String para : paragraphs) {
+            para = para.trim();
+            if (para.isEmpty()) { out.add(""); continue; }
+            StringBuilder line = new StringBuilder();
+            for (String word : para.split("\\s+")) {
+                String tryLine = line.length() == 0 ? word : line + " " + word;
+                if (fm.stringWidth(tryLine) <= maxWidth) {
+                    line = new StringBuilder(tryLine);
+                } else {
+                    if (line.length() > 0) {
+                        out.add(line.toString());
+                        line = new StringBuilder(word);
+                    } else {
+                        out.add(word);
+                    }
+                }
+            }
+            if (line.length() > 0) out.add(line.toString());
+        }
+        return out;
+    }
+
+    // Phone sprite 32x48; screen area in image: top-left (7,13), bottom-right (24,37) -> 18x25 source px
+    private static final int PHONE_SRC_W = 32;
+    private static final int PHONE_SRC_H = 48;
+    private static final int PHONE_SCREEN_LEFT = 7;
+    private static final int PHONE_SCREEN_TOP = 13;
+    private static final int PHONE_SCREEN_RIGHT = 24;
+    private static final int PHONE_SCREEN_BOTTOM = 37;
+    private static final int PHONE_SCALE = 14;
+    private static final int PHONE_MARGIN = 24;
+    private static final int PHONE_TEXT_FONT_SIZE = 18;
+    private static final int PHONE_LINE_HEIGHT = 22;
+
+    /** GTA V–style: phone at bottom-right, Gary message in the phone screen area. Open with P; dismiss popup or close with E/ENTER/ESC. */
+    private void drawGaryPhone(Graphics g, Game game) {
+        String msg = game.getMessageToShowOnPhone();
+        if (msg == null) return;
+        if (phoneSpriteImage == null) {
+            try { phoneSpriteImage = LoadSave.GetSpriteAtlas(LoadSave.PHONE_SPRITE); } catch (Exception ignored) { }
+        }
+        if (phoneSpriteImage == null) {
+            g.setColor(new Color(220, 200, 255));
+            g.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            g.drawString(msg, displayW - 300, displayH - 80);
+            return;
+        }
+        int phoneW = PHONE_SRC_W * PHONE_SCALE;
+        int phoneH = PHONE_SRC_H * PHONE_SCALE;
+        int phoneX = displayW - phoneW - PHONE_MARGIN;
+        int phoneY = displayH - phoneH - PHONE_MARGIN;
+        g.drawImage(phoneSpriteImage, phoneX, phoneY, phoneW, phoneH, null);
+        float contentLeftF = (float) PHONE_SCREEN_LEFT / PHONE_SRC_W * phoneW;
+        float contentTopF = (float) PHONE_SCREEN_TOP / PHONE_SRC_H * phoneH;
+        float contentWf = (float) (PHONE_SCREEN_RIGHT - PHONE_SCREEN_LEFT + 1) / PHONE_SRC_W * phoneW;
+        float contentHf = (float) (PHONE_SCREEN_BOTTOM - PHONE_SCREEN_TOP + 1) / PHONE_SRC_H * phoneH;
+        int contentX = phoneX + (int) contentLeftF;
+        int contentY = phoneY + (int) contentTopF;
+        int contentW = (int) contentWf;
+        int contentH = (int) contentHf;
+        g.setFont(new Font("SansSerif", Font.PLAIN, PHONE_TEXT_FONT_SIZE));
+        FontMetrics fm = g.getFontMetrics();
+        List<String> lines = wrapText(msg, contentW - 20, fm);
+        int bubblePad = 8;
+        int bubbleW = contentW - 2 * bubblePad;
+        int visibleLines = 0;
+        for (String line : lines) {
+            if (contentY + bubblePad + (visibleLines + 1) * PHONE_LINE_HEIGHT + bubblePad > contentY + contentH) break;
+            visibleLines++;
+        }
+        int bubbleH = visibleLines * PHONE_LINE_HEIGHT + 2 * bubblePad;
+        int bubbleX = contentX + bubblePad;
+        int bubbleY = contentY + bubblePad;
+        g.setColor(new Color(218, 224, 234));
+        g.fillRoundRect(bubbleX, bubbleY, bubbleW, bubbleH, 16, 16);
+        g.setColor(new Color(34, 28, 24));
+        int y = contentY + bubblePad + fm.getAscent();
+        for (String line : lines) {
+            if (y + fm.getDescent() > contentY + contentH - bubblePad) break;
+            g.drawString(line, contentX + bubblePad + 6, y);
+            y += PHONE_LINE_HEIGHT;
+        }
+        g.setColor(new Color(140, 120, 180));
+        g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        FontMetrics hintFm = g.getFontMetrics();
+        String hintStr = "E/ENTER or P to close";
+        g.drawString(hintStr, phoneX + (phoneW - hintFm.stringWidth(hintStr)) / 2, phoneY + phoneH - 8);
     }
 
     /** GTA-style encounter: black background, generic door (16:9), current NPC portrait (9:16) in same spot for all. */

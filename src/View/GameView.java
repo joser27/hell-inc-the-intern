@@ -66,6 +66,22 @@ public class GameView {
 
         Player1 p = game.getPlayer1();
         List<Drawable> drawables = new ArrayList<>();
+        final int tileSizePx = GameController.TILE_SIZE;
+        for (LevelLoader.Decoration dec : levelLoader.getDecorations()) {
+            int sortY = dec.y + tileSizePx;
+            Image tileBottom = levelLoader.getTileImage(dec.gid);
+            if (tileBottom == null) continue;
+            final int decX = dec.x, decY = dec.y;
+            final Image decTileBottom = tileBottom;
+            final Image decTileTop = dec.gidTop != 0 ? levelLoader.getTileImage(dec.gidTop) : null;
+            drawables.add(new Drawable(sortY, () -> {
+                int wobble = game.getDecorationRustleOffsetX(decX, decY);
+                int dx = decX + wobble;
+                g2d.drawImage(decTileBottom, dx, decY, null);
+                if (decTileTop != null)
+                    g2d.drawImage(decTileTop, dx, decY - tileSizePx, null);
+            }));
+        }
         int playerSortY = (int) (p.getHitBox().y + p.getHitBox().height);
         Rectangle2D.Float h = p.getHitBox();
         int sw = Player1.getSpriteDrawWidth();

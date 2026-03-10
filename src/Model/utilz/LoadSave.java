@@ -58,6 +58,8 @@ public class LoadSave {
     public static final String KNOCK_SOUND = "audio/knock.ogg";
     /** Shown above the player when they can knock on a door. */
     public static final String EXCLAMATION_MARK = "exclamationMark.png";
+    /** Gary text popup: 32x48; screen area in image at (7,13) to (24,37). */
+    public static final String PHONE_SPRITE = "phoneSprite.png";
 
     // Player 1 Abilities
     public static final String Death_Surge = "Death_Surge.png";

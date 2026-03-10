@@ -9,19 +9,19 @@
     ],
     "fileStates": {
         "Pixel Kingdom.tsx": {
-            "scaleInDock": 0.5,
+            "scaleInDock": 4,
             "scaleInEditor": 0.75
         },
         "mapTMX.tmx": {
             "scale": 2,
-            "selectedLayer": 8,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 848.25,
-                "y": 670
+                "x": 652,
+                "y": 666.5
             }
         }
     },
-    "last.imagePath": "E:/code/java-2d-engine/demo2DGame/res/paid/Pixel Kingdom - Town Tale",
+    "last.imagePath": "E:/code/java-2d-engine/demo2DGame/res/paid/Pixel Kingdom - Grasslands",
     "map.height": 64,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
@@ -32,6 +32,7 @@
         "mapTMX.tmx"
     ],
     "project": "tiledProject.tiled-project",
+    "property.type": "string",
     "recentFiles": [
         "Pixel Kingdom.tsx",
         "mapTMX.tmx"
