@@ -461,6 +461,7 @@ public class Game {
                 currentlyOverlapping.add(key);
                 if (!playerOverlappingDecorationKeys.contains(key)) {
                     decorationRustleEndTimes.put(key, System.currentTimeMillis() + DECORATION_RUSTLE_DURATION_MS);
+                    SoundPlayer.playRustle();
                 }
             }
         }

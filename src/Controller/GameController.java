@@ -86,6 +86,7 @@ public class GameController {
 
         SoundPlayer.preloadKnock();
         SoundPlayer.preloadSteps();
+        SoundPlayer.preloadRustle();
         gameLoop.startGameLoop();
 
     }

@@ -28,6 +28,11 @@ public final class SoundPlayer {
             "/audio/Steps_dirt-008.wav", "/res/audio/Steps_dirt-008.wav"
     };
 
+    private static final String[] RUSTLE_PATHS = {
+            "audio/rustle.wav", "res/audio/rustle.wav",
+            "/audio/rustle.wav", "/res/audio/rustle.wav"
+    };
+
     /** Menu music (main menu, options, about). */
     private static final String[] MENU_MUSIC_PATHS = {
             "audio/encounterMusic/20 11pm _ Towball's Crossing.wav",
@@ -61,6 +66,11 @@ public final class SoundPlayer {
     private static volatile boolean knockLoading = false;
     private static volatile Clip stepClip = null;
     private static volatile boolean stepLoading = false;
+    private static volatile Clip rustleClip = null;
+    private static volatile boolean rustleLoading = false;
+    /** Minimum ms between rustle plays; prevents noise when stepping through multiple plants. */
+    private static final int RUSTLE_COOLDOWN_MS = 220;
+    private static volatile long lastRustlePlayTime = 0;
 
     private static volatile Clip encounterMusicClip = null;
     private static volatile boolean encounterMusicLoading = false;
@@ -380,6 +390,48 @@ public final class SoundPlayer {
     public static void playStep() {
         Clip c = stepClip;
         if (c == null || !c.isOpen()) return;
+        applyVolumeToClip(c);
+        c.stop();
+        c.setFramePosition(0);
+        c.start();
+    }
+
+    // --- Plant rustle (preloaded one-shot) ---
+
+    /** Call once at startup to preload the rustle clip. */
+    public static void preloadRustle() {
+        if (rustleClip != null || rustleLoading) return;
+        rustleLoading = true;
+        Thread t = new Thread(() -> {
+            try {
+                InputStream in = findResource(RUSTLE_PATHS);
+                if (in == null) {
+                    System.err.println("[Rustle] Preload: resource not found");
+                    return;
+                }
+                in = toMarkResetStream(in);
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+                Clip c = AudioSystem.getClip();
+                c.open(audioIn);
+                rustleClip = c;
+            } catch (Exception e) {
+                System.err.println("[Rustle] Preload failed: " + e);
+            } finally {
+                rustleLoading = false;
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /** Play rustle once (plant stepped on). Cooldown prevents overlapping when stepping through multiple plants. */
+    public static void playRustle() {
+        Clip c = rustleClip;
+        if (c == null || !c.isOpen()) return;
+        long now = System.currentTimeMillis();
+        if (c.isRunning()) return;
+        if (now - lastRustlePlayTime < RUSTLE_COOLDOWN_MS) return;
+        lastRustlePlayTime = now;
         applyVolumeToClip(c);
         c.stop();
         c.setFramePosition(0);
