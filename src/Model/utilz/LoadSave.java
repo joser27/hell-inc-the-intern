@@ -21,6 +21,12 @@ public class LoadSave {
     public static final String INTERN_ATLAS = "characterSprites/boyIntern.png";
     /** Player run sheet: 632x237, 8 cols x 3 rows. Row 0=right, 1=down, 2=up; left = right flipped. */
     public static final String RUN_ATLAS = "characterSprites/run.png";
+    /** Player idle: 316x237, 4 cols x 3 rows. Row 0=right, 1=down, 2=up; left = right flipped. */
+    public static final String IDLE_ATLAS = "paid/Hana Caraka - Base Character/Hana Caraka - Base Character/Basic/idle.png";
+    /** Idle overlay (e.g. hair): same 4x3 layout as idle, drawn on top during idle only. */
+    public static final String IDLE_HAIR_OVERLAY = "paid/Hana Caraka - Base Character/idleFemaleHair.png";
+    /** Run overlay (e.g. hair): same 8x3 layout as run, drawn on top during run only. */
+    public static final String RUN_HAIR_OVERLAY = "paid/Hana Caraka - Base Character/runFemaleHair.png";
     public static final String PISTOL_STATIC_IMG = "GUN_01_[square_frame]_01_V1.00.png";
     public static final String BOMB_EXPLOSION = "Retro Impact Effect Pack 1 A.png";
     public static final String VECTOR_45 = "Vector 45 acp spritesheet - 75 ms per frame.png";
@@ -46,8 +52,12 @@ public class LoadSave {
     /** Main menu: intern/contractor portrait (9:16), GTA-style. */
     public static final String DEMON_PORTRAIT = "demonPortrait3.png";
 
+    /** VFX: firefly spritesheet 64x32, 4 cols x 2 rows (row 0 = simple, row 1 = larger). */
+    public static final String FIREFLY_SHEET = "ELR_FireFlies.png";
     /** Door knock one-shot (res/audio/knock.ogg). */
     public static final String KNOCK_SOUND = "audio/knock.ogg";
+    /** Shown above the player when they can knock on a door. */
+    public static final String EXCLAMATION_MARK = "exclamationMark.png";
 
     // Player 1 Abilities
     public static final String Death_Surge = "Death_Surge.png";

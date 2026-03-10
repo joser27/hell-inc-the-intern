@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 
 import static Model.utilz.Constants.PlayerConstants.*;
 
-/** Player character (Hell Inc. intern) — movement and sprite only. Uses run.png: 632x237, 8 cols x 3 rows. */
+/** Player character (Hell Inc. intern) — idle (idle.png 4x3) and run (run.png 8x3). */
 public class Player1 extends Player {
 
     /** Ticks per animation frame. Lower = faster (Entity default is 20). */
@@ -29,13 +29,27 @@ public class Player1 extends Player {
     private BufferedImage[][] runAnimations;
     private static final int RUN_COLS = 8;
     private static final int RUN_ROWS = 3;
-    /** run.png frame size: 632/8 = 79, 237/3 = 79 */
+    /** run.png frame size: 632/8 = 79, 237/3 = 79. idle.png same frame size 316/4 = 79. */
     private static final int RUN_FRAME_W = 79;
     private static final int RUN_FRAME_H = 79;
+    /** idle.png: 4 cols x 3 rows. Row 0=right, 1=down, 2=up; 4 frames per row. */
+    private static final int IDLE_COLS = 4;
+
+    /** Idle overlay (hair etc.): same 4x3 layout, indexed like idle [0]=down,[1]=up,[2]=left,[3]=right. */
+    private BufferedImage[][] idleOverlayFrames;
+    /** Run overlay (hair etc.): same 8x3 layout, indices 4=down,5=up,6=left,7=right; 8 frames each. */
+    private BufferedImage[][] runOverlayFrames;
 
     /** Run animation has 8 frames; play step when foot hits (frames 0 and 4). */
     private static final int[] STEP_ANIMATION_FRAMES = { 0, 4 };
     private int lastStepAniIndex = -1;
+    /** Idle has 4 frames vs run 8; use 2x tick duration so one full idle cycle = one full run cycle. */
+    private static final int IDLE_SPEED_MULTIPLIER = 2;
+
+    @Override
+    protected int getEffectiveAniSpeed() {
+        return IDLE.equals(playerAction) ? aniSpeed * IDLE_SPEED_MULTIPLIER : aniSpeed;
+    }
 
     public static int getSpriteDrawWidth() { return SPRITE_DRAW_W; }
     public static int getSpriteDrawHeight() { return SPRITE_DRAW_H; }
@@ -47,21 +61,55 @@ public class Player1 extends Player {
     }
 
     private void loadRunSprites() {
-        BufferedImage atlas = LoadSave.GetSpriteAtlas(LoadSave.RUN_ATLAS);
+        BufferedImage runAtlas = LoadSave.GetSpriteAtlas(LoadSave.RUN_ATLAS);
+        BufferedImage idleAtlas = LoadSave.GetSpriteAtlas(LoadSave.IDLE_ATLAS);
         int drawW = SPRITE_DRAW_W;
         int drawH = SPRITE_DRAW_H;
         runAnimations = new BufferedImage[8][];
 
-        // Idle: first frame of each direction (single frame)
-        runAnimations[0] = scaleFrame(atlas, drawW, drawH, 1, 0); // idle down = r1c0
-        runAnimations[1] = scaleFrame(atlas, drawW, drawH, 2, 0); // idle up = r2c0
-        runAnimations[2] = scaleFrameFlipped(atlas, drawW, drawH, 0, 0); // idle left = r0c0 flipped
-        runAnimations[3] = scaleFrame(atlas, drawW, drawH, 0, 0); // idle right = r0c0
-        // Run: 8 frames each
-        runAnimations[4] = extractRow(atlas, drawW, drawH, 1, 8); // run down r1c0-c7
-        runAnimations[5] = extractRow(atlas, drawW, drawH, 2, 8); // run up r2c0-c7
-        runAnimations[6] = extractRowFlipped(atlas, drawW, drawH, 0, 8); // run left = run right flipped
-        runAnimations[7] = extractRow(atlas, drawW, drawH, 0, 8); // run right r0c0-c7
+        // Idle: 4 frames per direction from idle.png (row 0=right, 1=down, 2=up; left = right flipped)
+        runAnimations[0] = extractIdleRow(idleAtlas, drawW, drawH, 1); // idle down R1C0-R1C3
+        runAnimations[1] = extractIdleRow(idleAtlas, drawW, drawH, 2); // idle up R2C0-R2C3
+        runAnimations[2] = extractIdleRowFlipped(idleAtlas, drawW, drawH, 0); // idle left = right flipped
+        runAnimations[3] = extractIdleRow(idleAtlas, drawW, drawH, 0); // idle right R0C0-R0C3
+        // Run: 8 frames each from run.png
+        runAnimations[4] = extractRow(runAtlas, drawW, drawH, 1, 8); // run down r1c0-c7
+        runAnimations[5] = extractRow(runAtlas, drawW, drawH, 2, 8); // run up r2c0-c7
+        runAnimations[6] = extractRowFlipped(runAtlas, drawW, drawH, 0, 8); // run left = run right flipped
+        runAnimations[7] = extractRow(runAtlas, drawW, drawH, 0, 8); // run right r0c0-c7
+
+        // Idle overlay (hair): same 4x3 layout as idle, drawn on top during idle only
+        try {
+            BufferedImage hairAtlas = LoadSave.GetSpriteAtlas(LoadSave.IDLE_HAIR_OVERLAY);
+            idleOverlayFrames = new BufferedImage[4][];
+            idleOverlayFrames[0] = extractIdleRow(hairAtlas, drawW, drawH, 1); // down
+            idleOverlayFrames[1] = extractIdleRow(hairAtlas, drawW, drawH, 2); // up
+            idleOverlayFrames[2] = extractIdleRowFlipped(hairAtlas, drawW, drawH, 0); // left
+            idleOverlayFrames[3] = extractIdleRow(hairAtlas, drawW, drawH, 0); // right
+        } catch (Exception ignored) {
+            idleOverlayFrames = null;
+        }
+
+        // Run overlay (hair): same 8x3 layout as run, drawn on top during run only
+        try {
+            BufferedImage runHairAtlas = LoadSave.GetSpriteAtlas(LoadSave.RUN_HAIR_OVERLAY);
+            runOverlayFrames = new BufferedImage[8][];
+            runOverlayFrames[4] = extractRow(runHairAtlas, drawW, drawH, 1, 8); // run down
+            runOverlayFrames[5] = extractRow(runHairAtlas, drawW, drawH, 2, 8); // run up
+            runOverlayFrames[6] = extractRowFlipped(runHairAtlas, drawW, drawH, 0, 8); // run left
+            runOverlayFrames[7] = extractRow(runHairAtlas, drawW, drawH, 0, 8); // run right
+        } catch (Exception ignored) {
+            runOverlayFrames = null;
+        }
+    }
+
+    /** Idle sheet is 4 cols; frame size 79x79 (same as run). */
+    private BufferedImage[] extractIdleRow(BufferedImage atlas, int drawW, int drawH, int row) {
+        return extractRow(atlas, drawW, drawH, row, IDLE_COLS);
+    }
+
+    private BufferedImage[] extractIdleRowFlipped(BufferedImage atlas, int drawW, int drawH, int row) {
+        return extractRowFlipped(atlas, drawW, drawH, row, IDLE_COLS);
     }
 
     private BufferedImage[] scaleFrame(BufferedImage atlas, int drawW, int drawH, int row, int col) {
@@ -219,5 +267,33 @@ public class Player1 extends Player {
         if (frames == null || frames.length == 0) return null;
         int idx = getAniIndex() % frames.length;
         return frames[idx];
+    }
+
+    /** Overlay (e.g. hair) drawn on top of the player during idle only; same frame and direction as idle. Null when not idle or no overlay loaded. */
+    public BufferedImage getCurrentIdleOverlaySprite() {
+        if (!IDLE.equals(playerAction) || idleOverlayFrames == null) return null;
+        int type = getRunAnimationType();
+        if (type < 0 || type >= idleOverlayFrames.length) return null;
+        BufferedImage[] frames = idleOverlayFrames[type];
+        if (frames == null || frames.length == 0) return null;
+        int idx = getAniIndex() % frames.length;
+        return frames[idx];
+    }
+
+    /** Overlay (e.g. hair) drawn on top of the player during run only; same frame and direction as run. Null when not running or no overlay loaded. */
+    public BufferedImage getCurrentRunOverlaySprite() {
+        if (runOverlayFrames == null) return null;
+        int type = getRunAnimationType();
+        if (type < 4 || type >= runOverlayFrames.length) return null;
+        BufferedImage[] frames = runOverlayFrames[type];
+        if (frames == null || frames.length == 0) return null;
+        int idx = getAniIndex() % frames.length;
+        return frames[idx];
+    }
+
+    /** Idle or run overlay, whichever applies; null when moving with no run overlay or no overlay loaded. */
+    public BufferedImage getCurrentOverlaySprite() {
+        if (IDLE.equals(playerAction)) return getCurrentIdleOverlaySprite();
+        return getCurrentRunOverlaySprite();
     }
 }

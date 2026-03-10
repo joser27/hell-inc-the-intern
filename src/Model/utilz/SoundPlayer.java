@@ -4,6 +4,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -138,6 +140,7 @@ public final class SoundPlayer {
             try {
                 InputStream in = findResource(MENU_MUSIC_PATHS);
                 if (in == null) return;
+                in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
@@ -186,6 +189,7 @@ public final class SoundPlayer {
                     System.err.println("[Night ambience] Resource not found");
                     return;
                 }
+                in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
@@ -232,6 +236,7 @@ public final class SoundPlayer {
                     System.err.println("[Encounter music] Resource not found: " + file);
                     return;
                 }
+                in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
@@ -315,6 +320,7 @@ public final class SoundPlayer {
                     System.err.println("[Knock] Preload: resource not found");
                     return;
                 }
+                in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
@@ -355,6 +361,7 @@ public final class SoundPlayer {
                     System.err.println("[Steps] Preload: resource not found");
                     return;
                 }
+                in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
@@ -380,6 +387,13 @@ public final class SoundPlayer {
     }
 
     // --- Util ---
+
+    /** Copy stream into memory so it supports mark/reset — required by Java Sound when loading from JAR. */
+    private static InputStream toMarkResetStream(InputStream in) throws IOException {
+        byte[] buf = in.readAllBytes();
+        in.close();
+        return new ByteArrayInputStream(buf);
+    }
 
     private static InputStream findResource(String[] paths) {
         for (String path : paths) {

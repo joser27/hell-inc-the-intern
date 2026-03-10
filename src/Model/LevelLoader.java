@@ -46,6 +46,8 @@ public class LevelLoader {
     private final List<Light> lights = new ArrayList<>();
     /** Collision rectangles from objectgroup "collision" (game pixels). Merged into world[][] with tile-layer collision. */
     private final List<Rectangle> collisionObjects = new ArrayList<>();
+    /** VFX spawn points from objectgroup "vfx" with effect=firefly (x,y in game pixels). */
+    private final List<float[]> fireflySpawns = new ArrayList<>();
     /** Scaled tile cache: gid -> 48x48 image (or null for empty). */
     private final Map<Integer, Image> tileImageCache = new HashMap<>();
 
@@ -59,12 +61,20 @@ public class LevelLoader {
         }
     }
 
-    /** Tries classpath first, then file from working dir (project root when run from IDE/terminal). */
+    /** Tries classpath first, then file from working dir. In JAR, res/ is at classpath root (no "res/" prefix). */
     private static InputStream openResource(String path) {
         InputStream is = LevelLoader.class.getResourceAsStream("/" + path);
         if (is != null) return is;
         is = LevelLoader.class.getClassLoader().getResourceAsStream(path);
         if (is != null) return is;
+        // Maven puts res/ contents at classpath root, so try without "res/" prefix (for JAR / jpackage exe)
+        if (path.startsWith("res/")) {
+            String classpathPath = path.substring(4);
+            is = LevelLoader.class.getResourceAsStream("/" + classpathPath);
+            if (is != null) return is;
+            is = LevelLoader.class.getClassLoader().getResourceAsStream(classpathPath);
+            if (is != null) return is;
+        }
         File f = new File(System.getProperty("user.dir"), path);
         if (f.isFile()) {
             try {
@@ -119,6 +129,7 @@ public class LevelLoader {
         loadTriggers(map);
         loadLights(map);
         loadCollisionObjects(map);
+        loadVfxSpawns(map);
         } finally {
             try { if (is != null) is.close(); } catch (IOException ignored) { }
         }
@@ -185,6 +196,38 @@ public class LevelLoader {
                         : Math.max(GameController.TILE_SIZE * 5f, Math.max(tw, th) * 0.5f * scale);
                 if (radius <= 0) radius = GameController.TILE_SIZE * 5f;
                 lights.add(new Light(centerX, centerY, radius));
+            }
+            break;
+        }
+    }
+
+    /** Parse objectgroup "vfx": objects with property effect=firefly; store center (x,y) in game pixels as spawn points. */
+    private void loadVfxSpawns(org.w3c.dom.Element map) {
+        float scale = (float) GameController.TILE_SIZE / tileWidth;
+        var objectGroups = map.getElementsByTagName("objectgroup");
+        for (int g = 0; g < objectGroups.getLength(); g++) {
+            var og = (org.w3c.dom.Element) objectGroups.item(g);
+            if (!"vfx".equals(og.getAttribute("name"))) continue;
+            var objects = og.getElementsByTagName("object");
+            for (int i = 0; i < objects.getLength(); i++) {
+                var obj = (org.w3c.dom.Element) objects.item(i);
+                String effect = null;
+                var propList = obj.getElementsByTagName("property");
+                for (int p = 0; p < propList.getLength(); p++) {
+                    var prop = (org.w3c.dom.Element) propList.item(p);
+                    if ("effect".equals(prop.getAttribute("name"))) {
+                        effect = prop.getAttribute("value");
+                        break;
+                    }
+                }
+                if (!"firefly".equals(effect)) continue;
+                float tx = Float.parseFloat(obj.getAttribute("x"));
+                float ty = Float.parseFloat(obj.getAttribute("y"));
+                float tw = obj.hasAttribute("width") ? Float.parseFloat(obj.getAttribute("width")) : 0;
+                float th = obj.hasAttribute("height") ? Float.parseFloat(obj.getAttribute("height")) : 0;
+                float x = (tx + tw * 0.5f) * scale;
+                float y = (ty + th * 0.5f) * scale;
+                fireflySpawns.add(new float[]{x, y});
             }
             break;
         }
@@ -361,5 +404,10 @@ public class LevelLoader {
     /** Lights from Tiled objectgroup "lights" (center and radius in game pixels). */
     public List<Light> getLights() {
         return Collections.unmodifiableList(lights);
+    }
+
+    /** Firefly spawn points from Tiled objectgroup "vfx" with effect=firefly (x,y in game pixels). */
+    public List<float[]> getFireflySpawns() {
+        return Collections.unmodifiableList(fireflySpawns);
     }
 }

@@ -45,6 +45,9 @@ public abstract class Entity {
     public void initHitBox() {
         hitBox = new Rectangle2D.Float(xPos, yPos,width,height);
     }
+    /** Override in subclass to use a different tick rate per action (e.g. slower idle). Default returns aniSpeed. */
+    protected int getEffectiveAniSpeed() { return aniSpeed; }
+
     /** Exposed for View layer to draw current animation frame. Model does not draw. */
     public int getAniIndex() { return aniIndex; }
     public int getAnimationCol() { return animationCol; }
@@ -75,8 +78,9 @@ public abstract class Entity {
             lastPlayerAction = playerAction;
         }
 
+        int effectiveSpeed = getEffectiveAniSpeed();
         aniTick++;
-        if (aniTick >= aniSpeed) {
+        if (aniTick >= effectiveSpeed) {
             aniTick = 0;
             aniIndex++;
             animationCol = action[0];

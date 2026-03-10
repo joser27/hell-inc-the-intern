@@ -39,3 +39,9 @@ out/
 # Env / API keys (never commit)
 env/
 .env
+
+dist/
+staging/
+
+target/
+out/

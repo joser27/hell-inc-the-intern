@@ -3,10 +3,13 @@ package View;
 import Controller.GameController;
 import Model.Game;
 import Model.LevelLoader;
+import Model.Particle;
 import Model.entities.Player1;
+import Model.utilz.LoadSave;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,6 +29,16 @@ public class GameView {
     }
     /** Nudge sprite down (world pixels) so it lines up with hitbox. Increase if sprite still floats. */
     private static final int SPRITE_OFFSET_Y = 160;
+    /** Firefly sheet: 64x32, 4 cols x 2 rows; frame 16x16. Draw at this size in world (1.5 tiles so they're clearly visible). */
+    private static final int FIREFLY_FRAME_W = 16;
+    private static final int FIREFLY_FRAME_H = 16;
+    private static final int FIREFLY_DRAW_SIZE = 72;
+    private static final int FIREFLY_FRAMES = 4;
+    /** Fraction of lifetime used for fade-in (0 = no fade-in). E.g. 0.15 = fade in over first 15% of life. */
+    private static final float FIREFLY_FADE_IN_FRACTION = 0.0f;
+    /** Fraction of lifetime used for fade-out (0 = no fade-out). E.g. 0.2 = fade out over last 20% of life. */
+    private static final float FIREFLY_FADE_OUT_FRACTION = 0.0f;
+    private BufferedImage fireflySheet;
 
     public void render(Graphics g, Game game, int xLvlOffset, int yLvlOffset) {
         render(g, game, xLvlOffset, yLvlOffset, GameController.GAME_WIDTH, GameController.GAME_HEIGHT);
@@ -60,13 +73,19 @@ public class GameView {
         // Bottom-center of sprite on hitbox; nudge down so art lines up with hitbox (sprite has empty space below feet)
         int sx = (int) (h.x + (h.width - sw) / 2f);
         int sy = (int) (h.y + h.height - sh) + SPRITE_OFFSET_Y;
-        drawables.add(new Drawable(playerSortY, () ->
-            g2d.drawImage(p.getCurrentSprite(), sx, sy, null)));
+        drawables.add(new Drawable(playerSortY, () -> {
+            g2d.drawImage(p.getCurrentSprite(), sx, sy, null);
+            BufferedImage overlay = p.getCurrentOverlaySprite();
+            if (overlay != null)
+                g2d.drawImage(overlay, sx, sy, null);
+        }));
         Collections.sort(drawables, Comparator.comparingInt(d -> d.sortY));
         for (Drawable d : drawables) d.draw.run();
 
         // Draw above_player layer on top of the player (e.g. roof overhangs, tree canopies)
         drawTileLayer(g2d, levelLoader, abovePlayerLayer);
+
+        drawFireflyParticles(g2d, game);
 
         if (debugHitbox) {
             drawDebugHitboxes(g2d, game);
@@ -136,6 +155,47 @@ public class GameView {
             g2d.setStroke(new BasicStroke(2f));
             g2d.drawRect((int) h.x, (int) h.y, (int) h.width, (int) h.height);
         }
+    }
+
+    private void drawFireflyParticles(Graphics2D g2d, Game game) {
+        List<Particle> particles = game.getParticles();
+        if (particles.isEmpty()) return;
+        if (fireflySheet == null) {
+            try {
+                fireflySheet = LoadSave.GetSpriteAtlas(LoadSave.FIREFLY_SHEET);
+            } catch (Exception ignored) {
+                return;
+            }
+        }
+        if (fireflySheet == null) return;
+        long nowMs = System.currentTimeMillis();
+        Composite prev = g2d.getComposite();
+        for (Particle p : particles) {
+            int frame = (int) ((nowMs + p.aniOffset) / 200) % FIREFLY_FRAMES;
+            // Fade in at start of life
+            float fadeIn = 1f;
+            if (FIREFLY_FADE_IN_FRACTION > 0f && p.maxLife > 0f) {
+                float lifeFrac = p.life / p.maxLife;
+                if (lifeFrac >= 1f - FIREFLY_FADE_IN_FRACTION)
+                    fadeIn = (1f - lifeFrac) / FIREFLY_FADE_IN_FRACTION;
+            }
+            // Fade out at end of life
+            float fadeOut = 1f;
+            if (FIREFLY_FADE_OUT_FRACTION > 0f && p.maxLife > 0f) {
+                float lifeFrac = p.life / p.maxLife;
+                if (lifeFrac <= FIREFLY_FADE_OUT_FRACTION)
+                    fadeOut = lifeFrac / FIREFLY_FADE_OUT_FRACTION;
+            }
+            float alpha = fadeIn * fadeOut;
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.max(0f, Math.min(1f, alpha))));
+            int sx = frame * FIREFLY_FRAME_W;
+            int sy = p.row * FIREFLY_FRAME_H;
+            g2d.drawImage(fireflySheet,
+                (int) p.x, (int) p.y, (int) p.x + FIREFLY_DRAW_SIZE, (int) p.y + FIREFLY_DRAW_SIZE,
+                sx, sy, sx + FIREFLY_FRAME_W, sy + FIREFLY_FRAME_H,
+                null);
+        }
+        g2d.setComposite(prev != null ? prev : AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
     private static class Drawable {

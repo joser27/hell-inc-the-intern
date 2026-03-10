@@ -42,7 +42,7 @@ public class Constants {
                     return new int[]{0,0,8};
                 }
                 case IDLE -> {
-                    return new int[]{0,0,1};// run.png: idle = first frame of direction
+                    return new int[]{0,0,4};// idle.png: 4 frames per direction (R0C0-R0C3, etc.)
                 }
                 case OGRE_ATTACK_DOWN -> {
                     return new int[]{5,0,4};//COL,ROW,ANIMATION LENGTH

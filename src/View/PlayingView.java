@@ -29,6 +29,8 @@ public class PlayingView {
     private BufferedImage fallbackPortraitImage;
     private final Map<String, BufferedImage> portraitCache = new HashMap<>();
 
+    /** Shown above the player when they can knock on a door. */
+    private BufferedImage exclamationMarkImage;
     /** Night overlay texture in world space; built at downscaled resolution for performance. */
     private BufferedImage nightOverlayTexture;
     private int nightOverlayLevelW = -1;
@@ -76,7 +78,7 @@ public class PlayingView {
             if (game.isLastEncounterMessageVisible())
                 drawEncounterOutcomeMessage(g, game);
             if (game.getDoorTriggerNpcId() != null)
-                drawKnockHint(g);
+                drawKnockHint(g, game, playing);
         } else {
             drawWidowFrame(g, game);
         }
@@ -216,8 +218,33 @@ public class PlayingView {
         g.drawString(msg, x + pad, y + (boxH + fm.getAscent()) / 2 - 2);
     }
 
-    /** Shown when the player is standing at a door (overworld only). */
-    private void drawKnockHint(Graphics g) {
+    /** Icon size (screen pixels) when drawn above the player. */
+    private static final int KNOCK_ICON_SIZE = 80;
+    /** Vertical offset (world pixels) above player hitbox top for the knock icon. */
+    private static final int KNOCK_ICON_OFFSET_ABOVE = 32;
+
+    /** Shown when the player is standing at a door (overworld only): exclamation above player, hint text at bottom. */
+    private void drawKnockHint(Graphics g, Game game, Playing playing) {
+        float zoom = GameController.CAMERA_ZOOM;
+        Model.entities.Player1 player = game.getPlayer1();
+        java.awt.geom.Rectangle2D.Float hitbox = player.getHitBox();
+        // Player top-center in world pixels -> screen position
+        float worldX = (float) (hitbox.x + hitbox.width / 2);
+        float worldY = (float) hitbox.y;
+        int screenX = (int) (worldX * zoom) - playing.getXLvlOffset();
+        int screenY = (int) (worldY * zoom) - playing.getYLvlOffset();
+        int iconX = screenX - KNOCK_ICON_SIZE / 2;
+        int iconY = screenY - KNOCK_ICON_OFFSET_ABOVE - KNOCK_ICON_SIZE;
+
+        if (exclamationMarkImage == null) {
+            try {
+                exclamationMarkImage = LoadSave.GetSpriteAtlas(LoadSave.EXCLAMATION_MARK);
+            } catch (Exception ignored) { }
+        }
+        if (exclamationMarkImage != null) {
+            g.drawImage(exclamationMarkImage, iconX, iconY, KNOCK_ICON_SIZE, KNOCK_ICON_SIZE, null);
+        }
+
         String hint = "Press E to knock";
         g.setFont(new Font("SansSerif", Font.PLAIN, 18));
         FontMetrics fm = g.getFontMetrics();
