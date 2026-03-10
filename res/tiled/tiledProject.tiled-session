@@ -9,15 +9,19 @@
     ],
     "fileStates": {
         "Pixel Kingdom.tsx": {
-            "scaleInDock": 4,
+            "scaleInDock": 0.25,
             "scaleInEditor": 0.75
+        },
+        "Tileset & Objects.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
         },
         "mapTMX.tmx": {
             "scale": 2,
-            "selectedLayer": 1,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 652,
-                "y": 666.5
+                "x": 865,
+                "y": 505
             }
         }
     },
@@ -29,12 +33,14 @@
     "map.width": 64,
     "openFiles": [
         "Pixel Kingdom.tsx",
-        "mapTMX.tmx"
+        "mapTMX.tmx",
+        "Tileset & Objects.tsx"
     ],
     "project": "tiledProject.tiled-project",
     "property.type": "string",
     "recentFiles": [
         "Pixel Kingdom.tsx",
+        "Tileset & Objects.tsx",
         "mapTMX.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
