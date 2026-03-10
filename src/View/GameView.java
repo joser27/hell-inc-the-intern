@@ -85,7 +85,7 @@ public class GameView {
         // Draw above_player layer on top of the player (e.g. roof overhangs, tree canopies)
         drawTileLayer(g2d, levelLoader, abovePlayerLayer);
 
-        drawFireflyParticles(g2d, game);
+        // Fireflies drawn in PlayingView above the night overlay so they are not dimmed
 
         if (debugHitbox) {
             drawDebugHitboxes(g2d, game);
@@ -157,7 +157,8 @@ public class GameView {
         }
     }
 
-    private void drawFireflyParticles(Graphics2D g2d, Game game) {
+    /** Draw fireflies in world space. Call with a Graphics2D that already has camera translate and zoom applied (e.g. after drawing night overlay in PlayingView). */
+    public void drawFireflyParticles(Graphics2D g2d, Game game) {
         List<Particle> particles = game.getParticles();
         if (particles.isEmpty()) return;
         if (fireflySheet == null) {
@@ -169,6 +170,9 @@ public class GameView {
         }
         if (fireflySheet == null) return;
         long nowMs = System.currentTimeMillis();
+        // Use nearest neighbor so scaled sprites stay crisp (PlayingView draws night with bilinear before us).
+        Object prevInterpolation = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         Composite prev = g2d.getComposite();
         for (Particle p : particles) {
             int frame = (int) ((nowMs + p.aniOffset) / 200) % FIREFLY_FRAMES;
@@ -196,6 +200,8 @@ public class GameView {
                 null);
         }
         g2d.setComposite(prev != null ? prev : AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                prevInterpolation != null ? prevInterpolation : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
     }
 
     private static class Drawable {

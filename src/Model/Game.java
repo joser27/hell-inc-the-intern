@@ -82,19 +82,22 @@ public class Game {
 
     /** Firefly (and future VFX) particles. Updated when in overworld; drawn by GameView. */
     private final List<Particle> particles = new ArrayList<>();
-    private int particleSpawnTick;
+    /** One tick counter per Tiled vfx spawn point — each point spawns on its own schedule. */
+    private int[] fireflySpawnTickPerPoint;
 
     /** Firefly lifetime in seconds — tweak these to change how long they last before fading out. */
     private static final float FIREFLY_LIFETIME_MIN_SEC = 4f;
     private static final float FIREFLY_LIFETIME_MAX_SEC = 7f;
     /** How many fireflies to create per vfx spawn point at init. Lower = less dense. */
     private static final int FIREFLY_INITIAL_PER_SPAWN = 1;
-    /** Ticks between adding one new firefly at a random spawn. Higher = less dense over time. */
-    private static final int FIREFLY_SPAWN_INTERVAL_TICKS = 60;
+    /** Ticks between adding one new firefly at each vfx spawn point (per point, not global). Higher = less dense. */
+    private static final int FIREFLY_SPAWN_INTERVAL_TICKS = 120;
+    /** If true, interval is multiplied by number of points so total spawn rate stays similar to a single point. */
+    private static final boolean FIREFLY_SPAWN_INTERVAL_SCALE_WITH_POINT_COUNT = true;
     /** Max random offset (world px) from spawn center when placing a firefly. Higher = more spread. */
-    private static final float FIREFLY_SPREAD_PX = 104f;
+    private static final float FIREFLY_SPREAD_PX = 120f;
     /** Chance (0–1) to use small firefly (row 0). Rest use large firefly (row 1). Higher = more small ones. */
-    private static final float FIREFLY_SMALL_CHANCE = 0.60f;
+    private static final float FIREFLY_SMALL_CHANCE = 0.85f;
 
     public Game() {
         levelLoader = new LevelLoader();
@@ -159,6 +162,27 @@ public class Game {
                 particles.add(spawnFirefly(pt[0], pt[1]));
             }
         }
+        initFireflySpawnCounters(spawns);
+    }
+
+    /** (Re)build per-point spawn counters; stagger so all points don't spawn the same frame. */
+    private void initFireflySpawnCounters(List<float[]> spawns) {
+        int n = spawns.size();
+        if (n == 0) {
+            fireflySpawnTickPerPoint = null;
+            return;
+        }
+        fireflySpawnTickPerPoint = new int[n];
+        int interval = effectiveFireflySpawnIntervalTicks(n);
+        for (int i = 0; i < n; i++)
+            fireflySpawnTickPerPoint[i] = (i * interval / Math.max(1, n)) % Math.max(1, interval);
+    }
+
+    private int effectiveFireflySpawnIntervalTicks(int numPoints) {
+        if (numPoints <= 0) return FIREFLY_SPAWN_INTERVAL_TICKS;
+        if (FIREFLY_SPAWN_INTERVAL_SCALE_WITH_POINT_COUNT)
+            return FIREFLY_SPAWN_INTERVAL_TICKS * numPoints;
+        return FIREFLY_SPAWN_INTERVAL_TICKS;
     }
 
     /** Sine-wave wobble radius (world px) layered on top of the upward drift. */
@@ -189,12 +213,19 @@ public class Game {
             if (p.life <= 0) p.dead = true;
         }
         particles.removeIf(p -> p.dead);
-        particleSpawnTick++;
-        if (particleSpawnTick >= FIREFLY_SPAWN_INTERVAL_TICKS && !levelLoader.getFireflySpawns().isEmpty()) {
-            particleSpawnTick = 0;
-            List<float[]> spawns = levelLoader.getFireflySpawns();
-            float[] pt = spawns.get(ThreadLocalRandom.current().nextInt(spawns.size()));
-            particles.add(spawnFirefly(pt[0], pt[1]));
+        List<float[]> spawns = levelLoader.getFireflySpawns();
+        if (spawns.isEmpty()) return;
+        if (fireflySpawnTickPerPoint == null || fireflySpawnTickPerPoint.length != spawns.size())
+            initFireflySpawnCounters(spawns);
+        int n = spawns.size();
+        int interval = effectiveFireflySpawnIntervalTicks(n);
+        for (int i = 0; i < n; i++) {
+            fireflySpawnTickPerPoint[i]++;
+            if (fireflySpawnTickPerPoint[i] >= interval) {
+                fireflySpawnTickPerPoint[i] = 0;
+                float[] pt = spawns.get(i);
+                particles.add(spawnFirefly(pt[0], pt[1]));
+            }
         }
     }
 

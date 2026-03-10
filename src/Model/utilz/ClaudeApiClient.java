@@ -97,7 +97,7 @@ public class ClaudeApiClient {
         sb.append("{");
         if (useProxy) {
             if (systemPrompt != null && !systemPrompt.isBlank())
-                sb.append("\"systemPrompt\":\"").append(escapeJson(systemPrompt)).append("\",");
+                sb.append("\"system\":\"").append(escapeJson(systemPrompt)).append("\",");
             sb.append("\"messages\":").append(messages);
         } else {
             if (systemPrompt != null && !systemPrompt.isBlank())

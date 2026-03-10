@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Holds state for the first-person door encounter.
- * Conversation lines (Player: ... or NPC display name: ... e.g. Eleanor:, Monty:), current input, loading flag.
+ * Conversation lines (Player: ... or NPC display name: ... e.g. Eleanor:, Casey Ohs:), current input, loading flag.
  * Submits to Claude API off the EDT using the current NPC's system prompt from res/npcs.json.
  * World is timeless/anachronistic — NPCs know about technology and modern life; the town exists outside normal time.
  */
@@ -108,54 +108,50 @@ public class EncounterState {
         return p != null ? p.getDisplayName() : "NPC";
     }
 
-    /** Prepended to every NPC system prompt. Tone is light office comedy (The Office meets Beetlejuice), not horror. */
-    private static final String GLOBAL_ROLEPLAY_PREAMBLE =
-        "You are an NPC in a lighthearted conversation game. Stay in character. Do not break the fourth wall or mention AI, Claude, or the player. The tone is comedy with dark edges — quirky, not scary.\n\n"
-        + "THE DEAL: The visitor is a Hell Inc. intern with a contract. They are trying to get you to SIGN the contract. "
-        + "They will offer you something you want (money, revenge, love, fame, etc.) — that is the pitch. "
-        + "You do NOT know the contract gives your soul to Hell Inc. You think you are signing for whatever they promised. "
-        + "The visitor does not need to mention souls or the fine print. If you agree to sign their contract / take their deal, set dealAccepted to true. "
-        + "If you refuse, get suspicious, or tell them to leave, set slamDoor to true as appropriate.\n\n"
-        + "PERSONALITY TONE: You are a quirky, slightly odd small town resident. You are not hostile by default. "
-        + "You are curious about strangers. You warm up quickly if someone is friendly or funny. "
-        + "You are NOT a gatekeeper — you are a person who genuinely could be convinced. "
-        + "Be a little gullible. Be a little lonely. Be a little bored. Small town life is not exciting.\n\n"
-        + "SIGNING THE DEAL: You do not need much convincing. If the offer sounds good or interesting, sign. "
-        + "You are not a lawyer. You do not read fine print. A reasonable offer that matches what you want is enough. "
-        + "Do not make the player work for 10 messages — 3 to 5 good messages should be enough to close.\n\n"
-        + "RULES:\n"
-        + "- Keep replies short (1 to 4 sentences). Just speak; no action asterisks like *crosses arms*.\n"
-        + "- Do not start your reply with your character's name. Do not repeat the same idea twice.\n"
-        + "- End every reply with exactly this on its own line: {\"dealAccepted\":false,\"slamDoor\":false}\n"
-        + "  Set dealAccepted to true only when you explicitly agree to sign their contract or accept their deal. Set slamDoor to true if you end the conversation or tell them to leave.\n\n"
-        + "Character instructions:\n\n";
+    /** Character identity block — placed FIRST so the model anchors on personality before reading rules. */
+    private static final String CHARACTER_HEADER =
+        "WHO YOU ARE (this is your identity — stay in character at all times, matching this personality and tone exactly):\n\n";
 
-    /** English-level instruction injected so NPC speech matches their class (simple → formal/archaic). */
+    /** Game rules — placed AFTER the character so personality is already established. */
+    private static final String GAME_RULES =
+        "\n\n--- GAME RULES (follow these, but never break character to do so) ---\n\n"
+        + "You are in a conversation game. Do not break the fourth wall or mention AI.\n\n"
+        + "THE TOWN: You live in a small town. You know of the other residents and neighbors (e.g. Eleanor, Gerald, Caseoh, Aldous, Marta, Lord Vane, Father Creed). If the visitor asks about someone in town, you know of them — react in character. Never claim you don't know a fellow resident.\n\n"
+        + "THE DEAL: The visitor is a Hell Inc. intern with a contract. They want you to SIGN it. "
+        + "They will offer you something you want — that is the pitch. "
+        + "You do NOT know the contract gives your soul to Hell Inc. You think you are signing for whatever they promised. "
+        + "If you agree to sign, set dealAccepted to true. If you refuse or tell them to leave, set slamDoor to true.\n\n"
+        + "SIGNING: You do not need much convincing. If the offer sounds good, sign. "
+        + "You are not a lawyer. A reasonable offer that matches what you want is enough. "
+        + "3 to 5 good messages should be enough to close.\n\n"
+        + "CONVERSATION: Be interesting to talk to. Volunteer thoughts, opinions, tangents that fit your character. "
+        + "React to what the visitor said, then add something of your own. Keep the conversation alive.\n\n"
+        + "It is nighttime; the visitor has come in the evening. Do not fixate on or complain about the time.\n\n"
+        + "FORMAT:\n"
+        + "- Spoken dialogue in your character's voice and tone. No stage directions or asterisk actions unless your character uses them (e.g. sound effects).\n"
+        + "- A few sentences to a short paragraph, maximum 4 sentences. Do not start with your name.\n"
+        + "- End every reply with exactly this on its own line: {\"dealAccepted\":false,\"slamDoor\":false}\n";
+
+    /** English-level instruction injected so NPC speech matches their class. */
     private static String languageInstructionFor(String englishLevel) {
         if (englishLevel == null) englishLevel = "conversational";
         return switch (englishLevel.toLowerCase()) {
-            case "simple" -> "LANGUAGE: Use only simple, everyday English. Short sentences. Common words. No fancy or formal words. Like talking to a friend who prefers plain talk.\n\n";
-            case "formal" -> "LANGUAGE: Use clear, formal English. Precise words. Polite but professional. No slang.\n\n";
-            case "archaic" -> "LANGUAGE: Use formal, slightly old-fashioned or archaic English. Measured and dignified. Vocabulary that sounds like an older, high-status person.\n\n";
-            default -> "LANGUAGE: Use natural, conversational English. How people actually talk. Some slang is fine if it fits the character.\n\n";
+            case "simple" -> "\nLANGUAGE: Simple everyday English. Short sentences. Common words.\n";
+            case "formal" -> "\nLANGUAGE: Clear, formal English. Precise words. No slang.\n";
+            case "archaic" -> "\nLANGUAGE: Formal, slightly old-fashioned English. Measured and dignified.\n";
+            default -> "";
         };
     }
 
-    /** Time-of-day context: night, dark outside. Some NPCs know ~8pm, others just that it's night. */
-    private static final String TIME_OF_DAY =
-        "TIME OF DAY: It is nighttime. It is dark outside; the visitor has come to the door in the evening. "
-        + "The exact time is around 8pm — some characters are aware of the time, others simply notice that it's night and a bit late for a stranger to call. "
-        + "Let this affect how you react (e.g. surprise at the hour, remark on the dark, or not caring about the clock).\n\n";
-
-    /** Build the full system prompt (preamble + name + language + time + NPC prompt + memory). */
+    /** Build the full system prompt: character FIRST, then game rules, then language + memory. */
     private String buildSystemPrompt() {
         Model.NpcProfile profile = game.getCurrentNpcProfile();
         String npcSystemPrompt = profile != null ? profile.getSystemPrompt() : "";
         String nameLine = (profile != null && !profile.getDisplayName().isEmpty())
-                ? "Your name is " + profile.getDisplayName() + ". When the visitor asks your name, give this name only.\n\n"
+                ? "Your name is " + profile.getDisplayName() + ".\n"
                 : "";
         String langLine = profile != null ? languageInstructionFor(profile.getEnglishLevel()) : "";
-        String systemPrompt = GLOBAL_ROLEPLAY_PREAMBLE + nameLine + langLine + TIME_OF_DAY + npcSystemPrompt;
+        String systemPrompt = CHARACTER_HEADER + nameLine + npcSystemPrompt + GAME_RULES + langLine;
         List<String> memory = game.getNpcMemory(game.getCurrentNpcId());
         if (!memory.isEmpty()) {
             StringBuilder memBlock = new StringBuilder(

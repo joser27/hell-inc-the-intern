@@ -69,6 +69,7 @@ public class PlayingView {
             g2.scale(GameController.CAMERA_ZOOM, GameController.CAMERA_ZOOM);
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2.drawImage(nightOverlayTexture, 0, 0, nightOverlayLevelW, nightOverlayLevelH, null);
+            gameView.drawFireflyParticles(g2, game);
             g2.setTransform(saveTransform);
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                     saveInterpolation != null ? saveInterpolation : RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);

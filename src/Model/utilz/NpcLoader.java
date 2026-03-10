@@ -18,17 +18,11 @@ import java.util.regex.Pattern;
  */
 public class NpcLoader {
     private static final String NPC_JSON_PATH = "npcs.json";
-    private static List<NpcProfile> cache;
-
+    /** No cache: npcs.json is re-read when needed so edits (e.g. systemPrompt) are picked up without restarting the game. */
     public static List<NpcProfile> load() {
-        if (cache != null) return cache;
         String json = readResource();
-        if (json == null || json.isBlank()) {
-            cache = List.of();
-            return cache;
-        }
-        cache = parseNpcs(json);
-        return cache;
+        if (json == null || json.isBlank()) return List.of();
+        return parseNpcs(json);
     }
 
     public static NpcProfile getById(String npcId) {
@@ -124,10 +118,11 @@ public class NpcLoader {
 
     /** Parses "key": ["a", "b", "c"] into a list of strings. */
     private static List<String> extractStringArray(String block, String key) {
-        String prefix = "\"" + key + "\"\\s*:\\s*\\[";
-        int idx = block.indexOf(prefix);
-        if (idx < 0) return List.of();
-        int start = block.indexOf("[", idx) + 1;
+        String keyStr = "\"" + key + "\"";
+        int keyIdx = block.indexOf(keyStr);
+        if (keyIdx < 0) return List.of();
+        int start = block.indexOf("[", keyIdx + keyStr.length()) + 1;
+        if (start == 0) return List.of();
         int depth = 1;
         int end = start;
         for (int i = start; i < block.length(); i++) {
@@ -156,10 +151,14 @@ public class NpcLoader {
     }
 
     private static String extractStringLong(String block, String key) {
-        String prefix = "\"" + key + "\"\\s*:\\s*\"";
-        int idx = block.indexOf(prefix);
-        if (idx < 0) return null;
-        int start = idx + prefix.length();
+        String keyStr = "\"" + key + "\"";
+        int keyIdx = block.indexOf(keyStr);
+        if (keyIdx < 0) return null;
+        int colonIdx = block.indexOf(':', keyIdx + keyStr.length());
+        if (colonIdx < 0) return null;
+        int quoteIdx = block.indexOf('"', colonIdx + 1);
+        if (quoteIdx < 0) return null;
+        int start = quoteIdx + 1;
         StringBuilder sb = new StringBuilder();
         for (int i = start; i < block.length(); i++) {
             char c = block.charAt(i);
@@ -168,6 +167,8 @@ public class NpcLoader {
                 if (next == '"') { sb.append('"'); i++; continue; }
                 if (next == '\\') { sb.append('\\'); i++; continue; }
                 if (next == 'n') { sb.append('\n'); i++; continue; }
+                if (next == 'r') { sb.append('\r'); i++; continue; }
+                if (next == 't') { sb.append('\t'); i++; continue; }
             }
             if (c == '"') break;
             sb.append(c);

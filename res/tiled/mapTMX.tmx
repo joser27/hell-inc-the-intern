@@ -561,7 +561,7 @@
   <object id="6" x="785.833" y="491.583" width="32" height="22.25">
    <properties>
     <property name="npc_id" value="slacker"/>
-    <property name="npc_name" value="Monty Briggs"/>
+    <property name="npc_name" value="Casey Ohs"/>
    </properties>
   </object>
   <object id="7" x="449.94" y="551.182" width="31" height="23.8182">
@@ -723,19 +723,7 @@
   </object>
  </objectgroup>
  <objectgroup id="13" name="vfx">
-  <object id="57" x="740.667" y="580">
-   <properties>
-    <property name="effect" value="firefly"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="58" x="703.333" y="813.333">
-   <properties>
-    <property name="effect" value="firefly"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="59" x="381" y="433.333">
+  <object id="58" x="641.667" y="879.333">
    <properties>
     <property name="effect" value="firefly"/>
    </properties>
