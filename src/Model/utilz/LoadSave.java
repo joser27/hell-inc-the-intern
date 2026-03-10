@@ -50,7 +50,7 @@ public class LoadSave {
     /** Main menu background — GTA-style frame/scene. */
     public static final String MENU_BACKGROUND = "menuBackground.png";
     /** Main menu: intern/contractor portrait (9:16), GTA-style. */
-    public static final String DEMON_PORTRAIT = "demonPortrait3.png";
+    public static final String DEMON_PORTRAIT = "demonPortrait.png";
 
     /** VFX: firefly spritesheet 64x32, 4 cols x 2 rows (row 0 = simple, row 1 = larger). */
     public static final String FIREFLY_SHEET = "ELR_FireFlies.png";

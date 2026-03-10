@@ -92,6 +92,20 @@ public class GameView {
         }
 
         g2d.dispose();
+
+        // Debug: player coordinates in screen space (world pixels)
+        if (debugHitbox) {
+            Rectangle2D.Float hitBox = game.getPlayer1().getHitBox();
+            int px = (int) hitBox.x;
+            int py = (int) hitBox.y;
+            int tileSize = GameController.TILE_SIZE;
+            int tileX = px / tileSize;
+            int tileY = py / tileSize;
+            g.setColor(Color.WHITE);
+            g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+            g.drawString("Player: " + px + ", " + py + " px", 10, 22);
+            g.drawString("Tile: " + tileX + ", " + tileY, 10, 38);
+        }
     }
 
     private void drawTileLayer(Graphics2D g2d, LevelLoader levelLoader, String layerName) {

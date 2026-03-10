@@ -102,7 +102,7 @@ public class Game {
     public Game() {
         levelLoader = new LevelLoader();
         world = levelLoader.getWorld();
-        player1 = new Player1(50 * GameController.TILE_SIZE, 40 * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, this);
+        player1 = new Player1(41 * GameController.TILE_SIZE, 43 * GameController.TILE_SIZE, 6 * GameController.SCALE, 8 * GameController.SCALE, this);
         players = new Player[]{player1};
         walls = new Wall[0];  // Level collision from Tiled solid layer (tile map), not Wall entities
         enemy = new Enemy[0];
