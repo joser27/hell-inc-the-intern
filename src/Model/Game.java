@@ -40,8 +40,8 @@ public class Game {
     /** Total souls collected across all assignments (for Endless scoring). */
     private int totalSouls = 0;
 
-    /** Campaign: 8 souls to win. */
-    private static final int ASSIGNMENT_QUOTA = 8;
+    /** Campaign: 7 souls to win. */
+    private static final int ASSIGNMENT_QUOTA = 7;
     /** Endless: first assignment quota, then doubles each time (1 → 2 → 4 → 8...). */
     private static final int ENDLESS_START_QUOTA = 1;
     /** Current soul quota for this assignment. */

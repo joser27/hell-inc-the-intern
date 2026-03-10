@@ -14,7 +14,7 @@ public class ModeSelectView {
     private static final String TITLE = "Choose Your Assignment";
     private static final String[] BUTTON_LABELS = { "Campaign", "Endless", "How to Play", "Back" };
     private static final String[] BUTTON_DESCS = {
-            "One assignment: 8 souls. Get them before suspicion hits 100%.",
+            "One assignment: 7 souls. Get them before suspicion hits 100%.",
             "Endless assignments. Quota rises each time. How long can you last?",
             "",
             ""
