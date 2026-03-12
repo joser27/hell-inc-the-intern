@@ -20,6 +20,8 @@ public class ClaudeApiClient {
     /** Cheapest: claude-haiku-4-5-20251001. Better quality: claude-sonnet-4-20250514 */
     private static final String MODEL = "claude-haiku-4-5-20251001";
     private static final String ANTHROPIC_VERSION = "2023-06-01";
+    /** Cap reply length so NPCs stay concise (roughly 2–4 short sentences). */
+    private static final int MAX_RESPONSE_TOKENS = 256;
 
     private final String apiUrl;
     private final String apiKey;
@@ -98,12 +100,13 @@ public class ClaudeApiClient {
         if (useProxy) {
             if (systemPrompt != null && !systemPrompt.isBlank())
                 sb.append("\"system\":\"").append(escapeJson(systemPrompt)).append("\",");
+            sb.append("\"max_tokens\":").append(MAX_RESPONSE_TOKENS).append(",");
             sb.append("\"messages\":").append(messages);
         } else {
             if (systemPrompt != null && !systemPrompt.isBlank())
                 sb.append("\"system\":\"").append(escapeJson(systemPrompt)).append("\",");
             sb.append("\"model\":\"").append(MODEL).append("\",");
-            sb.append("\"max_tokens\":1024,");
+            sb.append("\"max_tokens\":").append(MAX_RESPONSE_TOKENS).append(",");
             sb.append("\"messages\":").append(messages);
         }
         sb.append("}");

@@ -13,8 +13,14 @@ import java.util.concurrent.Executors;
  * Conversation lines (Player: ... or NPC display name: ... e.g. Eleanor:, Casey Ohs:), current input, loading flag.
  * Submits to Claude API off the EDT using the current NPC's system prompt from res/npcs.json.
  * World is timeless/anachronistic — NPCs know about technology and modern life; the town exists outside normal time.
+ * Conversation history is capped to avoid OOM from unbounded growth (see MAX_LINES and MAX_MESSAGES_FOR_API).
  */
 public class EncounterState {
+    /** Max lines kept in memory (and shown in UI). Prevents OOM from very long single encounters. */
+    private static final int MAX_LINES = 200;
+    /** Max user+assistant message pairs sent to the API per request (keeps request body and token usage bounded). */
+    private static final int MAX_MESSAGES_FOR_API = 30;
+
     private final Game game;
     private final List<String> lines = new ArrayList<>();  // "Player: ..." or "NPC name: ..."
     private final StringBuilder inputLine = new StringBuilder();
@@ -73,6 +79,7 @@ public class EncounterState {
         clearInput();
         lastError = null;
         lines.add("Player: " + text);
+        trimLinesToMax();
         resetScroll();
 
         loading = true;
@@ -86,6 +93,7 @@ public class EncounterState {
                     String displayName = getNpcDisplayName();
                     if (!outcome.replyText.isEmpty()) {
                         lines.add(displayName + ": " + outcome.replyText);
+                        trimLinesToMax();
                         resetScroll();
                     }
                     loading = false;
@@ -124,12 +132,11 @@ public class EncounterState {
         + "SIGNING: You do not need much convincing. If the offer sounds good, sign. "
         + "You are not a lawyer. A reasonable offer that matches what you want is enough. "
         + "3 to 5 good messages should be enough to close.\n\n"
-        + "CONVERSATION: Be interesting to talk to. Volunteer thoughts, opinions, tangents that fit your character. "
-        + "React to what the visitor said, then add something of your own. Keep the conversation alive.\n\n"
+        + "CONVERSATION: Be interesting but brief. React to what the visitor said, then add one short thought of your own. Keep the conversation moving.\n\n"
         + "It is nighttime; the visitor has come in the evening. Do not fixate on or complain about the time.\n\n"
         + "FORMAT:\n"
-        + "- Spoken dialogue in your character's voice and tone. No stage directions or asterisk actions unless your character uses them (e.g. sound effects).\n"
-        + "- A few sentences to a short paragraph, maximum 4 sentences. Do not start with your name.\n"
+        + "- Spoken dialogue only. No stage directions or asterisk actions unless your character uses them (e.g. sound effects).\n"
+        + "- Keep replies SHORT: 1 to 3 sentences only. No long paragraphs or monologues. Do not start with your name.\n"
         + "- End every reply with exactly this on its own line: {\"dealAccepted\":false,\"slamDoor\":false}\n";
 
     /** English-level instruction injected so NPC speech matches their class. */
@@ -178,6 +185,7 @@ public class EncounterState {
                 SwingUtilities.invokeLater(() -> {
                     if (!replyText.isEmpty()) {
                         lines.add(getNpcDisplayName() + ": " + replyText);
+                        trimLinesToMax();
                         resetScroll();
                     }
                     loading = false;
@@ -192,7 +200,14 @@ public class EncounterState {
         });
     }
 
-    /** Build messages from lines and call Claude with current NPC's system prompt. */
+    /** Keep only the most recent MAX_LINES to avoid unbounded memory growth. */
+    private void trimLinesToMax() {
+        while (lines.size() > MAX_LINES) {
+            lines.remove(0);
+        }
+    }
+
+    /** Build messages from lines and call Claude with current NPC's system prompt. Only the last MAX_MESSAGES_FOR_API pairs are sent to limit request size and tokens. */
     private String sendConversationToClaude() throws Exception {
         String systemPrompt = buildSystemPrompt();
         String npcPrefix = getNpcDisplayName() + ": ";
@@ -204,6 +219,13 @@ public class EncounterState {
             } else if (line.startsWith(npcPrefix)) {
                 assistantParts.add(line.substring(npcPrefix.length()).trim());
             }
+        }
+        // Send only the last N message pairs to avoid huge request bodies and OOM
+        int pairs = Math.min(userParts.size(), assistantParts.size());
+        if (pairs > MAX_MESSAGES_FOR_API) {
+            int from = pairs - MAX_MESSAGES_FOR_API;
+            userParts = new ArrayList<>(userParts.subList(from, userParts.size()));
+            assistantParts = new ArrayList<>(assistantParts.subList(from, assistantParts.size()));
         }
         return claude.sendConversation(systemPrompt, userParts, assistantParts);
     }

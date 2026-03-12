@@ -4,8 +4,11 @@ package Model;
  * Result of one NPC turn: display text plus whether the deal was accepted or the door was slammed.
  * Claude is instructed to append a JSON line to each reply: {"dealAccepted":bool,"slamDoor":bool}.
  * Parsing strips that line and extracts the two flags so the game can update soul count and close the encounter.
+ * Long replies are truncated for display so NPCs don't dominate the dialogue.
  */
 public class EncounterOutcome {
+    /** Max characters to show for one NPC reply; rest is truncated with "...". */
+    private static final int MAX_DISPLAY_CHARS = 380;
     /** The reply text to show (with any trailing JSON line stripped). */
     public final String replyText;
     /** True if the NPC agreed to the deal (soul sold). */
@@ -52,7 +55,7 @@ public class EncounterOutcome {
         return new EncounterOutcome(text, dealAccepted, slamDoor);
     }
 
-    /** Remove stray ASCII/numbers that sometimes appear in model output (e.g. token counts, "56"). */
+    /** Remove stray junk and truncate long replies for display. */
     private static String cleanReplyText(String text) {
         if (text == null) return "";
         text = text.trim();
@@ -68,6 +71,16 @@ public class EncounterOutcome {
             if (sb.length() > 0) sb.append('\n');
             sb.append(t);
         }
-        return sb.toString().trim();
+        text = sb.toString().trim();
+        // Truncate very long replies so NPCs don't talk too much
+        if (text.length() > MAX_DISPLAY_CHARS) {
+            int cut = MAX_DISPLAY_CHARS;
+            while (cut > 0 && cut < text.length() && !Character.isWhitespace(text.charAt(cut - 1))) {
+                cut--;
+            }
+            if (cut < MAX_DISPLAY_CHARS / 2) cut = MAX_DISPLAY_CHARS;
+            text = text.substring(0, cut).trim() + "...";
+        }
+        return text;
     }
 }

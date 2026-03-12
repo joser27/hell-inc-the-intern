@@ -46,6 +46,9 @@ public class LoadSave {
     /** GTA-style encounter: widow portrait (9:16), slightly larger than door. */
     public static final String WIDOW_PORTRAIT = "widowPortrait.png";
 
+    /** Window and app icon (title bar, taskbar). For exe icon use res/headerLogo.ico when building with jpackage. */
+    public static final String HEADER_LOGO = "headerLogo.png";
+
     /** Main menu background — GTA-style frame/scene. */
     public static final String MENU_BACKGROUND = "menuBackground.png";
     /** Main menu: intern/contractor portrait (9:16), GTA-style. */

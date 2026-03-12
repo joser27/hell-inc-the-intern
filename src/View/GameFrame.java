@@ -1,8 +1,11 @@
 package View;
 
+import Model.utilz.LoadSave;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -12,11 +15,26 @@ public class GameFrame {
     GamePanel gamePanel;
     private boolean fullscreen = false;
     private final Rectangle windowedBounds;
+    private Image windowIcon;
 
     public GameFrame(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         windowedBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        loadWindowIcon();
         initFrame();
+    }
+
+    private void loadWindowIcon() {
+        try {
+            BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.HEADER_LOGO);
+            if (img != null) windowIcon = img;
+        } catch (Exception ignored) {
+            windowIcon = null;
+        }
+    }
+
+    private void applyIconToFrame(JFrame f) {
+        if (windowIcon != null) f.setIconImage(windowIcon);
     }
 
     public void initFrame() {
@@ -27,6 +45,7 @@ public class GameFrame {
         frame.setLocation(windowedBounds.x, windowedBounds.y);
         frame.setUndecorated(false);
         frame.setResizable(true);
+        applyIconToFrame(frame);
         frame.setVisible(true);
     }
 
@@ -48,6 +67,7 @@ public class GameFrame {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setUndecorated(fullscreen);
         frame.add(gamePanel);
+        applyIconToFrame(frame);
         if (fullscreen) {
             frame.setExtendedState(Frame.MAXIMIZED_BOTH);
             frame.setResizable(false);

@@ -19,9 +19,15 @@ if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
 New-Item -ItemType Directory $staging -Force | Out-Null
 Copy-Item "$projectRoot\target\demonic-contractor-1.0-SNAPSHOT.jar" $staging\
 
-# 3. jpackage (with --win-console so errors are visible)
+# 3. jpackage (no --win-console so the .exe launches without a terminal; use Run Demonic Contractor.bat to see errors). For exe icon, add res/headerLogo.ico.
 $dist = "$projectRoot\dist"
 if (Test-Path $dist) { Remove-Item -Recurse -Force $dist }
+$iconArg = @()
+$iconPath = "$projectRoot\res\headerLogo.ico"
+if (Test-Path $iconPath) {
+  $iconArg = @("--icon", $iconPath)
+  Write-Host "Using app icon: $iconPath"
+}
 Write-Host "`n[2/4] Running jpackage..."
 & "$env:JAVA_HOME\bin\jpackage.exe" `
   --input $staging `
@@ -31,7 +37,7 @@ Write-Host "`n[2/4] Running jpackage..."
   --type app-image `
   --dest $dist `
   --java-options "-Xmx512m" `
-  --win-console `
+  @iconArg `
   --jlink-options "--strip-debug --no-man-pages --no-header-files --compress zip-6"
 if ($LASTEXITCODE -ne 0) { throw "jpackage failed" }
 
@@ -48,7 +54,7 @@ if ($cfg -notmatch "win\.norestart") {
 
 # 5. Copy run.bat so users can launch and see errors
 $appDir = "$dist\Demonic Contractor"
-Copy-Item "$PSScriptRoot\Run Demonic Contractor.bat" $appDir\
+Copy-Item "$PSScriptRoot\Dev run Demonic Contractor.bat" $appDir\
 Write-Host "`n[4/4] Copied Run Demonic Contractor.bat"
 
 Remove-Item -Recurse -Force $staging -ErrorAction SilentlyContinue
