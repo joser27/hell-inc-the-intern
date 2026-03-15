@@ -1,14 +1,33 @@
-# demo2DGame
-Practice shortest path algorithm. A*.
+# Hell Inc. — The Intern
 
-2 player game.
+You're a demon intern with a quota of eight souls and a boss named Gary who will not stop emailing you.
 
+No weapons. No combat. Just a clipboard, a town full of people, and the one thing that actually closes deals — finding out what someone *really* wants. Knock on doors. Have real conversations. Get them to sign before the town figures out something is wrong.
 
-**Windows exe (recommended):**  
-`.\packaging\build-windows.ps1` — builds JAR, runs jpackage with launcher fixes, copies `Run Demonic Contractor.bat`. Zip `dist\Demonic Contractor` for itch.io.
+**Every NPC is powered by Claude AI.** There's no script, no magic phrase. You have to listen and pitch — or get a door slammed in your face and a passive-aggressive message from Gary about your close rate.
 
-**Manual:**  
-`mvn clean package`  
-`New-Item -ItemType Directory staging -Force; Copy-Item target\demonic-contractor-1.0-SNAPSHOT.jar staging\`  
-`& "$env:JAVA_HOME\bin\jpackage.exe" --input staging --main-jar demonic-contractor-1.0-SNAPSHOT.jar --name "Demonic Contractor" --app-version 1.0 --type app-image --dest dist --java-options "-Xmx512m" --win-console --jlink-options "--strip-debug --no-man-pages --no-header-files --compress zip-6"`  
-Then add `win.norestart=true` under `[Application]` in `dist\Demonic Contractor\app\Demonic Contractor.cfg` and copy `packaging\Run Demonic Contractor.bat` into `dist\Demonic Contractor\`.
+---
+
+## Play / Download
+
+**[Play on itch.io → https://joser27.itch.io/hell-inc-the-intern](https://joser27.itch.io/hell-inc-the-intern)**
+
+Windows build (zip). If Windows shows "Windows protected your PC," click *More info* → *Run anyway* — normal for unsigned apps.
+
+---
+
+## The residents
+
+Eleanor won't stop mentioning her late husband. Gerald knows everything about everyone. Casey streams and won't stop talking about it. Aldous wants his competitor destroyed. Marta wants her neighbor Agnes to suffer. Cassius was important once. Father Creed doesn't want anything — which is your problem.
+
+**Modes:** Campaign (8 souls to win) or Endless (escalating quotas; see how long you last). The only pressure is suspicion: hit 100% and the town reports you.
+
+**Controls:** WASD to move · E to knock · Type + Enter to talk · Escape to leave
+
+---
+
+## For developers
+
+- **Stack:** Java 17, Maven. NPC dialogue via Claude API (or Lambda proxy). Maps: Tiled (TMX). Profiles: `res/npcs.json`.
+- **Run:** `mvn clean package` then `java -jar target/demonic-contractor-1.0-SNAPSHOT.jar`
+- **Windows build for itch:** `.\packaging\build-windows.ps1` — then zip `dist\Demonic Contractor`. See script for manual jpackage steps.
