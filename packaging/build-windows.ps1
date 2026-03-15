@@ -19,7 +19,7 @@ if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
 New-Item -ItemType Directory $staging -Force | Out-Null
 Copy-Item "$projectRoot\target\demonic-contractor-1.0-SNAPSHOT.jar" $staging\
 
-# 3. jpackage (no --win-console so the .exe launches without a terminal; use Run Demonic Contractor.bat to see errors). For exe icon, add res/headerLogo.ico.
+# 3. jpackage (no --win-console so the .exe launches without a terminal; use Dev run Demonic Contractor.bat to see errors). For exe icon, add res/headerLogo.ico.
 $dist = "$projectRoot\dist"
 if (Test-Path $dist) { Remove-Item -Recurse -Force $dist }
 $iconArg = @()
@@ -52,11 +52,11 @@ if ($cfg -notmatch "win\.norestart") {
   Write-Host "`n[3/4] .cfg already has win.norestart"
 }
 
-# 5. Copy run.bat so users can launch and see errors
+# 5. Copy dev launcher (console stays open so devs can see errors; "Dev" in name so players use the .exe)
 $appDir = "$dist\Demonic Contractor"
 Copy-Item "$PSScriptRoot\Dev run Demonic Contractor.bat" $appDir\
-Write-Host "`n[4/4] Copied Run Demonic Contractor.bat"
+Write-Host "`n[4/4] Copied Dev run Demonic Contractor.bat"
 
 Remove-Item -Recurse -Force $staging -ErrorAction SilentlyContinue
 Write-Host "`nDone. Run: $appDir\Demonic Contractor.exe"
-Write-Host "Or double-click: $appDir\Run Demonic Contractor.bat (shows errors if any)"
+Write-Host "Or for debugging: $appDir\Dev run Demonic Contractor.bat (shows errors if any)"
