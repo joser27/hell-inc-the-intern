@@ -1,4 +1,10 @@
+<p align="center">
+  <img src="https://joser27-portfolio.s3.us-east-1.amazonaws.com/images/pageArt.png" alt="Hell Inc. logo" width="400">
+</p>
+
 # Hell Inc. — The Intern
+
+![Hell Inc. — The Intern](https://joser27-portfolio.s3.us-east-1.amazonaws.com/gifs/hell-inc.gif)
 
 You're a demon intern with a quota of eight souls and a boss named Gary who will not stop emailing you.
 
