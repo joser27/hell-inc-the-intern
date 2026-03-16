@@ -27,27 +27,27 @@ public class LoadMenuView {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, w, h);
 
-        // 2. Menu background image — centered frame, ~52% width like encounter door
+        // 2. Menu background image — centered frame, 70% width
         Image bg = menu.getBackgroundImage();
         if (bg != null) {
-            float frameWidth = w * 0.52f;
+            float frameWidth = w * 0.70f;
             float frameHeight = frameWidth * (9f / 16f);
             int frameX = (int) ((w - frameWidth) / 2);
             int frameY = (int) ((h - frameHeight) / 2);
             g.drawImage(bg, frameX, frameY, (int) frameWidth, (int) frameHeight, null);
         }
 
-        // 3. Demon portrait — 9:16, bottom-anchored, 14% shift right (match encounter)
+        // 3. Demon portrait — 9:16, larger and shifted lower, 14% shift right (match encounter)
         if (demonPortraitImage == null) {
             try {
                 demonPortraitImage = LoadSave.GetSpriteAtlas(LoadSave.DEMON_PORTRAIT);
             } catch (Exception ignored) { }
         }
         if (demonPortraitImage != null) {
-            float portraitHeight = h * 0.88f;
+            float portraitHeight = h * 0.98f;
             float portraitWidth = portraitHeight * (9f / 16f);
             int portraitX = (int) ((w - portraitWidth) / 2 + w * 0.14f);
-            int portraitY = (int) (h - portraitHeight);
+            int portraitY = (int) (h - portraitHeight + h * 0.06f);
             g.drawImage(demonPortraitImage, portraitX, portraitY, (int) portraitWidth, (int) portraitHeight, null);
         }
 

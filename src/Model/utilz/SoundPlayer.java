@@ -1,5 +1,6 @@
 package Model.utilz;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -17,42 +18,46 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class SoundPlayer {
 
     private static final String[] KNOCK_PATHS = {
-            "audio/knock.wav", "audio/knock.ogg",
-            "res/audio/knock.wav", "res/audio/knock.ogg",
-            "/audio/knock.wav", "/audio/knock.ogg",
-            "/res/audio/knock.wav", "/res/audio/knock.ogg"
+            "audio/knock.ogg", "audio/knock.wav",
+            "res/audio/knock.ogg", "res/audio/knock.wav",
+            "/audio/knock.ogg", "/audio/knock.wav",
+            "/res/audio/knock.ogg", "/res/audio/knock.wav"
     };
 
     private static final String[] STEP_PATHS = {
-            "audio/Steps_dirt-008.wav", "res/audio/Steps_dirt-008.wav",
-            "/audio/Steps_dirt-008.wav", "/res/audio/Steps_dirt-008.wav"
+            "audio/Steps_dirt-008.ogg", "res/audio/Steps_dirt-008.ogg",
+            "/audio/Steps_dirt-008.ogg", "/res/audio/Steps_dirt-008.ogg",
+            "audio/Steps_dirt-008.wav", "res/audio/Steps_dirt-008.wav"
     };
 
     private static final String[] RUSTLE_PATHS = {
-            "audio/rustle.wav", "res/audio/rustle.wav",
-            "/audio/rustle.wav", "/res/audio/rustle.wav"
+            "audio/rustle.ogg", "res/audio/rustle.ogg",
+            "/audio/rustle.ogg", "/res/audio/rustle.ogg",
+            "audio/rustle.wav", "res/audio/rustle.wav"
     };
 
-    /** Menu music (main menu, options, about). */
+    /** Menu music (main menu, options, about) — 19 10pm _ Towball's Crossing. */
     private static final String[] MENU_MUSIC_PATHS = {
-            "audio/encounterMusic/20 11pm _ Towball's Crossing.wav",
-            "res/audio/encounterMusic/20 11pm _ Towball's Crossing.wav",
-            "/audio/encounterMusic/20 11pm _ Towball's Crossing.wav",
-            "/res/audio/encounterMusic/20 11pm _ Towball's Crossing.wav"
+            "audio/19-10pm-_-Towball_s-Crossing.ogg", "res/audio/19-10pm-_-Towball_s-Crossing.ogg",
+            "/audio/19-10pm-_-Towball_s-Crossing.ogg", "/res/audio/19-10pm-_-Towball_s-Crossing.ogg",
+            "audio/introMusic.ogg", "res/audio/introMusic.ogg",
+            "/audio/introMusic.ogg", "/res/audio/introMusic.ogg"
     };
 
     private static final String[] NIGHT_AMBIENCE_PATHS = {
-            "audio/nightAmbience.wav", "res/audio/nightAmbience.wav",
-            "/audio/nightAmbience.wav", "/res/audio/nightAmbience.wav"
+            "audio/nightAmbience.ogg", "res/audio/nightAmbience.ogg",
+            "/audio/nightAmbience.ogg", "/res/audio/nightAmbience.ogg",
+            "audio/nightAmbience.wav", "res/audio/nightAmbience.wav"
     };
 
-    /** Encounter music: one track played at random when entering an NPC encounter (WAV). */
+    /** Encounter music: one track played at random when entering an NPC encounter (OGG only — WAVs removed). */
     private static final String[] ENCOUNTER_MUSIC_FILES = {
-            "03 7am _ Towballs Crossing.wav",
-            "07 11am _ Towball's Crossing.wav",
-            "11 3pm _ Towballs Crossing.wav",
-            "25 4am _ Towball's Crossing.wav",
-            "26 5am - Goodbye _ Towball's Crossing.wav"
+            "03 7am _ Towballs Crossing.ogg",
+            "07 11am _ Towballs Crossing.ogg",
+            "11 3pm _ Towballs Crossing.ogg",
+            "25 4am _ Towballs Crossing.ogg",
+            "26-5am-Goodbye-_-Towball_s-Crossing.ogg",
+            "20 11pm _ Towballs Crossing.ogg"
     };
     private static final String[] ENCOUNTER_MUSIC_PATH_PREFIXES = {
             "audio/encounterMusic/", "res/audio/encounterMusic/",
@@ -152,6 +157,7 @@ public final class SoundPlayer {
                 if (in == null) return;
                 in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+                audioIn = toPcmIfNeeded(audioIn);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
                 menuMusicClip = c;
@@ -201,6 +207,7 @@ public final class SoundPlayer {
                 }
                 in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+                audioIn = toPcmIfNeeded(audioIn);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
                 nightAmbienceClip = c;
@@ -248,6 +255,7 @@ public final class SoundPlayer {
                 }
                 in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+                audioIn = toPcmIfNeeded(audioIn);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
                 encounterMusicClip = c;
@@ -332,6 +340,7 @@ public final class SoundPlayer {
                 }
                 in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+                audioIn = toPcmIfNeeded(audioIn);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
                 knockClip = c;
@@ -373,6 +382,7 @@ public final class SoundPlayer {
                 }
                 in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+                audioIn = toPcmIfNeeded(audioIn);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
                 stepClip = c;
@@ -411,6 +421,7 @@ public final class SoundPlayer {
                 }
                 in = toMarkResetStream(in);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);
+                audioIn = toPcmIfNeeded(audioIn);
                 Clip c = AudioSystem.getClip();
                 c.open(audioIn);
                 rustleClip = c;
@@ -439,6 +450,27 @@ public final class SoundPlayer {
     }
 
     // --- Util ---
+
+    /**
+     * Convert to PCM if the stream is in a format Clip doesn't support (e.g. VORBISENC from OGG).
+     * Clip only supports PCM; without this, "line with format VORBISENC ... not supported" occurs.
+     */
+    private static AudioInputStream toPcmIfNeeded(AudioInputStream in) throws Exception {
+        AudioFormat fmt = in.getFormat();
+        if (fmt.getEncoding() == AudioFormat.Encoding.PCM_SIGNED
+                || fmt.getEncoding() == AudioFormat.Encoding.PCM_UNSIGNED) {
+            return in;
+        }
+        AudioFormat pcm = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                fmt.getSampleRate(),
+                16,
+                fmt.getChannels(),
+                fmt.getChannels() * 2,
+                fmt.getSampleRate(),
+                false);
+        return AudioSystem.getAudioInputStream(pcm, in);
+    }
 
     /** Copy stream into memory so it supports mark/reset — required by Java Sound when loading from JAR. */
     private static InputStream toMarkResetStream(InputStream in) throws IOException {
